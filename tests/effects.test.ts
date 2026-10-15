@@ -15,11 +15,11 @@ describe('꾸밈효과·테마판', () => {
       else expect(fx.coin).toBeTruthy();
     }
   });
-  it('4티어 초상화 28명 모두 테마판과 테두리·상징 그림이 있다', () => {
+  it('4티어 초상화 28명 모두 테마판과 테두리 그림이 있다', () => {
     const top = Object.keys(t).filter((id) => t[id] === 4).sort();
     expect(top.length).toBe(28);
     expect(Object.keys(BOARD_THEMES).sort()).toEqual(top);
-    for (const id of top) for (const k of ['frame', 'emblem']) expect(() => readFileSync(`public/assets/themes/${id}_${k}.webp`), `${id} ${k}`).not.toThrow();
+    for (const id of top) for (const k of ['frame']) expect(() => readFileSync(`public/assets/themes/${id}_${k}.webp`), `${id} ${k}`).not.toThrow();
   });
   it('내 초상화 티어에 맞는 판: 1티어·빈칸 기본, 2·3티어는 티어 판, 4티어는 인물 판', () => {
     const t = tiers as Record<string, number>;

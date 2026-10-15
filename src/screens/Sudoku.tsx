@@ -15,7 +15,6 @@ import { sfx } from '../lib/sound';
 import { TREASURE_FX, boardThemeFor, themeVars } from '../data/effects';
 import { coinVars } from '../fx';
 import { FxLayers } from '../fx';
-import { josa } from '../lib/josa';
 
 const DIFF_KO: Record<string, string> = { intro: '입문', easy: '쉬움', medium: '보통', hard: '어려움' };
 const PICTURE = ['lyre', 'cornucopia', 'olive_tree', 'pandora_jar'];
@@ -214,7 +213,7 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
       if (board[sel]) return;
       // 보물을 달았으면: 같은 줄·칸·구역에 처음부터 있던 숫자는 메모에 넣지 않는다(지우기는 된다)
       if (badge && !(notes[sel] ?? []).includes(d) && g.peers[sel].some((p) => givens[p] === d)) {
-        toast(`같은 줄이나 구역에 처음부터 ${josa(sym(d), '이/가')} 있어서 메모하지 않았어요`);
+        toast('이미 있는 숫자예요.');
         return;
       }
       const s = new Set(notes[sel] ?? []);

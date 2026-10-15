@@ -75,7 +75,7 @@ const ok = (c: unknown, m: string) => { if (!c) throw new Error(m); console.log(
   await p.getByRole('button', { name: '메모', exact: true }).click();
   await p.getByRole('button', { name: `${blocked} 넣기(메모)` }).click();
   await p.waitForTimeout(400); await p.screenshot({ path: `${OUT}/c-memo-debug.png` });
-  await p.waitForSelector('text=메모하지 않았어요', { timeout: 3000 });
+  await p.waitForSelector('text=이미 있는 숫자예요', { timeout: 3000 });
   ok((await p.locator('.board .cell').nth(empty).locator('.notes').count()) === 0, `시작 숫자 ${blocked}는 메모 안 됨`);
   await p.screenshot({ path: `${OUT}/c-memo.png` });
   await p.getByRole('button', { name: '나가기' }).click();

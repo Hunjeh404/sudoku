@@ -2,7 +2,7 @@
 // 보물: 이야기책에 그 보물 장면이 있으면 그 그림을 화면 위·아래에 나눠 깐다.
 //       그림이 없는 보물은 아래 숫자 버튼(금화)을 그 보물 모양으로 바꾼다.
 //       버튼 그림(assets/coins/<id>.webp, <id>_memo.webp)이 오기 전까지는 색으로 만든 임시 동전을 쓴다(COIN_ART에 없는 것).
-// 4티어: 내 초상화로 쓰면 판의 색·선·구역마다 옅은 상징 무늬가 바뀐다.
+// 4티어: 내 초상화로 쓰면 판의 테두리·색·선이 바뀐다(구역 상징 무늬는 쓰지 않음).
 
 import { josa } from '../lib/josa';
 import TIER_MAP from './tiers.json';
@@ -105,7 +105,7 @@ export interface BoardTheme {
 }
 
 const T = (name: string, what: string, c: Omit<BoardTheme, 'name' | 'text'>): BoardTheme =>
-  ({ name, text: `판이 ${name}으로 바뀌어요. 테두리가 바뀌고, 굵은 선 안 구역마다 ${what} 무늬가 옅게 들어가요.`, art: true, ...c });
+  ({ name, text: `판이 ${name}으로 바뀌어요. 테두리와 판 색이 바뀌어요.`, art: true, ...c });
 
 export const BOARD_THEMES: Record<string, BoardTheme> = {
   chaos: T('소용돌이 판', '소용돌이', { dark: true, bg: '#2E2A36', line: '#4C445C', box: '#8A7BB0', entry: '#C7B8F0', given: '#F1ECF8', accent: '#9C8CC8' }),
@@ -154,9 +154,9 @@ export function boardThemeFor(avatarId: string): { key: string; theme: BoardThem
   return null;
 }
 
-// 판에 넣을 CSS 변수. 테두리·구역 상징 그림은 assets/themes/<key>_frame.webp, <key>_emblem.webp
+// 판에 넣을 CSS 변수. 테두리 그림은 assets/themes/<key>_frame.webp
 export function themeVars(key: string, t: BoardTheme, base: string): Record<string, string> {
   const v: Record<string, string> = { '--t-bg': t.bg, '--t-line': t.line, '--t-box': t.box, '--t-entry': t.entry, '--t-given': t.given, '--t-accent': t.accent };
-  if (t.art) { v['--t-emblem'] = `url(${base}assets/themes/${key}_emblem.webp)`; v['--t-frame'] = `url(${base}assets/themes/${key}_frame.webp)`; }
+  if (t.art) v['--t-frame'] = `url(${base}assets/themes/${key}_frame.webp)`;
   return v;
 }
