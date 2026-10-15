@@ -1,13 +1,13 @@
 """원본 자료 가져오기.
-사용: python3 -I scripts/import-assets.py <greek-myth-map 경로> <쿼터뷰 팩 경로>
+사용: python3 -I scripts/import-assets.py <greek-myth-map 경로>
 - 원본 PNG는 assets-src/에 보존, 게임용은 public/assets/에 WebP로 축소.
 - 데이터는 public/data/*.json(지연 로드)과 src/data/*.json(초기 번들)으로 변환.
 - 경로 누락을 검사하고 asset-sources.json에 원본 커밋·경로를 기록.
 """
-import hashlib, json, os, shutil, subprocess, sys
+import json, os, subprocess, sys
 from PIL import Image
 
-SRC, PACK = sys.argv[1], sys.argv[2]
+SRC = sys.argv[1]
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, 'public', 'assets')
 DATA_PUBLIC = os.path.join(ROOT, 'public', 'data')
@@ -39,20 +39,7 @@ sources = {'sourceRepo': 'https://github.com/Hunjeh404/greek-myth-map', 'sourceC
 def record(kind, src_rel, out_rel, size):
     sources['files'].append({'kind': kind, 'source': src_rel, 'output': out_rel, 'size': size})
 
-# ---- 1. 쿼터뷰 팩: 원본 보존 + 파생 WebP ----
-pack_dst = os.path.join(ROOT, 'assets-src', 'quarterview-v1')
-if not os.path.exists(pack_dst):
-    shutil.copytree(PACK, pack_dst)
-man = json.load(open(os.path.join(PACK, 'asset-manifest.json'), encoding='utf-8'))
-for a in man['assets']:
-    src = os.path.join(PACK, a['file'])
-    if a['id'] == 'room_base':  # 원근을 편 파생본 사용(scripts/straighten-room.py)
-        src = os.path.join(ROOT, 'assets-src', 'derived', 'room_base_parallel.png')
-    sub = 'env' if a['kind'] == 'environment' else 'furniture'
-    side = 1024 if sub == 'env' else 512
-    rel = f'assets/{sub}/{a["id"]}.webp'
-    size = webp(src, os.path.join(ROOT, 'public', rel), side, 84)
-    record('quarterview', 'sudoku-assets/quarterview-v1/' + a['file'], rel, size)
+# ---- 1. (집 꾸미기를 없애 쿼터뷰 가구·배경은 더 이상 쓰지 않는다)
 
 # ---- 2. 인물 데이터 ----
 myth = load_js('data.js', 'window.MYTH')

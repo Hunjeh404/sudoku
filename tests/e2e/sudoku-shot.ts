@@ -24,9 +24,9 @@ async function solve(p: Page) {
     await p.fill('#email', `s${w}${Date.now()}@test`); await p.click('#go');
     await p.waitForSelector('text=어떻게 불러 드릴까요?');
     await p.getByPlaceholder('예: 별빛 정원사').fill('훈제');
-    await p.getByRole('button', { name: '집 받기' }).click();
-    await p.waitForSelector('.space');
-    await p.getByRole('button', { name: '스도쿠', exact: true }).click();
+    await p.getByRole('button', { name: '시작하기' }).click();
+    await p.waitForSelector('.me-card');
+    await p.locator('.tabbar').getByRole('button', { name: '스도쿠', exact: true }).click();
     await p.waitForTimeout(600);
     await p.screenshot({ path: `${OUT}/sd${w}-select.png`, fullPage: true });
     await p.locator('.size-card', { hasText: w === 390 ? '4×4' : '9×9 어려움' }).click();

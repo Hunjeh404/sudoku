@@ -1,4 +1,4 @@
-// 두 계정 E2E: 로그인 → 스도쿠 완료 → 서버 보상 → 선물 → 구매 → 배치 저장 → 새로고침 유지 → 친구 초대 → 방문 → 방명록 → 우편함
+// 두 계정 E2E: 로그인(빈 초상) → 스도쿠 완료 → 서버 보상 → 초상화 선물 → 여정 별빛 → 초상화 구입 → 순위 → 이메일 친구 요청·수락 → 친구 소식 → 이모티콘 달기·바꾸기·지우기
 // 준비: DB=olympus_e2e tests/db/reset.sh, 게이트웨이(tests/e2e/gateway.ts), tests/e2e/rebuild.sh 후 vite preview(4173)
 import { chromium, Page, BrowserContext } from 'playwright';
 import pg from 'pg';
@@ -9,8 +9,6 @@ const db = new pg.Client({ host: 'localhost', user: 'postgres', password: 'postg
 let step = 0;
 const results: string[] = [];
 const ok = (m: string) => { results.push('✓ ' + m); console.log('✓', m); };
-// 가구 누르기: 접근성 경로(포커스+Enter). 포인터 경로는 tapPoint로 따로 확인
-const tap = async (p: Page, label: string, nth: 'first' | 'last' = 'first') => { const l = p.locator(`.sprite[aria-label="${label}"]`)[nth](); await l.focus(); await l.press('Enter'); };
 const shot = (p: Page, name: string) => p.screenshot({ path: `${OUT}/e2e-${String(++step).padStart(2, '0')}-${name}.png`, fullPage: true });
 
 async function login(ctx: BrowserContext, email: string, nickname: string) {
@@ -22,8 +20,8 @@ async function login(ctx: BrowserContext, email: string, nickname: string) {
   await p.click('#go');
   await p.waitForSelector('text=어떻게 불러 드릴까요?');
   await p.getByPlaceholder('예: 별빛 정원사').fill(nickname);
-  await p.getByRole('button', { name: '집 받기' }).click();
-  await p.waitForSelector('.space');
+  await p.getByRole('button', { name: '시작하기' }).click();
+  await p.waitForSelector('.me-card');
   return p;
 }
 
@@ -46,27 +44,31 @@ async function solveCurrent(p: Page) {
   const browser = await chromium.launch();
   const ctxA = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
   const ctxB = await browser.newContext({ viewport: { width: 360, height: 740 }, deviceScaleFactor: 2 });
+  const balanceOf = async (nick: string) => (await db.query(`select balance from public.wallets w join public.profiles p on p.id = w.profile_id where p.nickname = $1`, [nick])).rows[0].balance;
+  const tabTo = (p: Page, name: string) => p.locator('.tabbar').getByRole('button', { name, exact: true }).click();
+  const playOne = async (p: Page) => {
+    await tabTo(p, '스도쿠');
+    await p.getByRole('button', { name: /4×4 입문/ }).click();
+    await solveCurrent(p);
+    await p.waitForSelector('text=다 풀었어요!');
+  };
   try {
-    // ---- A: 로그인·첫 판 ----
+    // ---- A: 로그인(빈 초상)·첫 판 ----
     const a = await login(ctxA, 'dad@test', '아빠');
-    ok('A 구글(모의) 로그인 + 프로필·기본 집 생성');
-    await shot(a, 'A-home');
+    if (!(await a.locator('.me-card .pt-blank').count())) throw new Error('not blank');
+    ok('A 구글(모의) 로그인 + 프로필 생성, 초상화는 빈칸');
+    await shot(a, 'A-home-blank');
     await a.getByRole('button', { name: '스도쿠 하러 가기' }).click();
     await a.getByRole('button', { name: '4×4 짧은 안내' }).click();
-    await shot(a, 'A-tutorial');
     await a.getByRole('button', { name: '4×4 풀어 보기' }).click();
     await a.waitForSelector('.board');
-    // 힌트 4단계 확인
-    await a.getByRole('button', { name: '힌트' }).click();
+    await a.getByRole('button', { name: /^힌트, 남은/ }).click();
     await a.getByRole('button', { name: '더 알려 줘' }).click();
     await a.getByRole('button', { name: '더 알려 줘' }).click();
-    await shot(a, 'A-hint');
     await a.getByRole('button', { name: /숫자 넣기|정답 보기/ }).click();
     ok('힌트 3단계 설명 후 숫자 넣기');
     await a.waitForTimeout(1800);
     await a.waitForSelector('text=저장됨');
-    ok('진행 자동 저장(서버)');
-    // 연결 끊김 중 입력 → 기기에 보관 → 연결되면 저장
     await ctxA.setOffline(true);
     const empty = a.locator('.board .cell:not(.given)').filter({ hasText: /^$/ }).first();
     await empty.click();
@@ -74,119 +76,93 @@ async function solveCurrent(p: Page) {
     await a.getByRole('button', { name: /^1 넣기/ }).click();
     await a.getByRole('button', { name: '메모', exact: true }).click();
     await a.waitForSelector('text=연결 끊김', { timeout: 6000 });
-    await shot(a, 'A-offline');
     await ctxA.setOffline(false);
     await a.waitForSelector('text=저장됨', { timeout: 8000 });
-    ok('연결 끊김 중 메모 입력 유지 → 연결 후 저장');
-    await shot(a, 'A-puzzle');
+    ok('자동 저장, 연결 끊김 중 입력 유지 → 연결 후 저장');
     await solveCurrent(a);
     await a.waitForSelector('text=다 풀었어요!', { timeout: 10000 });
-    await shot(a, 'A-result');
-    const bal = await db.query(`select balance from public.wallets w join public.profiles p on p.id = w.profile_id where p.nickname = '아빠'`);
-    if (bal.rows[0].balance !== 9) throw new Error('balance ' + bal.rows[0].balance);
-    ok('서버 검증 후 별빛 +9 (힌트 1번 → 10%↓, DB 잔액 9)');
-    await a.getByRole('button', { name: /집으로/ }).click();
-    await a.getByRole('button', { name: '선물 고르기' }).click();
-    await a.getByRole('button', { name: /별빛 등불/ }).click();
-    ok('첫 선물(별빛 등불) 받기');
+    await shot(a, 'A-result-first');
+    if ((await balanceOf('아빠')) !== 9) throw new Error('balance');
+    ok('서버 검증 후 별빛 +9 (힌트 1번 → 10%↓)');
+    await a.getByRole('button', { name: '선물 고르러 가기' }).click();
+    await a.getByRole('button', { name: /초상화 선물 상자/ }).click();
+    await shot(a, 'A-gift');
+    await a.locator('.gift-card').first().click();
+    await a.waitForSelector('.me-card .pt-img:not(.pt-blank)');
+    ok('첫 판 선물: 1티어 셋 중 하나 → 바로 내 초상화');
 
-    // ---- 두 판 더 → 29 별빛 → 둥근 의자 구매 ----
-    for (let k = 0; k < 2; k++) {
-      await a.getByRole('tab', { name: '스도쿠' }).or(a.getByRole('button', { name: '스도쿠' })).first().click();
-      await a.getByRole('button', { name: /4×4 입문/ }).click();
-      await solveCurrent(a);
-      await a.waitForSelector('text=다 풀었어요!');
-      await a.getByRole('button', { name: /^집으로$/ }).click();
-    }
-    await a.getByRole('button', { name: '꾸미기' }).click();
-    await a.getByRole('tab', { name: '상점' }).click();
-    await a.locator('.item-card', { hasText: '둥근 의자' }).click();
-    await a.getByRole('button', { name: /20로 사기/ }).dblclick();
-    await a.waitForSelector('text=둥근 의자를 샀어요');
-    const inv = await db.query(`select quantity from public.inventory i join public.profiles p on p.id = i.profile_id where p.nickname = '아빠' and item_id = 'round_stool'`);
-    if (inv.rows[0].quantity !== 2) throw new Error('stool qty ' + inv.rows[0].quantity);
-    ok('구매 버튼 두 번 눌러도 거래 1회(의자 2개 = 기본 1 + 구매 1)');
-    // 보관함에서 의자·등불 놓기 → 저장
-    await a.locator('.item-card', { hasText: '둥근 의자' }).click();
-    await a.getByRole('button', { name: '오른쪽 아래로' }).click();
-    await a.getByRole('button', { name: '숨은 쪽지' }).click();
-    await a.getByRole('textbox', { name: '쪽지 내용' }).fill('의자 밑에 별사탕이 있어!');
-    await a.getByRole('button', { name: '넣기' }).click();
-    await a.getByRole('button', { name: '고르기 끝' }).click();
-    await a.locator('.item-card', { hasText: '별빛 등불' }).click();
-    await shot(a, 'A-editor');
-    await a.getByRole('button', { name: '완료' }).click();
-    await a.waitForSelector('text=집을 저장했어요');
-    ok('배치 저장(서버 검증 통과)');
-    await a.reload();
-    await a.waitForSelector('.space');
-    const placed = await a.locator('.sprite[aria-label="둥근 의자"]').count();
-    if (placed !== 2) throw new Error('stools placed after reload ' + placed);
-    ok('새로고침 후 배치 유지');
-    // 등불 켜기(주인)
-    // 포인터 경로: 등불 그림 위 실제 좌표를 눌러 투명도 판정 확인
-    const box = (await a.locator('.sprite[aria-label="별빛 등불"]').boundingBox())!;
-    await a.mouse.click(box.x + box.width / 2, box.y + box.height * 0.6);
-    await a.waitForTimeout(400);
-    if (!(await a.locator('.fx-lit').count())) throw new Error('lantern not lit by pointer');
-    ok('포인터로 등불 켜기(투명도 판정)');
-    await shot(a, 'A-lantern');
-
-    // ---- 친구 초대 ----
-    await a.getByRole('button', { name: '친구' }).click();
-    await a.getByRole('button', { name: '친구 초대 코드' }).click();
-    const code = (await a.locator('.invite-code').textContent())!.trim();
-    await shot(a, 'A-invite');
-    ok('친구 초대 코드 발급 ' + code);
-
-    // ---- B ----
-    const b = await login(ctxB, 'neighbor@test', '이웃');
-    await b.getByRole('button', { name: '친구' }).click();
-    await b.getByRole('button', { name: '받은 코드 넣기' }).click();
-    await b.getByRole('textbox', { name: '초대 코드' }).fill(code.toLowerCase());
-    await b.getByRole('button', { name: '연결하기' }).click();
-    await b.waitForSelector('text=아빠네와 친구가 되었어요');
-    ok('B 초대 코드로 친구 연결');
-    await b.locator('.conn', { hasText: '아빠' }).first().click();
-    await b.waitForSelector('.visit .space');
-    await shot(b, 'B-visit');
-    ok('B가 A의 집 방문(저장된 배치 읽기)');
-    // 방문자가 등불을 꺼도 A의 서버 데이터는 그대로
-    const before = await db.query(`select h.revision, h.room_layout from public.homes h join public.profiles p on p.id = h.profile_id where p.nickname = '아빠'`);
-    await tap(b, '별빛 등불');
-    await tap(b, '둥근 의자', 'last');
-    await tap(b, '둥근 의자', 'first');
-    await b.waitForSelector('text=숨은 쪽지를 찾았어요').catch(() => {});
-    await shot(b, 'B-note');
-    await b.keyboard.press('Escape');
-    const after = await db.query(`select h.revision, h.room_layout from public.homes h join public.profiles p on p.id = h.profile_id where p.nickname = '아빠'`);
-    if (before.rows[0].revision !== after.rows[0].revision) throw new Error('visitor changed home');
-    ok('방문자 조작 후에도 주인 집 revision 불변');
-    // 방명록
-    await b.getByRole('button', { name: '방명록 남기기' }).click();
-    await b.getByRole('textbox', { name: '방명록 글' }).fill('<b>놀러 왔어요</b> 의자 귀엽다!');
-    await b.getByRole('button', { name: '별', exact: true }).click();
-    await b.getByRole('button', { name: '남기기', exact: true }).click();
-    await b.waitForSelector('text=방명록을 남겼어요');
-    await shot(b, 'B-guestbook');
-    ok('B 방명록 작성(80자 제한, 스티커)');
-
-    // ---- A 우편함 ----
-    await a.reload();
-    await a.waitForSelector('.space');
-    await a.getByRole('button', { name: /우편함, 새 소식/ }).click();
-    await a.waitForSelector('text=이웃님이 방명록을 남겼어요');
-    await shot(a, 'A-mail');
-    ok('A 우편함에 새 방명록 알림');
+    // ---- 두 판 더(3판째 여정 별빛 30) → 도감에서 초상화 구입 ----
+    for (let k = 0; k < 2; k++) { await playOne(a); await a.getByRole('button', { name: '처음 화면으로' }).click(); }
+    if ((await balanceOf('아빠')) !== 59) throw new Error('balance after 3 ' + (await balanceOf('아빠')));
+    ok('3판째 여정 보상 별빛 30 (잔액 59)');
+    await tabTo(a, '도감');
+    await a.locator('.dex-card:not(.owned)').first().click();
+    await a.getByRole('button', { name: /✦ 20로 모으기/ }).click();
+    await a.getByRole('button', { name: '내 초상화로 쓰기' }).click();
+    await a.waitForSelector('text=내 초상화를 바꿨어요');
+    await shot(a, 'A-dex-bought');
+    if ((await balanceOf('아빠')) !== 39) throw new Error('buy');
+    ok('도감에서 1티어 초상화 구입(별빛 20) → 내 초상화로 쓰기');
     await a.keyboard.press('Escape');
-    await a.getByRole('button', { name: '내 집' }).click();
-    await a.getByRole('tab', { name: '정원' }).click();
-    await tap(a, '올빼미 우편함');
-    await a.waitForSelector('.gb-list li');
-    const txt = await a.locator('.gb-list li p').first().innerText();
-    if (!txt.includes('<b>놀러 왔어요</b>')) throw new Error('guestbook text not plain: ' + txt);
-    await shot(a, 'A-guestbook');
-    ok('방명록 HTML이 글자 그대로 표시(스크립트 실행 안 됨)');
+
+    // ---- 순위 ----
+    await tabTo(a, '순위');
+    await a.waitForSelector('.rank-row.me');
+    const pts = await a.locator('.rank-row.me .rank-pts').innerText();
+    if (!pts.startsWith('29')) throw new Error('rank pts ' + pts);
+    await shot(a, 'A-rank');
+    ok('순위표(이번 주·통합)에 내 점수 29');
+
+    // ---- B(할머니): 이메일로 친구 요청 → A 수락 ----
+    const b = await login(ctxB, 'grandma@test', '할머니');
+    await tabTo(b, '친구');
+    await b.getByRole('tab', { name: '친구 맺기' }).click();
+    await b.getByLabel('친구 이메일').fill('nobody@test');
+    await b.getByRole('button', { name: '요청' }).click();
+    await b.waitForSelector('text=이 이메일로 가입한 사람이 없어요');
+    await b.getByLabel('친구 이메일').fill('Dad@test');
+    await b.getByRole('button', { name: '요청' }).click();
+    await b.waitForSelector('text=수락을 기다리는 중');
+    await shot(b, 'B-request');
+    ok('B가 이메일로 친구 요청(없는 주소는 안내)');
+    await a.reload();
+    await a.waitForSelector('.me-card');
+    await a.getByRole('button', { name: /우편함, 새 소식/ }).click();
+    await a.waitForSelector('text=할머니님이 친구 요청을 보냈어요');
+    await shot(a, 'A-mail-request');
+    await a.locator('.mail-list').getByRole('button', { name: '수락' }).click();
+    await a.waitForSelector('text=수락함');
+    ok('A 우편함에서 친구 요청 수락');
+    await a.keyboard.press('Escape');
+
+    // ---- A가 여정 5판(2티어 열림) → B 소식에 뜸 → 이모티콘 ----
+    await db.query(`update public.quest_progress set completed_count = 4 where profile_id = (select id from public.profiles where nickname = '아빠')`);
+    await playOne(a);
+    await a.getByRole('button', { name: '처음 화면으로' }).click();
+    await b.reload();
+    await tabTo(b, '친구');
+    await b.waitForSelector('text=2티어 초상화 상점이 열렸어요');
+    const item = b.locator('.feed-item', { hasText: '2티어 초상화 상점이 열렸어요' });
+    await item.getByRole('button', { name: '이모티콘 달기' }).click();
+    await item.getByRole('button', { name: '❤️ 달기' }).click();
+    await item.getByRole('button', { name: /내 이모티콘 ❤️/ }).click();
+    await item.getByRole('button', { name: '🎉 달기' }).click();
+    await b.waitForTimeout(500);
+    await shot(b, 'B-feed');
+    ok('B 친구 소식에 A의 티어 해금 → 이모티콘 ❤️ 달고 🎉로 바꾸기');
+    await a.reload();
+    await a.waitForSelector('.feed-item.mine');
+    const mine = a.locator('.feed-item.mine', { hasText: '2티어 초상화 상점이 열렸어요' });
+    await mine.locator('.reactions li', { hasText: '할머니' }).waitFor();
+    if (!(await mine.locator('.reactions').innerText()).includes('🎉')) throw new Error('reaction not shown');
+    await shot(a, 'A-home-reaction');
+    ok('A 홈의 내 소식에 누가(할머니) 어떤 이모티콘(🎉)을 달았는지 표시');
+    await item.getByRole('button', { name: /내 이모티콘 🎉/ }).click();
+    await item.getByRole('button', { name: '이모티콘 지우기' }).click();
+    await b.waitForTimeout(500);
+    const left = await db.query('select count(*)::int as n from public.activity_reactions');
+    if (left.rows[0].n !== 0) throw new Error('not removed');
+    ok('B 이모티콘 지우기');
   } catch (e: any) {
     console.log('FAIL', e.message);
     results.push('✗ ' + e.message);

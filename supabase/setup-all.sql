@@ -1676,3 +1676,1075 @@ begin
     updated_at = now(), result = res where id = attempt;
   return res;
 end $$;
+
+
+-- 집 꾸미기를 없애고, 초상화 수집·순위·친구 소식으로 바꾼다.
+-- - 초상화: 4티어, 별빛으로 구입, 여정에서 티어 해금·무료 선물. 새 프로필은 초상화 없이(빈칸) 시작.
+-- - 점수: 한 판 끝낼 때 받은 별빛(힌트로 깎인 뒤)을 난이도별로 쌓아 전체 순위(누적·이번 주)를 만든다.
+-- - 친구: 상대 구글 이메일로 요청 → 상대가 수락하면 두 가족(계정)이 친구.
+-- - 친구 소식: 판 수·누적 점수 구간, 자기 기록 경신, 칭호, 티어 해금. 친구는 소식마다 이모티콘 하나.
+-- 데이터(초상화 목록·여정·칭호)는 0009_portrait_data.sql.
+
+-- ===================== 표 =====================
+create table if not exists public.portrait_catalog (
+  id text primary key,
+  tier int not null check (tier between 1 and 4),
+  price int not null check (price > 0),
+  name_ko text not null
+);
+create table if not exists public.title_catalog (
+  id text primary key,
+  name_ko text not null
+);
+create table if not exists public.owned_portraits (
+  profile_id uuid not null references public.profiles (id) on delete cascade,
+  portrait_id text not null references public.portrait_catalog (id),
+  source text not null,
+  acquired_at timestamptz not null default now(),
+  primary key (profile_id, portrait_id)
+);
+create table if not exists public.portrait_gifts (
+  id uuid primary key default gen_random_uuid(),
+  profile_id uuid not null references public.profiles (id) on delete cascade,
+  tier int not null,
+  options text[] not null,
+  claimed text,
+  created_at timestamptz not null default now(),
+  claimed_at timestamptz
+);
+create index if not exists portrait_gifts_open on public.portrait_gifts (profile_id) where claimed is null;
+
+create table if not exists public.score_events (
+  id bigint generated always as identity primary key,
+  profile_id uuid not null references public.profiles (id) on delete cascade,
+  attempt_id uuid not null unique references public.puzzle_attempts (id) on delete cascade,
+  size int not null,
+  difficulty text not null,
+  points int not null check (points >= 0),
+  created_at timestamptz not null default now()
+);
+create index if not exists score_events_time on public.score_events (created_at);
+create index if not exists score_events_profile on public.score_events (profile_id);
+
+create table if not exists public.personal_records (
+  profile_id uuid not null references public.profiles (id) on delete cascade,
+  size int not null,
+  difficulty text not null,
+  best_sec int not null,
+  attempt_id uuid not null,
+  set_at timestamptz not null default now(),
+  primary key (profile_id, size, difficulty)
+);
+
+alter table public.puzzle_attempts add column if not exists elapsed_sec int;
+alter table public.profiles add column if not exists title text not null default '';
+alter table public.profiles alter column avatar_id set default '';
+alter table public.journey_steps add column if not exists need int;
+
+create table if not exists public.family_friends (
+  family_a uuid not null references public.families (id) on delete cascade,
+  family_b uuid not null references public.families (id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (family_a, family_b),
+  check (family_a < family_b)
+);
+create table if not exists public.friend_requests (
+  id uuid primary key default gen_random_uuid(),
+  from_profile uuid not null references public.profiles (id) on delete cascade,
+  from_family uuid not null references public.families (id) on delete cascade,
+  to_family uuid not null references public.families (id) on delete cascade,
+  status text not null default 'pending' check (status in ('pending', 'accepted', 'declined', 'cancelled')),
+  created_at timestamptz not null default now(),
+  responded_at timestamptz
+);
+create index if not exists friend_requests_to on public.friend_requests (to_family) where status = 'pending';
+
+create table if not exists public.activities (
+  id bigint generated always as identity primary key,
+  profile_id uuid not null references public.profiles (id) on delete cascade,
+  kind text not null check (kind in ('clears', 'points', 'record', 'title', 'tier')),
+  payload jsonb not null default '{}',
+  created_at timestamptz not null default now()
+);
+create index if not exists activities_profile on public.activities (profile_id, created_at desc);
+
+create table if not exists public.activity_reactions (
+  activity_id bigint not null references public.activities (id) on delete cascade,
+  reactor uuid not null references public.profiles (id) on delete cascade,
+  emoji text not null,
+  updated_at timestamptz not null default now(),
+  primary key (activity_id, reactor)
+);
+
+do $$
+declare t text;
+begin
+  foreach t in array array['portrait_catalog', 'title_catalog', 'owned_portraits', 'portrait_gifts', 'score_events', 'personal_records',
+                           'family_friends', 'friend_requests', 'activities', 'activity_reactions'] loop
+    execute format('alter table public.%I enable row level security', t);
+    execute format('revoke all on public.%I from anon, authenticated, public', t);
+  end loop;
+end $$;
+grant select on public.portrait_catalog, public.title_catalog to authenticated;
+drop policy if exists portrait_read on public.portrait_catalog;
+create policy portrait_read on public.portrait_catalog for select to authenticated using (true);
+drop policy if exists title_read on public.title_catalog;
+create policy title_read on public.title_catalog for select to authenticated using (true);
+
+-- 예전 프로필 친구 관계 → 가족 친구 관계
+insert into public.family_friends (family_a, family_b)
+select distinct least(ma.family_id, mb.family_id), greatest(ma.family_id, mb.family_id)
+from public.friendships f
+join public.family_members ma on ma.profile_id = f.profile_a
+join public.family_members mb on mb.profile_id = f.profile_b
+where ma.family_id <> mb.family_id
+on conflict do nothing;
+
+-- ===================== 예전 기능 정리(집·방문·방명록·가구 상점) =====================
+drop function if exists public.purchase_item(uuid, text, uuid);
+drop function if exists public.claim_choice(uuid, text);
+drop function if exists public.save_home(uuid, int, jsonb, uuid);
+drop function if exists public.visit_home(uuid, uuid);
+drop function if exists public.discover_note(uuid, uuid, text);
+drop function if exists public.post_guestbook(uuid, uuid, text, text, uuid);
+drop function if exists public.list_guestbook(uuid, uuid);
+drop function if exists public.delete_guestbook(uuid, uuid);
+drop function if exists public.list_connections(uuid);
+drop function if exists public.set_goal(uuid, text);
+drop function if exists private.validate_home(uuid, jsonb);
+drop function if exists private.can_visit(uuid, uuid);
+drop function if exists public.complete_attempt(uuid, text, uuid);
+
+-- ===================== 공통 =====================
+create or replace function private.are_friends(fa uuid, fb uuid) returns boolean
+language sql stable security definer set search_path = '' as $$
+  select fa = fb or exists (select 1 from public.family_friends where family_a = least(fa, fb) and family_b = greatest(fa, fb));
+$$;
+
+-- viewer 프로필이 other 프로필의 소식을 볼 수 있는가(같은 가족 또는 친구 가족)
+create or replace function private.connected(viewer uuid, other uuid) returns boolean
+language sql stable security definer set search_path = '' as $$
+  select private.are_friends(private.family_of(viewer), private.family_of(other));
+$$;
+
+create or replace function private.add_activity(p uuid, k text, payload jsonb) returns void
+language sql security definer set search_path = '' as $$
+  insert into public.activities (profile_id, kind, payload) values (p, k, payload);
+$$;
+
+create or replace function private.tier_open(p uuid, t int) returns boolean
+language sql stable security definer set search_path = '' as $$
+  select t = 1 or exists (select 1 from public.unlocks where profile_id = p and key = 'tier:' || t);
+$$;
+
+-- 아직 없는 그 티어 초상화 중 셋을 골라 선물 상자를 만든다
+create or replace function private.make_gift(p uuid, t int) returns uuid
+language plpgsql security definer set search_path = '' as $$
+declare opts text[]; gid uuid;
+begin
+  select array_agg(id) into opts from (
+    select c.id from public.portrait_catalog c
+    where c.tier = t and not exists (select 1 from public.owned_portraits o where o.profile_id = p and o.portrait_id = c.id)
+    order by random() limit 3) s;
+  if opts is null then return null; end if;
+  insert into public.portrait_gifts (profile_id, tier, options) values (p, t, opts) returning id into gid;
+  return gid;
+end $$;
+
+create or replace function private.grant_title(p uuid, tid text) returns void
+language plpgsql security definer set search_path = '' as $$
+begin
+  insert into public.unlocks (profile_id, key) values (p, 'title:' || tid) on conflict do nothing;
+  if found then
+    update public.profiles set title = tid where id = p and title = '';
+    perform private.add_activity(p, 'title', jsonb_build_object('title', tid, 'name', (select name_ko from public.title_catalog where id = tid)));
+  end if;
+end $$;
+
+create or replace function private.points_of(p uuid, since timestamptz default null) returns int
+language sql stable security definer set search_path = '' as $$
+  select coalesce(sum(points), 0)::int from public.score_events where profile_id = p and (since is null or created_at >= since);
+$$;
+
+create or replace function private.week_start() returns timestamptz
+language sql stable as $$
+  select (date_trunc('week', now() at time zone 'Asia/Seoul')) at time zone 'Asia/Seoul';
+$$;
+
+-- 새 프로필: 지갑·여정·기본 안내 친구. 초상화는 없이 시작한다.
+create or replace function private.setup_new_profile(p uuid) returns void
+language plpgsql security definer set search_path = '' as $$
+begin
+  insert into public.wallets (profile_id, balance) values (p, 0);
+  insert into public.quest_progress (profile_id) values (p);
+  insert into public.unlocks (profile_id, key) values (p, 'guide:hestia'), (p, 'guide:athena');
+end $$;
+
+-- ===================== 프로필 =====================
+create or replace function public.create_my_profile(nickname text, avatar_id text, guide_id text) returns uuid
+language plpgsql security definer set search_path = '' as $$
+declare pid uuid; fid uuid;
+begin
+  if auth.uid() is null then perform private.fail('not_signed_in', '다시 로그인해 주세요.'); end if;
+  if exists (select 1 from public.profile_access where auth_user_id = auth.uid() and role = 'self' and revoked_at is null) then
+    perform private.fail('already_exists', '이미 내 프로필이 있어요.');
+  end if;
+  if char_length(btrim(coalesce(nickname, ''))) not between 1 and 12 then perform private.fail('bad_name', '이름은 1~12자로 적어 주세요.'); end if;
+  insert into public.profiles (nickname, avatar_id, guide_id) values (btrim(nickname), '', 'hestia') returning id into pid;
+  insert into public.profile_access (profile_id, auth_user_id, role) values (pid, auth.uid(), 'self');
+  insert into public.families default values returning id into fid;
+  insert into public.family_members (family_id, profile_id, role) values (fid, pid, 'guardian');
+  perform private.setup_new_profile(pid);
+  return pid;
+end $$;
+
+create or replace function public.create_child_profile(guardian uuid, nickname text, avatar_id text, guide_id text) returns uuid
+language plpgsql security definer set search_path = '' as $$
+declare pid uuid; fid uuid;
+begin
+  perform private.require_act(guardian);
+  if not private.is_adult(guardian) then perform private.fail('forbidden', '보호자만 아이 프로필을 만들 수 있어요.'); end if;
+  if char_length(btrim(coalesce(nickname, ''))) not between 1 and 12 then perform private.fail('bad_name', '이름은 1~12자로 적어 주세요.'); end if;
+  fid := private.family_of(guardian);
+  if (select count(*) from public.family_members where family_id = fid and role = 'child') >= 6 then
+    perform private.fail('limit', '아이 프로필은 6개까지 만들 수 있어요.');
+  end if;
+  insert into public.profiles (nickname, avatar_id, guide_id, is_child) values (btrim(nickname), '', 'hestia', true) returning id into pid;
+  insert into public.profile_access (profile_id, auth_user_id, role) values (pid, auth.uid(), 'guardian');
+  insert into public.family_members (family_id, profile_id, role) values (fid, pid, 'child');
+  perform private.setup_new_profile(pid);
+  return pid;
+end $$;
+
+-- 이름·초상화(가진 것만)·칭호(받은 것만)·설정
+create or replace function public.update_profile(p uuid, patch jsonb) returns void
+language plpgsql security definer set search_path = '' as $$
+begin
+  perform private.require_act(p);
+  if patch ? 'nickname' and char_length(btrim(patch->>'nickname')) not between 1 and 12 then
+    perform private.fail('bad_name', '이름은 1~12자로 적어 주세요.');
+  end if;
+  if coalesce(patch->>'avatar_id', '') <> '' and not exists (
+    select 1 from public.owned_portraits where profile_id = p and portrait_id = patch->>'avatar_id') then
+    perform private.fail('not_owned', '아직 모으지 않은 초상화예요.');
+  end if;
+  if coalesce(patch->>'title', '') <> '' and not exists (
+    select 1 from public.unlocks where profile_id = p and key = 'title:' || (patch->>'title')) then
+    perform private.fail('locked', '아직 받지 않은 칭호예요.');
+  end if;
+  update public.profiles set
+    nickname = coalesce(btrim(patch->>'nickname'), nickname),
+    avatar_id = coalesce(patch->>'avatar_id', avatar_id),
+    title = coalesce(patch->>'title', title),
+    settings = case when patch ? 'settings' then patch->'settings' else settings end,
+    updated_at = now()
+  where id = p;
+end $$;
+
+create or replace function public.get_state(p uuid) returns jsonb
+language plpgsql stable security definer set search_path = '' as $$
+declare r jsonb;
+begin
+  perform private.require_act(p);
+  select jsonb_build_object(
+    'profile', jsonb_build_object('id', pr.id, 'nickname', pr.nickname, 'avatar_id', pr.avatar_id, 'title', pr.title,
+      'is_child', pr.is_child, 'settings', pr.settings),
+    'balance', (select balance from public.wallets where profile_id = p),
+    'quest', (select jsonb_build_object('completed_count', q.completed_count, 'no_hint_count', q.no_hint_count) from public.quest_progress q where q.profile_id = p),
+    'unlocks', coalesce((select jsonb_agg(key) from public.unlocks where profile_id = p), '[]'::jsonb),
+    'owned', coalesce((select jsonb_agg(portrait_id order by acquired_at) from public.owned_portraits where profile_id = p), '[]'::jsonb),
+    'gifts', coalesce((select jsonb_agg(jsonb_build_object('id', g.id, 'tier', g.tier, 'options', g.options) order by g.created_at)
+      from public.portrait_gifts g where g.profile_id = p and g.claimed is null), '[]'::jsonb),
+    'points', jsonb_build_object('total', private.points_of(p), 'week', private.points_of(p, private.week_start())),
+    'records', coalesce((select jsonb_object_agg(size || ':' || difficulty, best_sec) from public.personal_records where profile_id = p), '{}'::jsonb),
+    'active', coalesce((select jsonb_agg(jsonb_build_object('id', a.id, 'puzzle_id', a.puzzle_id, 'size', c.size,
+        'difficulty', c.difficulty, 'updated_at', a.updated_at) order by a.updated_at desc)
+      from public.puzzle_attempts a join public.puzzle_catalog c on c.id = a.puzzle_id
+      where a.profile_id = p and a.status = 'active'), '[]'::jsonb),
+    'unread', (select count(*) from public.notifications where recipient_profile_id = p and read_at is null),
+    'family_role', (select role from public.family_members where profile_id = p)
+  ) into r from public.profiles pr where pr.id = p;
+  return r;
+end $$;
+
+-- ===================== 초상화 =====================
+create or replace function public.purchase_portrait(p uuid, portrait text, op_id uuid) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare c public.portrait_catalog; done jsonb; bal int; res jsonb;
+begin
+  perform private.require_act(p);
+  select result into done from private.operations where operations.op_id = purchase_portrait.op_id;
+  if found then return done || jsonb_build_object('repeat', true); end if;
+  select * into c from public.portrait_catalog where id = portrait;
+  if not found then perform private.fail('bad_item', '없는 초상화예요.'); end if;
+  if not private.tier_open(p, c.tier) then perform private.fail('locked', '여정을 더 걸으면 이 티어가 열려요.'); end if;
+  if exists (select 1 from public.owned_portraits where profile_id = p and portrait_id = portrait) then
+    perform private.fail('owned', '이미 가진 초상화예요.');
+  end if;
+  update public.wallets set balance = balance - c.price where profile_id = p and balance >= c.price returning balance into bal;
+  if not found then perform private.fail('not_enough', '별빛이 부족해요.'); end if;
+  insert into public.reward_ledger (profile_id, event_key, amount, reason) values (p, 'buy:' || op_id, -c.price, 'portrait:' || portrait);
+  insert into public.owned_portraits (profile_id, portrait_id, source) values (p, portrait, 'buy');
+  res := jsonb_build_object('portrait', portrait, 'price', c.price, 'balance', bal);
+  insert into private.operations (op_id, profile_id, kind, result) values (purchase_portrait.op_id, p, 'purchase', res);
+  return res;
+end $$;
+
+-- 여정 선물: 셋 중 하나 고르기(한 번만). 처음 받은 초상화는 바로 프로필 얼굴이 된다.
+create or replace function public.claim_gift(p uuid, gift uuid, portrait text) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare g public.portrait_gifts;
+begin
+  perform private.require_act(p);
+  select * into g from public.portrait_gifts where id = gift and profile_id = p for update;
+  if not found then perform private.fail('not_found', '선물을 찾을 수 없어요.'); end if;
+  if g.claimed is not null then perform private.fail('claimed', '이미 고른 선물이에요.'); end if;
+  if not (portrait = any (g.options)) then perform private.fail('bad_item', '선물 상자에 없는 초상화예요.'); end if;
+  update public.portrait_gifts set claimed = portrait, claimed_at = now() where id = gift;
+  insert into public.owned_portraits (profile_id, portrait_id, source) values (p, portrait, 'gift') on conflict do nothing;
+  update public.profiles set avatar_id = portrait where id = p and avatar_id = '';
+  return jsonb_build_object('portrait', portrait);
+end $$;
+
+-- ===================== 스도쿠 완료 =====================
+-- 판 수·점수 구간 소식, 자기 기록(힌트 없이 끝낸 판의 시간), 여정 보상(별빛·티어·칭호·초상화 선물)
+create or replace function public.complete_attempt(attempt uuid, board text, op_id uuid, elapsed_sec int default null) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare
+  a public.puzzle_attempts; pz public.puzzle_catalog; sol text; amount int; q public.quest_progress;
+  step public.journey_steps; res jsonb; jr jsonb := null; bal int; before_pts int; after_pts int; th int;
+  secs int; wall int; prev int; rec jsonb := null; gift_id uuid := null; bonus int := 0; k text;
+begin
+  select * into a from public.puzzle_attempts where id = attempt for update;
+  if not found then perform private.fail('not_found', '퍼즐을 찾을 수 없어요.'); end if;
+  perform private.require_act(a.profile_id);
+  if a.status = 'completed' then return a.result || jsonb_build_object('repeat', true); end if;
+  if a.status <> 'active' then perform private.fail('not_active', '그만둔 퍼즐이에요.'); end if;
+  select * into pz from public.puzzle_catalog where id = a.puzzle_id;
+  perform private.check_board(board, pz.givens, pz.size);
+  select solution into sol from private.puzzle_solutions where puzzle_id = a.puzzle_id;
+  if board <> sol then perform private.fail('not_solved', '아직 맞지 않는 칸이 있어요.'); end if;
+
+  -- 시간: 기기가 잰 시간(화면을 보고 있던 시간). 서버 시계보다 길 수 없다.
+  wall := greatest(1, extract(epoch from now() - a.started_at)::int);
+  secs := least(greatest(coalesce(complete_attempt.elapsed_sec, wall), 1), wall);
+
+  -- 보상: 힌트 한 번마다 10%씩 줄어듦
+  select r.amount into amount from public.reward_rules r where r.size = pz.size and r.difficulty = pz.difficulty;
+  amount := amount * (10 - least(a.hints_used, 10)) / 10;
+  insert into public.reward_ledger (profile_id, event_key, amount, reason) values (a.profile_id, 'complete:' || a.id, amount, 'puzzle:' || pz.id);
+  update public.wallets set balance = balance + amount where profile_id = a.profile_id returning balance into bal;
+
+  before_pts := private.points_of(a.profile_id);
+  insert into public.score_events (profile_id, attempt_id, size, difficulty, points) values (a.profile_id, a.id, pz.size, pz.difficulty, amount);
+  after_pts := before_pts + amount;
+  foreach th in array array[100, 300, 500, 1000, 2000, 3000, 5000, 10000] loop
+    if before_pts < th and after_pts >= th then perform private.add_activity(a.profile_id, 'points', jsonb_build_object('points', th)); end if;
+  end loop;
+
+  update public.quest_progress set completed_count = completed_count + 1,
+    no_hint_count = no_hint_count + case when a.hints_used = 0 then 1 else 0 end
+    where profile_id = a.profile_id returning * into q;
+  if q.completed_count = any (array[10, 25, 50, 100, 150, 200, 300, 500, 1000]) then
+    perform private.add_activity(a.profile_id, 'clears', jsonb_build_object('count', q.completed_count));
+  end if;
+
+  -- 자기 기록: 힌트 없이 끝낸 판만
+  if a.hints_used = 0 then
+    select best_sec into prev from public.personal_records where profile_id = a.profile_id and size = pz.size and difficulty = pz.difficulty;
+    if prev is null then
+      insert into public.personal_records (profile_id, size, difficulty, best_sec, attempt_id) values (a.profile_id, pz.size, pz.difficulty, secs, a.id);
+      rec := jsonb_build_object('sec', secs, 'prev', null, 'first', true);
+    elsif secs < prev then
+      update public.personal_records set best_sec = secs, attempt_id = a.id, set_at = now()
+        where profile_id = a.profile_id and size = pz.size and difficulty = pz.difficulty;
+      rec := jsonb_build_object('sec', secs, 'prev', prev, 'first', false);
+      perform private.add_activity(a.profile_id, 'record', jsonb_build_object('size', pz.size, 'difficulty', pz.difficulty, 'sec', secs, 'prev', prev));
+    end if;
+  end if;
+
+  -- 여정
+  select * into step from public.journey_steps where need = q.completed_count;
+  if found then
+    if step.reward ? 'bonus' then
+      bonus := (step.reward->>'bonus')::int;
+      insert into public.reward_ledger (profile_id, event_key, amount, reason) values (a.profile_id, 'journey:' || a.profile_id || ':' || step.step, bonus, 'journey');
+      update public.wallets set balance = balance + bonus where profile_id = a.profile_id returning balance into bal;
+    end if;
+    if step.reward ? 'tier' then
+      insert into public.unlocks (profile_id, key) values (a.profile_id, 'tier:' || (step.reward->>'tier')) on conflict do nothing;
+      if found then perform private.add_activity(a.profile_id, 'tier', jsonb_build_object('tier', (step.reward->>'tier')::int)); end if;
+    end if;
+    if step.reward ? 'title' then perform private.grant_title(a.profile_id, step.reward->>'title'); end if;
+    if step.reward ? 'gift' then gift_id := private.make_gift(a.profile_id, (step.reward->>'gift')::int); end if;
+    jr := jsonb_build_object('step', step.step, 'title', step.title, 'reward', step.reward, 'gift_id', gift_id);
+  end if;
+
+  res := jsonb_build_object('reward', amount, 'balance', bal, 'completed_count', q.completed_count,
+    'no_hint', a.hints_used = 0, 'hints_used', least(a.hints_used, 10), 'journey', jr, 'puzzle_id', pz.id,
+    'size', pz.size, 'difficulty', pz.difficulty, 'elapsed', secs, 'record', rec, 'points', after_pts);
+  update public.puzzle_attempts set status = 'completed', board = complete_attempt.board, completed_at = now(),
+    updated_at = now(), elapsed_sec = secs, result = res where id = attempt;
+  return res;
+end $$;
+
+-- ===================== 순위 =====================
+-- board: all | 4 | 6 | 9e | 9m | 9h, period: all | week. 전체 플레이어 상위 50명 + 내 순위.
+create or replace function public.get_leaderboard(p uuid, board text, period text) returns jsonb
+language plpgsql stable security definer set search_path = '' as $$
+declare since timestamptz := null; sz int := null; df text := null; rows jsonb; me jsonb;
+begin
+  perform private.require_act(p);
+  if period = 'week' then since := private.week_start(); elsif period <> 'all' then perform private.fail('bad_period', '기간이 맞지 않아요.'); end if;
+  case board
+    when 'all' then null;
+    when '4' then sz := 4; df := 'intro';
+    when '6' then sz := 6; df := 'intro';
+    when '9e' then sz := 9; df := 'easy';
+    when '9m' then sz := 9; df := 'medium';
+    when '9h' then sz := 9; df := 'hard';
+    else perform private.fail('bad_board', '순위표 종류가 맞지 않아요.');
+  end case;
+  with s as (
+    select e.profile_id, sum(e.points)::int as pts, count(*)::int as games, max(e.created_at) as last_at
+    from public.score_events e
+    where (since is null or e.created_at >= since) and (sz is null or (e.size = sz and e.difficulty = df))
+    group by e.profile_id having sum(e.points) > 0
+  ), ranked as (
+    select s.*, rank() over (order by s.pts desc) as rnk, row_number() over (order by s.pts desc, s.last_at) as rn from s
+  )
+  select
+    coalesce((select jsonb_agg(jsonb_build_object('rank', r.rnk, 'id', r.profile_id, 'nickname', pr.nickname, 'avatar_id', pr.avatar_id,
+        'title', pr.title, 'points', r.pts, 'games', r.games, 'me', r.profile_id = p) order by r.rn)
+      from ranked r join public.profiles pr on pr.id = r.profile_id where r.rn <= 50), '[]'::jsonb),
+    (select jsonb_build_object('rank', r.rnk, 'points', r.pts, 'games', r.games) from ranked r where r.profile_id = p)
+  into rows, me;
+  return jsonb_build_object('rows', rows, 'me', me);
+end $$;
+
+-- ===================== 친구 =====================
+create or replace function public.send_friend_request(p uuid, email text) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare my_fid uuid; target_uid uuid; target_profile uuid; target_fid uuid; req public.friend_requests; rev public.friend_requests;
+begin
+  perform private.require_act(p);
+  my_fid := private.family_of(p);
+  if (select count(*) from public.friend_requests where from_family = my_fid and created_at > now() - interval '1 hour') >= 20 then
+    perform private.fail('rate_limited', '요청을 너무 많이 보냈어요. 잠시 뒤에 다시 해 주세요.', true);
+  end if;
+  select u.id into target_uid from auth.users u where lower(u.email) = lower(btrim(coalesce(send_friend_request.email, '')));
+  if target_uid is null then perform private.fail('no_user', '이 이메일로 가입한 사람이 없어요. 철자를 확인해 주세요.'); end if;
+  select a.profile_id into target_profile from public.profile_access a
+    where a.auth_user_id = target_uid and a.role = 'self' and a.revoked_at is null limit 1;
+  if target_profile is null then perform private.fail('no_user', '그 사람은 아직 게임 프로필을 만들지 않았어요.'); end if;
+  target_fid := private.family_of(target_profile);
+  if target_fid = my_fid then perform private.fail('same_family', '이미 같은 가족이에요.'); end if;
+  if private.are_friends(my_fid, target_fid) then perform private.fail('already', '이미 친구예요.'); end if;
+  -- 상대가 먼저 보낸 요청이 있으면 바로 친구
+  select * into rev from public.friend_requests where from_family = target_fid and to_family = my_fid and status = 'pending' for update;
+  if found then
+    return public.respond_friend_request(p, rev.id, true);
+  end if;
+  select * into req from public.friend_requests where from_family = my_fid and to_family = target_fid and status = 'pending';
+  if found then return jsonb_build_object('ok', true, 'status', 'pending', 'repeat', true); end if;
+  insert into public.friend_requests (from_profile, from_family, to_family) values (p, my_fid, target_fid) returning * into req;
+  insert into public.notifications (recipient_profile_id, kind, ref, payload)
+    select m.profile_id, 'friend_request', req.id::text,
+      jsonb_build_object('nickname', (select nickname from public.profiles where id = p), 'avatar_id', (select avatar_id from public.profiles where id = p))
+    from public.family_members m where m.family_id = target_fid;
+  return jsonb_build_object('ok', true, 'status', 'pending');
+end $$;
+
+create or replace function public.respond_friend_request(p uuid, request uuid, accept boolean) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare req public.friend_requests;
+begin
+  perform private.require_act(p);
+  select * into req from public.friend_requests where id = request for update;
+  if not found or req.to_family <> private.family_of(p) then perform private.fail('not_found', '친구 요청을 찾을 수 없어요.'); end if;
+  if req.status <> 'pending' then return jsonb_build_object('ok', true, 'status', req.status, 'repeat', true); end if;
+  update public.friend_requests set status = case when accept then 'accepted' else 'declined' end, responded_at = now() where id = request;
+  if accept then
+    insert into public.family_friends (family_a, family_b) values (least(req.from_family, req.to_family), greatest(req.from_family, req.to_family))
+      on conflict do nothing;
+    insert into public.notifications (recipient_profile_id, kind, ref, payload)
+      values (req.from_profile, 'friend_accepted', p::text, jsonb_build_object('nickname', (select nickname from public.profiles where id = p)));
+  end if;
+  return jsonb_build_object('ok', true, 'status', case when accept then 'accepted' else 'declined' end,
+    'with', (select nickname from public.profiles where id = req.from_profile));
+end $$;
+
+create or replace function public.cancel_friend_request(p uuid, request uuid) returns void
+language plpgsql security definer set search_path = '' as $$
+begin
+  perform private.require_act(p);
+  update public.friend_requests set status = 'cancelled', responded_at = now()
+    where id = request and from_family = private.family_of(p) and status = 'pending';
+end $$;
+
+-- 우리 가족·친구 가족·받은/보낸 요청
+create or replace function public.list_friends(p uuid) returns jsonb
+language plpgsql stable security definer set search_path = '' as $$
+declare fid uuid;
+begin
+  perform private.require_act(p);
+  fid := private.family_of(p);
+  return jsonb_build_object(
+    'family', coalesce((select jsonb_agg(jsonb_build_object('id', pr.id, 'nickname', pr.nickname, 'avatar_id', pr.avatar_id, 'title', pr.title,
+        'is_child', pr.is_child, 'points', private.points_of(pr.id)) order by pr.is_child, pr.created_at)
+      from public.family_members m join public.profiles pr on pr.id = m.profile_id where m.family_id = fid and pr.id <> p), '[]'::jsonb),
+    'friends', coalesce((select jsonb_agg(jsonb_build_object('family', ff.other, 'since', ff.created_at, 'members',
+        (select jsonb_agg(jsonb_build_object('id', pr.id, 'nickname', pr.nickname, 'avatar_id', pr.avatar_id, 'title', pr.title,
+           'is_child', pr.is_child, 'points', private.points_of(pr.id)) order by pr.is_child, pr.created_at)
+         from public.family_members m join public.profiles pr on pr.id = m.profile_id where m.family_id = ff.other)) order by ff.created_at)
+      from (select case when family_a = fid then family_b else family_a end as other, created_at
+            from public.family_friends where family_a = fid or family_b = fid) ff), '[]'::jsonb),
+    'incoming', coalesce((select jsonb_agg(jsonb_build_object('id', r.id, 'nickname', pr.nickname, 'avatar_id', pr.avatar_id, 'created_at', r.created_at) order by r.created_at desc)
+      from public.friend_requests r join public.profiles pr on pr.id = r.from_profile where r.to_family = fid and r.status = 'pending'), '[]'::jsonb),
+    'outgoing', coalesce((select jsonb_agg(jsonb_build_object('id', r.id, 'to', (select string_agg(pr.nickname, ', ' order by pr.created_at)
+        from public.family_members m join public.profiles pr on pr.id = m.profile_id where m.family_id = r.to_family and m.role <> 'child'),
+        'created_at', r.created_at) order by r.created_at desc)
+      from public.friend_requests r where r.from_family = fid and r.status = 'pending'), '[]'::jsonb)
+  );
+end $$;
+
+-- 친구 끊기: 상대 가족의 아무 프로필 id로
+create or replace function public.remove_friend(p uuid, other uuid) returns void
+language plpgsql security definer set search_path = '' as $$
+declare a uuid; b uuid;
+begin
+  perform private.require_act(p);
+  a := private.family_of(p); b := private.family_of(other);
+  delete from public.family_friends where family_a = least(a, b) and family_b = greatest(a, b);
+end $$;
+
+-- 가족 초대 코드만 남긴다(친구는 이메일 요청으로)
+create or replace function public.create_invite(p uuid, kind text) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare code text := ''; alphabet text := 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; bytes bytea; i int; exp timestamptz := now() + interval '72 hours';
+begin
+  perform private.require_act(p);
+  if not private.is_adult(p) then perform private.fail('forbidden', '초대는 어른 프로필에서 만들 수 있어요.'); end if;
+  if kind <> 'family' then perform private.fail('bad_kind', '친구는 이메일로 요청해 주세요.'); end if;
+  if (select count(*) from public.invites where from_profile = p and created_at > now() - interval '1 hour') >= 10 then
+    perform private.fail('rate_limited', '잠시 뒤에 다시 만들어 주세요.', true);
+  end if;
+  bytes := extensions.gen_random_bytes(10);
+  for i in 0..9 loop code := code || substr(alphabet, (get_byte(bytes, i) % 31) + 1, 1); end loop;
+  insert into public.invites (code_hash, kind, from_profile, family_id, expires_at)
+    values (encode(extensions.digest(code, 'sha256'), 'hex'), 'family', p, private.family_of(p), exp);
+  return jsonb_build_object('code', substr(code, 1, 5) || '-' || substr(code, 6, 5), 'expires_at', exp, 'kind', 'family');
+end $$;
+
+-- ===================== 친구 소식·이모티콘 =====================
+create or replace function public.list_feed(p uuid, before_id bigint default null) returns jsonb
+language plpgsql stable security definer set search_path = '' as $$
+declare fid uuid;
+begin
+  perform private.require_act(p);
+  fid := private.family_of(p);
+  return coalesce((select jsonb_agg(jsonb_build_object(
+      'id', ac.id, 'kind', ac.kind, 'payload', ac.payload, 'created_at', ac.created_at, 'mine', ac.profile_id = p,
+      'who', jsonb_build_object('id', pr.id, 'nickname', pr.nickname, 'avatar_id', pr.avatar_id, 'title', pr.title),
+      'my_emoji', (select emoji from public.activity_reactions where activity_id = ac.id and reactor = p),
+      'reactions', coalesce((select jsonb_agg(jsonb_build_object('emoji', r.emoji, 'id', rp.id, 'nickname', rp.nickname, 'avatar_id', rp.avatar_id)
+          order by r.updated_at) from public.activity_reactions r join public.profiles rp on rp.id = r.reactor where r.activity_id = ac.id), '[]'::jsonb)
+    ) order by ac.id desc)
+    from (select a.* from public.activities a
+          join public.family_members m on m.profile_id = a.profile_id
+          where private.are_friends(fid, m.family_id) and (before_id is null or a.id < before_id)
+          order by a.id desc limit 40) ac
+    join public.profiles pr on pr.id = ac.profile_id), '[]'::jsonb);
+end $$;
+
+-- 소식 하나에 이모티콘 하나. 같은 것을 다시 보내거나 빈 값이면 지운다. 내 소식에는 달 수 없다.
+create or replace function public.set_reaction(p uuid, activity bigint, emoji text) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare ac public.activities; cur text;
+begin
+  perform private.require_act(p);
+  select * into ac from public.activities where id = activity;
+  if not found or not private.connected(p, ac.profile_id) then perform private.fail('not_found', '소식을 찾을 수 없어요.'); end if;
+  if ac.profile_id = p then perform private.fail('own', '내 소식에는 이모티콘을 달 수 없어요.'); end if;
+  select r.emoji into cur from public.activity_reactions r where activity_id = activity and reactor = p;
+  if coalesce(emoji, '') = '' or emoji = cur then
+    delete from public.activity_reactions where activity_id = activity and reactor = p;
+    return jsonb_build_object('emoji', null);
+  end if;
+  if not (emoji = any (array['👍', '❤️', '👏', '🎉', '😆', '😮', '🔥', '🌟'])) then perform private.fail('bad_emoji', '고를 수 없는 이모티콘이에요.'); end if;
+  insert into public.activity_reactions (activity_id, reactor, emoji) values (activity, p, emoji)
+    on conflict (activity_id, reactor) do update set emoji = excluded.emoji, updated_at = now();
+  insert into public.notifications (recipient_profile_id, kind, ref, payload)
+    values (ac.profile_id, 'reaction', activity::text, jsonb_build_object('nickname', (select nickname from public.profiles where id = p),
+      'avatar_id', (select avatar_id from public.profiles where id = p), 'emoji', emoji, 'activity_kind', ac.kind, 'activity', ac.payload));
+  return jsonb_build_object('emoji', emoji);
+end $$;
+
+-- 우편함: 친구 요청은 지금 상태(대기·수락·거절)를 함께
+create or replace function public.list_mail(p uuid) returns jsonb
+language plpgsql stable security definer set search_path = '' as $$
+begin
+  perform private.require_act(p);
+  return coalesce((select jsonb_agg(to_jsonb(n) - 'recipient_profile_id'
+      || case when n.kind = 'friend_request' then jsonb_build_object('request_status', (select status from public.friend_requests where id::text = n.ref)) else '{}'::jsonb end
+      order by n.created_at desc)
+    from (select * from public.notifications where recipient_profile_id = p order by created_at desc limit 50) n), '[]'::jsonb);
+end $$;
+
+-- ---------- 실행 권한 ----------
+do $$
+declare f record;
+begin
+  for f in select p.oid::regprocedure as sig, n.nspname from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+           where n.nspname in ('public', 'private') and p.prokind = 'f' loop
+    execute format('revoke all on function %s from public, anon', f.sig);
+    if f.nspname = 'public' then execute format('grant execute on function %s to authenticated', f.sig); end if;
+  end loop;
+end $$;
+grant execute on function private.can_act(uuid) to authenticated;
+
+
+-- 자동 생성: npm run gen:portraits (src/data/catalog.ts, public/data/people.json이 원본)
+-- 초상화 390장: 티어별 145/132/85/28장
+insert into public.portrait_catalog (id,tier,price,name_ko) values
+('chaos',4,400,'카오스'),
+('gaia',4,400,'가이아'),
+('tartarus',4,400,'타르타로스'),
+('eros',4,400,'에로스'),
+('erebus',4,400,'에레보스'),
+('nyx',4,400,'닉스'),
+('aether',4,400,'아이테르'),
+('hemera',4,400,'헤메라'),
+('uranus',4,400,'우라노스'),
+('pontus',4,400,'폰토스'),
+('ourea',4,400,'오우레아'),
+('chronos',4,400,'크로노스(시간)'),
+('ananke',4,400,'아낭케'),
+('phanes',4,400,'파네스'),
+('oceanus',3,150,'오케아노스'),
+('tethys',3,150,'테티스(티탄)'),
+('hyperion',3,150,'히페리온'),
+('theia',3,150,'테이아'),
+('coeus',3,150,'코이오스'),
+('phoebe',3,150,'포이베'),
+('crius',3,150,'크리오스'),
+('iapetus',3,150,'이아페토스'),
+('mnemosyne',3,150,'므네모시네'),
+('themis',3,150,'테미스'),
+('cronus',3,150,'크로노스'),
+('rhea',3,150,'레아'),
+('atlas',3,150,'아틀라스'),
+('prometheus',3,150,'프로메테우스'),
+('epimetheus',3,150,'에피메테우스'),
+('menoetius',3,150,'메노이티오스'),
+('leto',3,150,'레토'),
+('asteria',3,150,'아스테리아'),
+('helios',3,150,'헬리오스'),
+('selene',3,150,'셀레네'),
+('eos',3,150,'에오스'),
+('astraeus',3,150,'아스트라이오스'),
+('pallas_titan',3,150,'팔라스(티탄)'),
+('perses_titan',3,150,'페르세스(티탄)'),
+('metis',3,150,'메티스'),
+('dione',3,150,'디오네'),
+('zeus',4,400,'제우스'),
+('hera',4,400,'헤라'),
+('poseidon',4,400,'포세이돈'),
+('demeter',4,400,'데메테르'),
+('hestia',4,400,'헤스티아'),
+('hades',4,400,'하데스'),
+('athena',4,400,'아테나'),
+('apollo',4,400,'아폴론'),
+('artemis',4,400,'아르테미스'),
+('ares',4,400,'아레스'),
+('aphrodite',4,400,'아프로디테'),
+('hephaestus',4,400,'헤파이스토스'),
+('hermes',4,400,'헤르메스'),
+('dionysus',4,400,'디오니소스'),
+('persephone',3,150,'페르세포네'),
+('hebe',3,150,'헤베'),
+('eileithyia',3,150,'에일레이티이아'),
+('harmonia',3,150,'하르모니아'),
+('phobos',3,150,'포보스'),
+('deimos',3,150,'데이모스'),
+('hecate',3,150,'헤카테'),
+('iris',3,150,'이리스'),
+('nike',3,150,'니케'),
+('kratos',3,150,'크라토스'),
+('bia',3,150,'비아'),
+('zelus',3,150,'젤로스'),
+('styx',1,20,'스틱스'),
+('thanatos',3,150,'타나토스'),
+('hypnos',3,150,'힙노스'),
+('morpheus',3,150,'모르페우스'),
+('nemesis',3,150,'네메시스'),
+('eris',3,150,'에리스'),
+('moros',3,150,'모로스'),
+('momus',3,150,'모모스'),
+('apate',3,150,'아파테'),
+('geras',3,150,'게라스'),
+('ate',3,150,'아테'),
+('clotho',3,150,'클로토'),
+('lachesis',3,150,'라케시스'),
+('atropos',3,150,'아트로포스'),
+('horai',3,150,'호라이'),
+('charites',3,150,'카리테스'),
+('eurynome',1,20,'에우리노메'),
+('calliope',3,150,'칼리오페'),
+('clio',3,150,'클레이오'),
+('euterpe',3,150,'에우테르페'),
+('thalia_muse',3,150,'탈레이아(무사)'),
+('melpomene',3,150,'멜포메네'),
+('terpsichore',3,150,'테릅시코레'),
+('erato',3,150,'에라토'),
+('polyhymnia',3,150,'폴림니아'),
+('urania',3,150,'우라니아'),
+('pan',3,150,'판'),
+('asclepius',3,150,'아스클레피오스'),
+('hygieia',3,150,'히기에이아'),
+('aristaeus',3,150,'아리스타이오스'),
+('silenus',3,150,'실레노스'),
+('triton',3,150,'트리톤'),
+('amphitrite',1,20,'암피트리테'),
+('nereus',3,150,'네레우스'),
+('proteus',3,150,'프로테우스'),
+('thaumas',3,150,'타우마스'),
+('phorcys',3,150,'포르키스'),
+('ceto',2,60,'케토'),
+('eurybia',3,150,'에우리비아'),
+('thetis',1,20,'테티스(네레이스)'),
+('galatea',1,20,'갈라테이아'),
+('psamathe',1,20,'프사마테'),
+('doris',1,20,'도리스'),
+('clymene',1,20,'클리메네'),
+('electra_oc',1,20,'엘렉트라(오케아니스)'),
+('callirhoe',1,20,'칼리로에'),
+('pleione',1,20,'플레이오네'),
+('pleiades',1,20,'플레이아데스'),
+('maia',1,20,'마이아'),
+('electra_pl',1,20,'엘렉트라(플레이아스)'),
+('hesperides',1,20,'헤스페리데스'),
+('calypso',1,20,'칼립소'),
+('circe',3,150,'키르케'),
+('echo',1,20,'에코'),
+('daphne',1,20,'다프네'),
+('syrinx',1,20,'시링크스'),
+('oenone',1,20,'오이노네'),
+('cyrene',1,20,'키레네'),
+('nephele',1,20,'네펠레'),
+('achelous',3,150,'아켈로오스'),
+('scamander',3,150,'스카만드로스'),
+('inachus',3,150,'이나코스'),
+('asopus',3,150,'아소포스'),
+('alpheus',3,150,'알페이오스'),
+('charon',3,150,'카론'),
+('lethe',3,150,'레테'),
+('boreas',3,150,'보레아스'),
+('zephyrus',3,150,'제피로스'),
+('notus',3,150,'노토스'),
+('eurus',3,150,'에우로스'),
+('graiai',2,60,'그라이아이'),
+('typhon',2,60,'티폰'),
+('echidna',2,60,'에키드나'),
+('cerberus',2,60,'케르베로스'),
+('orthrus',2,60,'오르트로스'),
+('hydra',2,60,'히드라'),
+('chimera',2,60,'키마이라'),
+('sphinx',2,60,'스핑크스'),
+('nemean_lion',2,60,'네메아의 사자'),
+('ladon',2,60,'라돈'),
+('caucasian_eagle',2,60,'카우카소스의 독수리'),
+('crommyon_sow',2,60,'크롬미온의 암퇘지'),
+('colchian_dragon',2,60,'콜키스의 용'),
+('minotaur',2,60,'미노타우로스'),
+('polyphemus',2,60,'폴리페모스'),
+('scylla',2,60,'스킬라'),
+('charybdis',2,60,'카리브디스'),
+('medusa',2,60,'메두사'),
+('stheno',2,60,'스테노'),
+('euryale',2,60,'에우리알레'),
+('pegasus',2,60,'페가소스'),
+('chrysaor',2,60,'크리사오르'),
+('geryon',2,60,'게리온'),
+('cacus',2,60,'카쿠스'),
+('python',2,60,'피톤'),
+('talos',2,60,'탈로스'),
+('argus',2,60,'아르고스 판옵테스'),
+('stymphalian_birds',2,60,'스팀팔로스의 새'),
+('cretan_bull',2,60,'크레타의 황소'),
+('erymanthian_boar',2,60,'에리만토스의 멧돼지'),
+('ceryneian_hind',2,60,'케리네이아의 암사슴'),
+('mares_of_diomedes',2,60,'디오메데스의 암말'),
+('calydonian_boar',2,60,'칼리돈의 멧돼지'),
+('teumessian_fox',2,60,'테우메소스의 여우'),
+('laelaps',2,60,'라이라프스'),
+('cetus',2,60,'케토스'),
+('chiron',2,60,'케이론'),
+('pholus',2,60,'폴로스'),
+('nessus',2,60,'네소스'),
+('centaurs',2,60,'켄타우로스족'),
+('harpies',2,60,'하르피이아이'),
+('seirenes',2,60,'세이레네스'),
+('gigantes',2,60,'기간테스'),
+('alcyoneus',2,60,'알키오네우스'),
+('porphyrion',2,60,'포르피리온'),
+('enceladus',2,60,'엔켈라도스'),
+('mimas',2,60,'미마스'),
+('polybotes',2,60,'폴리보테스'),
+('antaeus',2,60,'안타이오스'),
+('tityos',2,60,'티티오스'),
+('otus',2,60,'오토스'),
+('ephialtes_aload',2,60,'에피알테스(알로아다이)'),
+('brontes',2,60,'브론테스'),
+('steropes',2,60,'스테로페스'),
+('arges',2,60,'아르게스'),
+('cottus',2,60,'코토스'),
+('briareus',2,60,'브리아레오스'),
+('gyges',2,60,'기게스'),
+('alecto',2,60,'알렉토'),
+('tisiphone',2,60,'티시포네'),
+('megaera',2,60,'메가이라'),
+('lamia',2,60,'라미아'),
+('marsyas',2,60,'마르시아스'),
+('procrustes',1,20,'프로크루스테스'),
+('sinis',1,20,'시니스'),
+('sciron',1,20,'스키론'),
+('danae',1,20,'다나에'),
+('acrisius',1,20,'아크리시오스'),
+('perseus',2,60,'페르세우스'),
+('andromeda',1,20,'안드로메다'),
+('cepheus',1,20,'케페우스'),
+('cassiopeia',1,20,'카시오페이아'),
+('polydectes',1,20,'폴리덱테스'),
+('electryon',1,20,'엘렉트리온'),
+('alcaeus',1,20,'알카이오스'),
+('sthenelus',1,20,'스테넬로스'),
+('amphitryon',1,20,'암피트리온'),
+('alcmene',1,20,'알크메네'),
+('heracles',2,60,'헤라클레스'),
+('iphicles',1,20,'이피클레스'),
+('iolaus',2,60,'이올라오스'),
+('eurystheus',1,20,'에우리스테우스'),
+('megara',1,20,'메가라'),
+('deianira',1,20,'데이아네이라'),
+('hyllus',2,60,'힐로스'),
+('omphale',1,20,'옴팔레'),
+('hippolyta',2,60,'히폴리테'),
+('telephus',2,60,'텔레포스'),
+('iole',1,20,'이올레'),
+('augeas',1,20,'아우게이아스'),
+('deucalion',2,60,'데우칼리온'),
+('pyrrha',1,20,'피라'),
+('pandora',1,20,'판도라'),
+('hellen',1,20,'헬렌'),
+('aeolus',1,20,'아이올로스'),
+('sisyphus',1,20,'시시포스'),
+('salmoneus',1,20,'살모네우스'),
+('tyro',1,20,'티로'),
+('athamas',1,20,'아타마스'),
+('ino',1,20,'이노'),
+('phrixus',1,20,'프릭소스'),
+('helle',1,20,'헬레'),
+('bellerophon',2,60,'벨레로폰'),
+('glaucus_cor',1,20,'글라우코스(코린토스)'),
+('neleus',1,20,'넬레우스'),
+('pelias',1,20,'펠리아스'),
+('aeson',1,20,'아이손'),
+('jason',2,60,'이아손'),
+('medea',1,20,'메데이아'),
+('aeetes',1,20,'아이에테스'),
+('absyrtus',1,20,'압시르토스'),
+('nestor',2,60,'네스토르'),
+('admetus',1,20,'아드메토스'),
+('alcestis',1,20,'알케스티스'),
+('melampus',1,20,'멜람푸스'),
+('amphiaraus',2,60,'암피아라오스'),
+('adrastus',2,60,'아드라스토스'),
+('eriphyle',1,20,'에리필레'),
+('alcmaeon',2,60,'알크마이온'),
+('orpheus',2,60,'오르페우스'),
+('eurydice',1,20,'에우리디케'),
+('castor',2,60,'카스토르'),
+('pollux',2,60,'폴리데우케스'),
+('idas',2,60,'이다스'),
+('lynceus',2,60,'린케우스'),
+('zetes',2,60,'제테스'),
+('calais',2,60,'칼라이스'),
+('peleus',2,60,'펠레우스'),
+('telamon',2,60,'텔라몬'),
+('meleager',2,60,'멜레아그로스'),
+('althaea',1,20,'알타이아'),
+('oeneus',1,20,'오이네우스'),
+('atalanta',2,60,'아탈란테'),
+('hippomenes',1,20,'히포메네스'),
+('hylas',1,20,'힐라스'),
+('phineus',1,20,'피네우스'),
+('amycus',1,20,'아미코스'),
+('europa',1,20,'에우로페'),
+('agenor',1,20,'아게노르'),
+('minos',2,60,'미노스'),
+('rhadamanthys',2,60,'라다만티스'),
+('aeacus',2,60,'아이아코스'),
+('aegina',1,20,'아이기나'),
+('pasiphae',1,20,'파시파에'),
+('ariadne',1,20,'아리아드네'),
+('phaedra',1,20,'파이드라'),
+('daedalus',1,20,'다이달로스'),
+('icarus',1,20,'이카로스'),
+('aegeus',1,20,'아이게우스'),
+('aethra',1,20,'아이트라'),
+('theseus',2,60,'테세우스'),
+('hippolytus',1,20,'히폴리토스'),
+('pirithous',2,60,'페이리토오스'),
+('cadmus',2,60,'카드모스'),
+('semele',1,20,'세멜레'),
+('agave',1,20,'아가우에'),
+('autonoe',1,20,'아우토노에'),
+('actaeon',1,20,'악타이온'),
+('pentheus',1,20,'펜테우스'),
+('laius',1,20,'라이오스'),
+('jocasta',1,20,'이오카스테'),
+('oedipus',2,60,'오이디푸스'),
+('eteocles',1,20,'에테오클레스'),
+('polynices',2,60,'폴리네이케스'),
+('antigone',1,20,'안티고네'),
+('ismene',1,20,'이스메네'),
+('creon',1,20,'크레온'),
+('tiresias',1,20,'테이레시아스'),
+('tydeus',2,60,'티데우스'),
+('capaneus',2,60,'카파네우스'),
+('parthenopaeus',2,60,'파르테노파이오스'),
+('diomedes',2,60,'디오메데스'),
+('diomedes_thrace',1,20,'디오메데스(트라키아 왕)'),
+('tantalus',1,20,'탄탈로스'),
+('pelops',2,60,'펠롭스'),
+('niobe',1,20,'니오베'),
+('oenomaus',1,20,'오이노마오스'),
+('hippodamia',1,20,'히포다메이아'),
+('atreus',1,20,'아트레우스'),
+('thyestes',1,20,'티에스테스'),
+('agamemnon',2,60,'아가멤논'),
+('menelaus',2,60,'메넬라오스'),
+('clytemnestra',1,20,'클리타임네스트라'),
+('aegisthus',1,20,'아이기스토스'),
+('iphigenia',1,20,'이피게네이아'),
+('electra',1,20,'엘렉트라(아가멤논의 딸)'),
+('orestes',2,60,'오레스테스'),
+('pylades',2,60,'필라데스'),
+('hermione',1,20,'헤르미오네'),
+('tyndareus',1,20,'틴다레오스'),
+('leda',1,20,'레다'),
+('helen',1,20,'헬레네'),
+('achilles',2,60,'아킬레우스'),
+('neoptolemus',2,60,'네오프톨레모스'),
+('ajax',2,60,'아이아스(대)'),
+('ajax_lesser',2,60,'아이아스(소)'),
+('teucer',2,60,'테우크로스'),
+('patroclus',2,60,'파트로클로스'),
+('odysseus',2,60,'오디세우스'),
+('penelope',1,20,'페넬로페'),
+('telemachus',2,60,'텔레마코스'),
+('laertes',1,20,'라에르테스'),
+('telegonus',1,20,'텔레고노스'),
+('palamedes',2,60,'팔라메데스'),
+('philoctetes',2,60,'필록테테스'),
+('calchas',1,20,'칼카스'),
+('protesilaus',2,60,'프로테실라오스'),
+('idomeneus',2,60,'이도메네우스'),
+('machaon',2,60,'마카온'),
+('thersites',1,20,'테르시테스'),
+('antilochus',2,60,'안틸로코스'),
+('eurypylus',2,60,'에우리필로스'),
+('dardanus',2,60,'다르다노스'),
+('tros',1,20,'트로스'),
+('ilus',1,20,'일로스'),
+('ganymede',1,20,'가니메데스'),
+('laomedon',1,20,'라오메돈'),
+('hesione',1,20,'헤시오네'),
+('tithonus',1,20,'티토노스'),
+('priam',1,20,'프리아모스'),
+('hecuba',1,20,'헤카베'),
+('hector',2,60,'헥토르'),
+('andromache',1,20,'안드로마케'),
+('astyanax',1,20,'아스티아낙스'),
+('paris',2,60,'파리스'),
+('cassandra',1,20,'카산드라'),
+('helenus',1,20,'헬레노스'),
+('deiphobus',1,20,'데이포보스'),
+('troilus',1,20,'트로일로스'),
+('polyxena',1,20,'폴릭세네'),
+('aeneas',2,60,'아이네이아스'),
+('anchises',1,20,'안키세스'),
+('memnon',2,60,'멤논'),
+('penthesilea',2,60,'펜테실레이아'),
+('sarpedon',2,60,'사르페돈'),
+('glaucus',2,60,'글라우코스(리키아)'),
+('pandarus',2,60,'판다로스'),
+('euphorbus',2,60,'에우포르보스'),
+('rhesus',2,60,'레소스'),
+('narcissus',1,20,'나르키소스'),
+('arachne',1,20,'아라크네'),
+('midas',1,20,'미다스'),
+('ixion',1,20,'익시온'),
+('orion',2,60,'오리온'),
+('endymion',1,20,'엔디미온'),
+('adonis',1,20,'아도니스'),
+('psyche',1,20,'프시케'),
+('hyacinthus',1,20,'히아킨토스'),
+('phaethon',1,20,'파에톤'),
+('io',1,20,'이오'),
+('callisto',1,20,'칼리스토'),
+('arcas',1,20,'아르카스'),
+('pygmalion',1,20,'피그말리온'),
+('coronis',1,20,'코로니스')
+on conflict (id) do update set tier=excluded.tier,price=excluded.price,name_ko=excluded.name_ko;
+
+insert into public.title_catalog (id,name_ko) values
+('apprentice','스도쿠 수습생'),
+('explorer','미궁 탐험가'),
+('sage','올림포스의 현자')
+on conflict (id) do update set name_ko=excluded.name_ko;
+
+delete from public.journey_steps;
+insert into public.journey_steps (step,need,title,reward) values
+(1,1,'첫 초상화','{"gift":1}'::jsonb),
+(2,3,'별빛 주머니','{"bonus":30}'::jsonb),
+(3,5,'영웅의 문','{"tier":2}'::jsonb),
+(4,8,'수습생','{"title":"apprentice"}'::jsonb),
+(5,12,'영웅의 선물','{"gift":2}'::jsonb),
+(6,16,'큰 별빛 주머니','{"bonus":80}'::jsonb),
+(7,20,'신들의 문','{"tier":3}'::jsonb),
+(8,25,'미궁 탐험','{"title":"explorer"}'::jsonb),
+(9,30,'신의 선물','{"gift":3}'::jsonb),
+(10,40,'별빛 보물 상자','{"bonus":200}'::jsonb),
+(11,50,'올림포스의 문','{"tier":4}'::jsonb),
+(12,70,'올림포스의 현자','{"title":"sage","gift":4}'::jsonb);
+alter table public.journey_steps alter column need set not null;
+create unique index if not exists journey_need on public.journey_steps (need);
+
+-- ---------- 기존 사용자 옮기기 ----------
+-- 지금 쓰는 얼굴 그림은 가진 초상화로 남긴다
+insert into public.owned_portraits (profile_id, portrait_id, source)
+select pr.id, pr.avatar_id, 'legacy' from public.profiles pr
+where exists (select 1 from public.portrait_catalog c where c.id = pr.avatar_id)
+on conflict do nothing;
+update public.profiles set avatar_id = '' where avatar_id <> '' and not exists (select 1 from public.portrait_catalog c where c.id = avatar_id);
+-- 지금까지 끝낸 판의 별빛을 점수로
+insert into public.score_events (profile_id, attempt_id, size, difficulty, points, created_at)
+select a.profile_id, a.id, c.size, c.difficulty, greatest(0, coalesce((a.result->>'reward')::int, 0)), coalesce(a.completed_at, a.updated_at)
+from public.puzzle_attempts a join public.puzzle_catalog c on c.id = a.puzzle_id
+where a.status = 'completed'
+on conflict (attempt_id) do nothing;
+-- 이미 지난 여정 칸의 티어·칭호(별빛·선물은 다시 주지 않는다)
+insert into public.unlocks (profile_id, key)
+select q.profile_id, 'tier:' || (j.reward->>'tier') from public.quest_progress q join public.journey_steps j on j.need <= q.completed_count
+where j.reward ? 'tier' on conflict do nothing;
+insert into public.unlocks (profile_id, key)
+select q.profile_id, 'title:' || (j.reward->>'title') from public.quest_progress q join public.journey_steps j on j.need <= q.completed_count
+where j.reward ? 'title' on conflict do nothing;
+-- 한 판 이상 끝냈는데 초상화가 하나도 없으면 첫 선물 상자
+do $$ begin
+  perform private.make_gift(q.profile_id, 1) from public.quest_progress q
+  where q.completed_count >= 1 and not exists (select 1 from public.owned_portraits o where o.profile_id = q.profile_id)
+    and not exists (select 1 from public.portrait_gifts g where g.profile_id = q.profile_id);
+end $$;

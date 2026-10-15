@@ -1,73 +1,69 @@
+// 첫 화면: 내 초상화·칭호·별빛·점수, 선물 상자, 다음 여정, 친구 소식 미리보기
 import { useState } from 'react';
-import { IconBrush, IconRoute } from '@tabler/icons-react';
-import { useGame, Layout } from '../lib/store';
-import { GUIDES, ITEM_BY_ID, Space, FIRST_CHOICE, JOURNEY } from '../data/catalog';
-import { HomeStage } from '../home/HomeStage';
-import { PanelHost, PanelCtx } from '../panels/Panels';
-import type { PanelKind } from '../home/interactions';
-import { Editor } from './Editor';
-import { JourneySheet, ChoiceSheet } from './Journey';
-import { Avatar } from '../ui';
-import { josa } from '../lib/josa';
+import { IconGift, IconRoute, IconChevronRight } from '@tabler/icons-react';
+import { useGame } from '../lib/store';
+import { GUIDES, rewardText } from '../data/catalog';
+import { Avatar, TitleTag } from '../ui';
+import { JourneySheet, GiftSheet, nextJourney } from './Journey';
+import { FeedList } from './Friends';
 
-export function HomeScreen({ goSudoku, visit }: { goSudoku: () => void; visit: (id: string) => void }) {
-  const { state, settings, profileId } = useGame();
-  const [space, setSpace] = useState<Space>('room');
-  const [editing, setEditing] = useState(false);
-  const [panel, setPanel] = useState<{ kind: PanelKind; item: Layout } | null>(null);
+const TOTAL_PORTRAITS = 390;
+
+export function HomeScreen({ goSudoku, goFriends, goDex }: { goSudoku: () => void; goFriends: () => void; goDex: () => void }) {
+  const { state } = useGame();
+  const s = state!;
   const [journey, setJourney] = useState(false);
-  const [choice, setChoice] = useState(false);
-  const [mirror, setMirror] = useState<Record<string, string>>({});
-  if (!state) return null;
-  if (editing) return <Editor initialSpace={space} onClose={() => setEditing(false)} />;
+  const [gift, setGift] = useState(false);
+  const q = s.quest;
+  const next = nextJourney(q.completed_count);
+  const hestia = GUIDES[0];
 
-  const guide = GUIDES.find((g) => g.id === state.profile.guide_id) ?? GUIDES[0];
-  const q = state.quest;
-  const goal = state.profile.goal_item ? ITEM_BY_ID[state.profile.goal_item] : null;
-  const layout = space === 'room' ? state.home.room_layout : state.home.garden_layout;
-  const ctx: PanelCtx | null = panel && {
-    kind: panel.kind, item: panel.item, layout, home: state.home, ownerId: profileId!, ownerName: state.profile.nickname, isOwner: true,
-    unlocks: state.unlocks, onVisit: visit, onMirror: (uid, f) => setMirror((m) => ({ ...m, [uid]: f })),
-  };
-
-  let bubble: { text: string; action?: { label: string; run: () => void } };
-  if (q.choice_pending) bubble = { text: '첫 별빛을 모았네요! 집에 둘 선물을 하나 골라 보세요.', action: { label: '선물 고르기', run: () => setChoice(true) } };
-  else if (q.completed_count === 0) bubble = { text: `${guide.line} 스도쿠 한 판으로 첫 별빛을 모아 볼까요?`, action: { label: '스도쿠 하러 가기', run: goSudoku } };
-  else if (goal) {
-    const need = Math.max(0, goal.price - state.balance);
-    bubble = need > 0
-      ? { text: `목표「${goal.nameKo}」까지 별빛 ${need}만큼 남았어요.`, action: { label: '한 판 더', run: goSudoku } }
-      : { text: `별빛이 모였어요! 꾸미기 상점에서「${goal.nameKo}」${josa(goal.nameKo, '을/를').slice(goal.nameKo.length)} 살 수 있어요.`, action: { label: '꾸미러 가기', run: () => setEditing(true) } };
-  } else bubble = { text: '물건을 눌러 보면 저마다 다르게 반응해요. 꾸미기 상점에서 다음 목표도 정해 보세요.' };
-
-  const nextStep = JOURNEY[q.completed_count];
+  let line: string;
+  if (q.completed_count === 0) line = `${hestia.line} 첫 판을 끝내면 첫 초상화를 골라 가질 수 있어요.`;
+  else if (s.gifts.length) line = '선물 상자가 도착했어요! 열어서 초상화를 골라 보세요.';
+  else if (next) line = `다음 여정「${next.title}」까지 ${next.need - q.completed_count}판 남았어요. 보상: ${rewardText(next.reward)}`;
+  else line = '여정을 모두 마쳤어요. 순위표에서 이번 주 1등에 도전해 보세요.';
 
   return (
-    <div className="home">
-      <div className="home-top">
-        <div className="seg" role="tablist" aria-label="공간">
-          {(['room', 'garden'] as Space[]).map((sp) => <button key={sp} role="tab" aria-selected={space === sp} className={space === sp ? 'on' : ''}
-            onClick={() => setSpace(sp)}>{sp === 'room' ? '실내' : '정원'}</button>)}
-        </div>
-        <h1 className="home-name">{state.profile.home_name || `${state.profile.nickname}의 집`}</h1>
-      </div>
-      <HomeStage key={space} space={space} layout={layout} storageKey={`lit:${profileId}:${profileId}`} reducedMotion={settings.reducedMotion}
-        onPanel={(kind, item) => setPanel({ kind, item })} mirrorFace={mirror} label={space === 'room' ? '내 집 실내' : '내 집 정원'} />
-      <div className="guide-bubble">
-        <Avatar id={guide.id} size={52} />
+    <div className="page">
+      <section className="me-card">
+        <Avatar id={s.profile.avatar_id} size={96} />
         <div className="grow">
-          <p><strong>{guide.name}</strong> {bubble.text}</p>
-          {bubble.action && <button className="btn primary small" onClick={bubble.action.run}>{bubble.action.label}</button>}
+          <h1 className="me-nick">{s.profile.nickname}</h1>
+          <TitleTag id={s.profile.title} />
+          {!s.profile.avatar_id && <p className="fine">아직 초상화가 없어요.</p>}
         </div>
+      </section>
+      <dl className="stat-row">
+        <div><dt>별빛</dt><dd>✦ {s.balance.toLocaleString()}</dd></div>
+        <div><dt>누적 점수</dt><dd>{s.points.total.toLocaleString()}</dd></div>
+        <div><dt>이번 주</dt><dd>{s.points.week.toLocaleString()}</dd></div>
+        <div><dt>모은 초상화</dt><dd><button className="link" onClick={goDex}>{s.owned.length}<small>/{TOTAL_PORTRAITS}</small></button></dd></div>
+      </dl>
+
+      {s.gifts.length > 0 && (
+        <button className="gift-banner" onClick={() => setGift(true)}>
+          <IconGift size={28} aria-hidden /><span className="grow"><strong>초상화 선물 상자</strong><small>{s.gifts[0].tier}티어 초상화 셋 중 하나를 골라요</small></span>
+          <IconChevronRight aria-hidden />
+        </button>
+      )}
+
+      <div className="guide-bubble">
+        <Avatar id={hestia.id} size={56} />
+        <div><p><strong>{hestia.name}</strong> {line}</p>
+          <button className="btn small primary" onClick={goSudoku}>스도쿠 하러 가기</button></div>
       </div>
-      <div className="home-actions">
-        <button className="btn big" onClick={() => setEditing(true)}><IconBrush aria-hidden />꾸미기</button>
-        <button className="btn big" onClick={() => setJourney(true)}><IconRoute aria-hidden />여정 {Math.min(q.completed_count, 12)}/12
-          {nextStep && <small>다음: {nextStep.title}</small>}</button>
-      </div>
-      {ctx && <PanelHost ctx={ctx} onClose={() => setPanel(null)} />}
+
+      <button className="journey-btn" onClick={() => setJourney(true)}>
+        <IconRoute aria-hidden /><span className="grow"><strong>여정 {q.completed_count}판</strong>
+          <small>{next ? `다음: ${next.need}판「${next.title}」` : '모두 마쳤어요'}</small></span><IconChevronRight aria-hidden />
+      </button>
+
+      <div className="sub-row"><h2 className="sub">친구 소식</h2><button className="link" onClick={goFriends}>모두 보기</button></div>
+      <FeedList limit={3} empty="아직 소식이 없어요. 친구 탭에서 이메일로 친구를 맺어 보세요." />
+
       {journey && <JourneySheet onClose={() => setJourney(false)} />}
-      {choice && <ChoiceSheet items={FIRST_CHOICE} onClose={() => setChoice(false)} />}
+      {gift && <GiftSheet onClose={() => setGift(false)} />}
     </div>
   );
 }

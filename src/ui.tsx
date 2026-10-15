@@ -1,6 +1,8 @@
 import { ReactNode, useEffect, useRef } from 'react';
-import { IconX } from '@tabler/icons-react';
+import { IconX, IconUser } from '@tabler/icons-react';
 import { portrait, asset } from './lib/store';
+import { TITLE_NAME, boardName } from './data/catalog';
+import { josa } from './lib/josa';
 
 export function Sheet({ title, onClose, children, wide }: { title: string; onClose: () => void; children: ReactNode; wide?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -25,15 +27,38 @@ export function Sheet({ title, onClose, children, wide }: { title: string; onClo
   );
 }
 
-/** 원형 초상 + 그리스 신화 앱의 월계수 원형 테두리(framed=false면 테두리 없이 원만) */
+/** 원형 초상 + 월계수 원형 테두리. id가 비어 있으면 아직 초상화가 없는 빈칸 */
 export function Avatar({ id, size = 40, framed = true }: { id: string; size?: number; framed?: boolean }) {
   return (
-    <span className="portrait" style={{ width: size, height: size }}>
-      <img className="pt-img" src={portrait(id)} alt="" width={size} height={size} loading="lazy"
-        onError={(e) => { (e.currentTarget as HTMLImageElement).style.visibility = 'hidden'; }} />
+    <span className={`portrait${id ? '' : ' blank'}`} style={{ width: size, height: size }}>
+      {id
+        ? <img className="pt-img" src={portrait(id)} alt="" width={size} height={size} loading="lazy"
+            onError={(e) => { (e.currentTarget as HTMLImageElement).style.visibility = 'hidden'; }} />
+        : <span className="pt-img pt-blank" aria-hidden><IconUser size={Math.round(size * 0.42)} stroke={1.6} /></span>}
       {framed && <img className="pt-frame" src={asset('assets/ui/frame.webp')} alt="" aria-hidden />}
     </span>
   );
+}
+
+export function TitleTag({ id }: { id: string }) {
+  return id ? <span className="title-tag">{TITLE_NAME[id] ?? id}</span> : null;
+}
+
+export const mmss = (sec: number) => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+/** 문장 속 시간: 2분 30초 */
+export const secText = (sec: number) => {
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return m ? (s ? `${m}분 ${s}초` : `${m}분`) : `${s}초`;
+};
+
+/** 친구 소식 한 줄 */
+export function activityText(kind: string, p: any) {
+  if (kind === 'clears') return `스도쿠 ${p.count}판을 끝냈어요`;
+  if (kind === 'points') return `누적 점수 ${p.points.toLocaleString()}점을 넘었어요`;
+  if (kind === 'record') return `${boardName(p.size, p.difficulty)} 자기 기록을 ${josa(secText(p.sec), '으로/로')} 앞당겼어요 (전 기록 ${secText(p.prev)})`;
+  if (kind === 'title') { const n = p.name ?? TITLE_NAME[p.title] ?? ''; return `칭호「${n}」${josa(n, '을/를').slice(n.length)} 받았어요`; }
+  if (kind === 'tier') return `${p.tier}티어 초상화 상점이 열렸어요`;
+  return '새 소식이 있어요';
 }
 
 export function Starlight({ value }: { value: number }) {

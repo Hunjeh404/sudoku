@@ -8,8 +8,9 @@ import { rpc, newOpId, ApiError } from '../lib/api';
 import { getLocal, setLocal, delLocal } from '../lib/local';
 import { Board, Size, parseBoard, boardToString, conflicts, geometry, rowOf, colOf, countSolutions } from '../sudoku/engine';
 import { makeHint, Hint } from '../sudoku/hints';
-import { JOURNEY, ITEM_BY_ID, REWARD_RULES, HINT_MAX } from '../data/catalog';
-import { Sheet, Starlight, ErrorLine, Spinner, Avatar } from '../ui';
+import { REWARD_RULES, HINT_MAX, boardName, rewardText } from '../data/catalog';
+import { nextJourney } from './Journey';
+import { Sheet, Starlight, ErrorLine, Spinner, Avatar, mmss, secText } from '../ui';
 import { sfx } from '../lib/sound';
 
 const DIFF_KO: Record<string, string> = { intro: '입문', easy: '쉬움', medium: '보통', hard: '어려움' };
@@ -67,13 +68,13 @@ export function SudokuSelect({ onStart }: { onStart: (a: AttemptData) => void })
         {choices.map(([s, d, label]) => (
           <li key={label}><button className={`size-card s${s}`} onClick={() => start(s, d)} disabled={!!busy}>
             <span className="size-mini" aria-hidden>{Array.from({ length: s === 9 ? 9 : s }, (_, i) => <i key={i} />)}</span>
-            <strong>{label}</strong><Starlight value={amount(s, d)} />
+            <strong>{label}{state!.records[`${s}:${d}`] && <small className="best">내 기록 {mmss(state!.records[`${s}:${d}`])}</small>}</strong><Starlight value={amount(s, d)} />
             {busy === `${s}${d}` && <Spinner label="문제 받는 중" />}
           </button></li>
         ))}
       </ul>
       {err && <ErrorLine msg={err} />}
-      <p className="fine">시간 제한과 실수 제한은 없어요. 힌트는 한 판에 {HINT_MAX}번까지 쓸 수 있고, 한 번 쓸 때마다 받을 별빛이 10%씩 줄어요.</p>
+      <p className="fine">시간 제한과 실수 제한은 없어요. 힌트 없이 끝낸 판은 푼 시간이 내 기록이 돼요. 힌트는 한 판에 {HINT_MAX}번까지 쓸 수 있고, 한 번 쓸 때마다 받을 별빛이 10%씩 줄어요.</p>
       {tutorial && (
         <Sheet title="4×4 스도쿠 규칙" onClose={() => setTutorial(false)}>
           <ol className="rules">
@@ -120,15 +121,19 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
   const dirty = useRef(false);
   const timer = useRef<number | undefined>(undefined);
   const opRef = useRef(newOpId());
-  const [seconds, setSeconds] = useState(0);
+  // 푼 시간: 화면을 보고 있는 동안만 센다(기기에 보관해 이어 풀어도 이어짐). 자기 기록에 쓴다.
+  const elKey = `el:${profileId}:${attempt.id}`;
+  const [seconds, setSeconds] = useState(() => getLocal<number>(elKey, 0));
   const picture = n === 4 && settings.pictureMode;
   const sym = (d: number) => (picture ? PICTURE_KO[d - 1] : String(d));
 
   useEffect(() => {
-    if (!settings.showTimer) return;
-    const t = window.setInterval(() => setSeconds((s) => s + 1), 1000);
+    const t = window.setInterval(() => {
+      if (document.visibilityState !== 'visible') return;
+      setSeconds((s) => { setLocal(elKey, s + 1); return s + 1; });
+    }, 1000);
     return () => window.clearInterval(t);
-  }, [settings.showTimer]);
+  }, [elKey]);
 
   const pushServer = useCallback(async () => {
     if (!dirty.current) return;
@@ -250,8 +255,8 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
     // 힌트 사용 기록이 서버에 먼저 반영되도록 마지막 진행을 저장(무힌트 배지 판정)
     if (dirty.current) await pushServer();
     try {
-      const r = await rpc('complete_attempt', { attempt: attempt.id, board: boardToString(cur.board), op_id: opRef.current });
-      delLocal(localKey);
+      const r = await rpc('complete_attempt', { attempt: attempt.id, board: boardToString(cur.board), op_id: opRef.current, elapsed_sec: Math.max(1, seconds) });
+      delLocal(localKey); delLocal(elKey);
       sfx.success();
       onComplete(r);
     } catch (e) {
@@ -291,7 +296,7 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
       <header className="puzzle-head">
         <button className="icon-btn" aria-label="나가기" onClick={async () => { await pushServer(); onExit(); }}><IconArrowLeft /></button>
         <div className="grow"><strong>{n}×{n} {DIFF_KO[attempt.difficulty]}</strong>
-          {settings.showTimer && <small> {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, '0')}</small>}</div>
+          {settings.showTimer && <small> {mmss(seconds)}</small>}</div>
         <span className={`save-state ${status}`} role="status"><StatusIcon size={18} aria-hidden />{statusText}</span>
       </header>
 
@@ -377,26 +382,26 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
 }
 
 export function ResultScreen({ result, onHome, onAgain }: { result: any; onHome: () => void; onAgain: () => void }) {
-  const { state, refresh } = useGame();
+  const { refresh } = useGame();
   useEffect(() => { refresh(); }, []);
-  const goal = state?.profile.goal_item ? ITEM_BY_ID[state.profile.goal_item] : null;
   const j = result.journey && result.journey.step ? result.journey : null;
-  const next = JOURNEY[result.completed_count];
+  const next = nextJourney(result.completed_count);
+  const rec = result.record;
   return (
     <div className="result">
       <h1>다 풀었어요!</h1>
       <div className="wreath" role="img" aria-label={`별빛 ${result.reward} 받음`}>
         <img className="wreath-frame" src={asset('assets/ui/frame.webp')} alt="" />
-        <div className="wreath-coin"><span aria-hidden>✦</span><strong>+{result.reward}</strong><small>별빛</small></div>
+        <div className="wreath-coin"><span aria-hidden>✦</span><strong>+{result.reward}</strong><small>별빛·점수</small></div>
       </div>
-      <p>지금 별빛 {result.balance}</p>
+      <p>{boardName(result.size, result.difficulty)} · {secText(result.elapsed)} · 지금 별빛 {result.balance} · 누적 점수 {result.points}</p>
       {result.no_hint && <p className="badge-line">힌트 없이 끝냈어요</p>}
-      {result.hints_used > 0 && <p className="fine">힌트 {result.hints_used}번을 써서 별빛이 {result.hints_used * 10}% 줄었어요</p>}
-      {j && <div className="journey-card"><p>여정 {j.step}칸 도착</p><strong>{j.title}</strong><small>{JOURNEY[j.step - 1]?.desc}</small></div>}
-      {!j && next && <p className="fine">다음 여정「{next.title}」까지 한 판</p>}
-      {goal && <p className="fine">목표「{goal.nameKo}」까지 {Math.max(0, goal.price - result.balance) || '이제 살 수 있어요!'}{goal.price > result.balance ? ' 남음' : ''}</p>}
+      {result.hints_used > 0 && <p className="fine">힌트 {result.hints_used}번을 써서 별빛이 {result.hints_used * 10}% 줄었어요. 힌트를 쓴 판은 기록에 들어가지 않아요.</p>}
+      {rec && <p className="record-line">{rec.first ? `첫 기록 ${secText(rec.sec)}` : `자기 기록 경신! ${secText(rec.prev)} → ${secText(rec.sec)}`}</p>}
+      {j && <div className="journey-card"><p>여정 {j.step}번째 보상</p><strong>{j.title}</strong><small>{rewardText(j.reward)}</small></div>}
+      {!j && next && <p className="fine">다음 여정「{next.title}」까지 {next.need - result.completed_count}판</p>}
       <div className="stack">
-        <button className="btn primary big" onClick={onHome}>{j?.reward?.choice ? '선물 고르러 집으로' : '집으로'}</button>
+        <button className="btn primary big" onClick={onHome}>{j?.reward?.gift ? '선물 고르러 가기' : '처음 화면으로'}</button>
         <button className="btn big" onClick={onAgain}>한 판 더</button>
       </div>
     </div>

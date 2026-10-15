@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useGame } from '../lib/store';
 import { rpc, ApiError } from '../lib/api';
-import { AVATARS, GUIDES } from '../data/catalog';
-import { Sheet, Avatar, ErrorLine, Spinner, timeAgo } from '../ui';
+import { TITLES } from '../data/catalog';
+import { Sheet, Avatar, ErrorLine, Spinner, timeAgo, activityText } from '../ui';
 import { CreateProfile } from './Entry';
 
 export function SettingsSheet({ onClose }: { onClose: () => void }) {
   const { state, settings, updateSettings, profileId, patchState, toast, selectProfile, signOut, reloadProfiles, session } = useGame();
   const p = state!.profile;
-  const [form, setForm] = useState({ nickname: p.nickname, avatar_id: p.avatar_id, guide_id: p.guide_id, home_name: p.home_name, welcome_text: p.welcome_text, home_visibility: p.home_visibility });
+  const [form, setForm] = useState({ nickname: p.nickname, avatar_id: p.avatar_id, title: p.title });
   const [err, setErr] = useState<string | null>(null);
   const [childForm, setChildForm] = useState(false);
-  const guides = GUIDES.filter((g) => state!.unlocks.includes(`guide:${g.id}`));
+  const titles = TITLES.filter((t) => state!.unlocks.includes(`title:${t.id}`));
   const saveProfile = async () => {
     try {
       await rpc('update_profile', { p: profileId, patch: form });
@@ -41,16 +41,21 @@ export function SettingsSheet({ onClose }: { onClose: () => void }) {
         <Toggle k="pictureMode" label="4×4 그림 모드" hint="숫자 대신 보물 그림으로 풀어요" />
       </section>
       <section className="set-group">
-        <h3>내 프로필과 집</h3>
-        <label className="field"><span>이름</span><input value={form.nickname} maxLength={12} onChange={(e) => setForm({ ...form, nickname: e.target.value })} /></label>
-        <div className="avatar-grid small">{AVATARS.map((a) => <button key={a} className={`avatar-pick${form.avatar_id === a ? ' on' : ''}`} aria-pressed={form.avatar_id === a} aria-label={a} onClick={() => setForm({ ...form, avatar_id: a })}><Avatar id={a} size={40} framed={form.avatar_id === a} /></button>)}</div>
-        <fieldset className="field"><legend>안내 친구</legend>
-          <div className="row wrap">{guides.map((g) => <button key={g.id} className={`btn small${form.guide_id === g.id ? ' on' : ''}`} aria-pressed={form.guide_id === g.id} onClick={() => setForm({ ...form, guide_id: g.id })}>{g.name}</button>)}</div>
+        <h3>내 프로필</h3>
+        <label className="field"><span>이름</span><input value={form.nickname} maxLength={12} onChange={(e) => setForm({ ...form, nickname: e.target.value })} /><small>순위표와 친구 소식에 보여요. 아이는 실명 대신 별명을 쓰는 게 좋아요.</small></label>
+        <fieldset className="field"><legend>내 초상화</legend>
+          {state!.owned.length === 0
+            ? <p className="fine">아직 모은 초상화가 없어요. 첫 판을 끝내면 선물로 받고, 도감에서 별빛으로 모을 수 있어요.</p>
+            : <div className="avatar-grid small">{state!.owned.map((a) => <button key={a} className={`avatar-pick${form.avatar_id === a ? ' on' : ''}`} aria-pressed={form.avatar_id === a} aria-label={a} onClick={() => setForm({ ...form, avatar_id: a })}><Avatar id={a} size={44} framed={form.avatar_id === a} /></button>)}</div>}
         </fieldset>
-        <label className="field"><span>집 이름</span><input value={form.home_name} maxLength={20} onChange={(e) => setForm({ ...form, home_name: e.target.value })} /></label>
-        <label className="field"><span>환영 문구</span><input value={form.welcome_text} maxLength={60} onChange={(e) => setForm({ ...form, welcome_text: e.target.value })} placeholder="놀러 온 사람에게 보여요" /><small>{[...form.welcome_text].length}/60</small></label>
-        <label className="toggle"><input type="checkbox" checked={form.home_visibility === 'private'} onChange={(e) => setForm({ ...form, home_visibility: e.target.checked ? 'private' : 'friends' })} />
-          <span><strong>집 비공개</strong><small>켜면 가족과 친구도 놀러 오거나 방명록을 남길 수 없어요</small></span></label>
+        <fieldset className="field"><legend>칭호</legend>
+          {titles.length === 0 ? <p className="fine">여정을 걸으면 칭호를 받아요.</p> : (
+            <div className="row wrap">
+              <button className={`btn small${form.title === '' ? ' on' : ''}`} aria-pressed={form.title === ''} onClick={() => setForm({ ...form, title: '' })}>달지 않기</button>
+              {titles.map((t) => <button key={t.id} className={`btn small${form.title === t.id ? ' on' : ''}`} aria-pressed={form.title === t.id} onClick={() => setForm({ ...form, title: t.id })}>{t.name}</button>)}
+            </div>
+          )}
+        </fieldset>
         {err && <ErrorLine msg={err} />}
         <div className="row-end"><button className="btn primary" onClick={saveProfile}>프로필 저장</button></div>
       </section>
@@ -68,7 +73,7 @@ export function SettingsSheet({ onClose }: { onClose: () => void }) {
 }
 
 export function MailSheet({ onClose }: { onClose: () => void }) {
-  const { profileId, patchState } = useGame();
+  const { profileId, patchState, toast } = useGame();
   const [list, setList] = useState<any[] | null>(null);
   const [err, setErr] = useState<string | null>(null);
   useEffect(() => {
@@ -78,9 +83,18 @@ export function MailSheet({ onClose }: { onClose: () => void }) {
     }).catch((e) => setErr(e.message));
   }, [profileId]);
   const text = (m: any) => {
-    if (m.kind === 'guestbook') return `${m.payload.nickname}님이 방명록을 남겼어요${m.payload.preview ? `: "${m.payload.preview}"` : ''}`;
-    if (m.kind === 'invite_accepted') return `${m.payload.nickname}님이 ${m.payload.kind === 'family' ? '가족' : '친구'} 초대를 받았어요`;
+    if (m.kind === 'friend_request') return `${m.payload.nickname}님이 친구 요청을 보냈어요`;
+    if (m.kind === 'friend_accepted') return `${m.payload.nickname}님이 친구 요청을 수락했어요. 이제 서로의 소식이 보여요`;
+    if (m.kind === 'reaction') return `${m.payload.nickname}님이 내 소식「${activityText(m.payload.activity_kind, m.payload.activity)}」에 ${m.payload.emoji}를 달았어요`;
+    if (m.kind === 'invite_accepted') return `${m.payload.nickname}님이 가족 초대를 받았어요`;
     return '새 소식이 있어요';
+  };
+  const respond = async (m: any, accept: boolean) => {
+    try {
+      await rpc('respond_friend_request', { p: profileId, request: m.ref, accept });
+      setList((l) => l?.map((x) => (x.id === m.id ? { ...x, request_status: accept ? 'accepted' : 'declined' } : x)) ?? l);
+      toast(accept ? `${m.payload.nickname}님과 친구가 되었어요` : '요청을 거절했어요');
+    } catch (e) { toast((e as ApiError).message); }
   };
   return (
     <Sheet title="우편함" onClose={onClose}>
@@ -88,9 +102,17 @@ export function MailSheet({ onClose }: { onClose: () => void }) {
       {!list && !err && <Spinner />}
       {list?.length === 0 && <p className="fine">아직 온 소식이 없어요.</p>}
       <ul className="mail-list">
-        {list?.map((m) => <li key={m.id} className={m.read_at ? '' : 'unread'}><p>{text(m)}</p><small>{timeAgo(m.created_at)}</small></li>)}
+        {list?.map((m) => (
+          <li key={m.id} className={m.read_at ? '' : 'unread'}>
+            {m.payload?.avatar_id !== undefined && <Avatar id={m.payload.avatar_id} size={36} />}
+            <div className="grow"><p>{text(m)}</p><small>{timeAgo(m.created_at)}</small>
+              {m.kind === 'friend_request' && (m.request_status === 'pending'
+                ? <div className="row"><button className="btn small primary" onClick={() => respond(m, true)}>수락</button><button className="btn small" onClick={() => respond(m, false)}>거절</button></div>
+                : <small> · {m.request_status === 'accepted' ? '수락함' : m.request_status === 'declined' ? '거절함' : '취소된 요청'}</small>)}
+            </div>
+          </li>
+        ))}
       </ul>
-      <p className="fine">내 방명록 전체는 집의 올빼미 우편함을 눌러 볼 수 있어요.</p>
     </Sheet>
   );
 }

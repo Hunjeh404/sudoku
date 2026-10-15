@@ -10,7 +10,7 @@
     "test": "vitest run",
     "gen:puzzles": "tsx scripts/gen-puzzles.ts",
     "test:db": "tsx tests/db/run-db-tests.ts",
-    "gen:catalog": "tsx scripts/gen-catalog-sql.ts"
+    "gen:portraits": "tsx scripts/gen-portrait-sql.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.3",

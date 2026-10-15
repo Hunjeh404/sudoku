@@ -1,0 +1,60 @@
+// 순위: 통합·난이도별, 누적·이번 주. 전체 플레이어 상위 50명과 내 순위
+import { useEffect, useState } from 'react';
+import { IconTrophy } from '@tabler/icons-react';
+import { useGame } from '../lib/store';
+import { rpc } from '../lib/api';
+import { BOARDS } from '../data/catalog';
+import { Avatar, ErrorLine, Spinner, TitleTag } from '../ui';
+
+interface Row { rank: number; id: string; nickname: string; avatar_id: string; title: string; points: number; games: number; me: boolean }
+interface Board { rows: Row[]; me: { rank: number; points: number; games: number } | null }
+
+export function RankingScreen() {
+  const { profileId, state } = useGame();
+  const [board, setBoard] = useState<string>('all');
+  const [period, setPeriod] = useState<'all' | 'week'>('week');
+  const [data, setData] = useState<Board | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const load = () => { setData(null); setErr(null); rpc<Board>('get_leaderboard', { p: profileId, board, period }).then(setData).catch((e) => setErr(e.message)); };
+  useEffect(load, [board, period, profileId]);
+  const meInTop = data?.rows.some((r) => r.me);
+  return (
+    <div className="page">
+      <h1 className="page-title">순위</h1>
+      <div className="seg" role="tablist" aria-label="기간">
+        {([['week', '이번 주'], ['all', '누적']] as const).map(([k, l]) =>
+          <button key={k} role="tab" aria-selected={period === k} className={period === k ? 'on' : ''} onClick={() => setPeriod(k)}>{l}</button>)}
+      </div>
+      <div className="chips" role="group" aria-label="순위표">
+        {BOARDS.map((b) => <button key={b.id} className={`chip${board === b.id ? ' on' : ''}`} aria-pressed={board === b.id} onClick={() => setBoard(b.id)}>{b.label}</button>)}
+      </div>
+      <p className="fine">점수는 한 판을 끝내고 받은 별빛이에요(힌트를 쓰면 줄어요). 별빛을 써도 점수는 줄지 않아요.{period === 'week' ? ' 이번 주는 월요일 0시부터예요.' : ''}</p>
+      {err && <ErrorLine msg={err} onRetry={load} />}
+      {!data && !err && <Spinner />}
+      {data && data.rows.length === 0 && <p className="fine">아직 이 순위표에 오른 사람이 없어요. 첫 번째가 되어 보세요!</p>}
+      {data && (
+        <ol className="rank-list">
+          {data.rows.map((r) => <RankRow key={r.id} r={r} />)}
+        </ol>
+      )}
+      {data && !meInTop && (
+        <div className="rank-me">
+          {data.me
+            ? <RankRow r={{ rank: data.me.rank, id: profileId!, nickname: state!.profile.nickname, avatar_id: state!.profile.avatar_id, title: state!.profile.title, points: data.me.points, games: data.me.games, me: true }} />
+            : <p className="fine">아직 이 순위표에 내 점수가 없어요.</p>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RankRow({ r }: { r: Row }) {
+  return (
+    <li className={`rank-row${r.me ? ' me' : ''}${r.rank <= 3 ? ` top${r.rank}` : ''}`}>
+      <span className="rank-n">{r.rank <= 3 ? <IconTrophy size={20} aria-label={`${r.rank}등`} /> : r.rank}</span>
+      <Avatar id={r.avatar_id} size={40} />
+      <span className="grow"><strong>{r.nickname}</strong>{r.me && <small className="me-tag">나</small>} <TitleTag id={r.title} /><small>{r.games}판</small></span>
+      <span className="rank-pts">{r.points.toLocaleString()}<small>점</small></span>
+    </li>
+  );
+}

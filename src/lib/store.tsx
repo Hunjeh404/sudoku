@@ -8,19 +8,15 @@ import { configureSound } from './sound';
 export interface Settings { sound: boolean; fx: number; music: number; reducedMotion: boolean; autoNotes: boolean; showTimer: boolean; pictureMode: boolean }
 export const DEFAULT_SETTINGS: Settings = { sound: false, fx: 0.6, music: 0.4, reducedMotion: false, autoNotes: true, showTimer: false, pictureMode: false };
 
-export interface Layout { uid: string; item: string; x?: number; y?: number; parent?: string }
-export interface HomeData {
-  room_layout: Layout[]; garden_layout: Layout[]; exhibits: Record<string, string>; notes: Record<string, string>;
-  featured_uid: string | null; music: string | null; revision: number; saved_at: string;
-}
 export interface GameState {
-  profile: { id: string; nickname: string; avatar_id: string; guide_id: string; is_child: boolean; home_name: string; welcome_text: string;
-    home_visibility: 'friends' | 'private'; goal_item: string | null; settings: Partial<Settings> };
+  profile: { id: string; nickname: string; avatar_id: string; title: string; is_child: boolean; settings: Partial<Settings> };
   balance: number;
-  inventory: Record<string, number>;
-  home: HomeData;
-  quest: { completed_count: number; no_hint_count: number; choice_pending: boolean };
+  quest: { completed_count: number; no_hint_count: number };
   unlocks: string[];
+  owned: string[];
+  gifts: { id: string; tier: number; options: string[] }[];
+  points: { total: number; week: number };
+  records: Record<string, number>;
   active: { id: string; puzzle_id: string; size: number; difficulty: string; updated_at: string }[];
   unread: number;
   family_role: 'guardian' | 'adult' | 'child';
@@ -140,3 +136,4 @@ export function GameProvider({ children }: { children: ReactNode }) {
 export const assetBase = import.meta.env.BASE_URL;
 export const asset = (p: string) => `${assetBase}${p}`;
 export const portrait = (id: string) => asset(`assets/portraits/${id}.webp`);
+export const tierOpen = (s: GameState, tier: number) => tier === 1 || s.unlocks.includes(`tier:${tier}`);

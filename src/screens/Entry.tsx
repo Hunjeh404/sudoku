@@ -3,8 +3,7 @@ import { useState } from 'react';
 import { IconBrandGoogle, IconPlus } from '@tabler/icons-react';
 import { supabase } from '../lib/supabase';
 import { rpc, ApiError } from '../lib/api';
-import { useGame, asset } from '../lib/store';
-import { AVATARS, GUIDES } from '../data/catalog';
+import { useGame } from '../lib/store';
 import { Avatar, ErrorLine } from '../ui';
 
 export function Login() {
@@ -19,11 +18,11 @@ export function Login() {
   return (
     <main className="entry">
       <div className="entry-art" aria-hidden>
-        <img src={asset('assets/env/garden_base.webp')} alt="" />
+        <Avatar id="apollo" size={92} /><Avatar id="athena" size={124} /><Avatar id="artemis" size={92} />
       </div>
       <section className="letter">
         <h1>올림포스의<br />작은 정원</h1>
-        <p>스도쿠를 한 판 풀 때마다 별빛이 모여요. 별빛으로 작은 집과 구름 정원을 꾸미고, 신화 속 보물을 놓아 두고, 가족의 집에 놀러 가 방명록을 남겨 보세요.</p>
+        <p>스도쿠를 한 판 풀 때마다 별빛이 모여요. 별빛으로 그리스 신화 인물 초상화를 모으고, 순위표에서 겨루고, 친구와 가족의 소식에 이모티콘을 달아 보세요.</p>
         <button className="btn primary big" onClick={go} disabled={busy}>
           <IconBrandGoogle size={22} aria-hidden /> 구글 계정으로 시작하기
         </button>
@@ -38,8 +37,6 @@ export function Login() {
 export function CreateProfile({ child, onDone, onCancel }: { child?: boolean; onDone: (id: string) => void; onCancel?: () => void }) {
   const { profileId } = useGame();
   const [nickname, setNickname] = useState('');
-  const [avatar, setAvatar] = useState(child ? 'iris' : 'hestia');
-  const [guide, setGuide] = useState('hestia');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const submit = async () => {
@@ -47,8 +44,8 @@ export function CreateProfile({ child, onDone, onCancel }: { child?: boolean; on
     setBusy(true); setErr(null);
     try {
       const id = child
-        ? await rpc<string>('create_child_profile', { guardian: profileId, nickname: nickname.trim(), avatar_id: avatar, guide_id: guide })
-        : await rpc<string>('create_my_profile', { nickname: nickname.trim(), avatar_id: avatar, guide_id: guide });
+        ? await rpc<string>('create_child_profile', { guardian: profileId, nickname: nickname.trim(), avatar_id: '', guide_id: 'hestia' })
+        : await rpc<string>('create_my_profile', { nickname: nickname.trim(), avatar_id: '', guide_id: 'hestia' });
       onDone(id);
     } catch (e) { setErr((e as ApiError).message); setBusy(false); }
   };
@@ -58,34 +55,16 @@ export function CreateProfile({ child, onDone, onCancel }: { child?: boolean; on
       <label className="field">
         <span>게임 속 이름</span>
         <input value={nickname} maxLength={12} onChange={(e) => setNickname(e.target.value)} placeholder="예: 별빛 정원사" autoFocus />
-        <small>이 이름이 친구에게 보여요 ({nickname.length}/12)</small>
+        <small>순위표와 친구 소식에 보여요 ({nickname.length}/12). {child ? '실명 대신 별명을 추천해요.' : ''}</small>
       </label>
-      <fieldset className="field">
-        <legend>얼굴 그림</legend>
-        <div className="avatar-grid">
-          {AVATARS.map((a) => (
-            <button key={a} className={`avatar-pick${a === avatar ? ' on' : ''}`} onClick={() => setAvatar(a)} aria-pressed={a === avatar} aria-label={a}>
-              <Avatar id={a} size={56} framed={a === avatar} />
-            </button>
-          ))}
-        </div>
-      </fieldset>
-      <fieldset className="field">
-        <legend>처음 함께할 안내 친구</legend>
-        <div className="guide-pick">
-          {GUIDES.slice(0, 2).map((g) => (
-            <button key={g.id} className={`guide-card${g.id === guide ? ' on' : ''}`} onClick={() => setGuide(g.id)} aria-pressed={g.id === guide}>
-              <Avatar id={g.id} size={64} />
-              <strong>{g.name}</strong><span className="role">{g.role}</span>
-            </button>
-          ))}
-        </div>
-        <small>아폴론과 아르테미스는 여정을 걷다 보면 만나요.</small>
-      </fieldset>
+      <div className="first-portrait">
+        <Avatar id="" size={72} />
+        <p>초상화는 빈칸으로 시작해요. 스도쿠 첫 판을 끝내면 초상화 셋 중 하나를 선물로 골라요.</p>
+      </div>
       {err && <ErrorLine msg={err} />}
       <div className="row-end">
         {onCancel && <button className="btn" onClick={onCancel}>취소</button>}
-        <button className="btn primary" onClick={submit} disabled={busy}>{busy ? '만드는 중' : '집 받기'}</button>
+        <button className="btn primary" onClick={submit} disabled={busy}>{busy ? '만드는 중' : '시작하기'}</button>
       </div>
     </main>
   );

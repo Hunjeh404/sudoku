@@ -2,7 +2,6 @@ import { Component, ReactNode, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { GameProvider } from './lib/store';
 import { App } from './App';
-import { Calib } from './dev/Calib';
 import './styles.css';
 
 class Boundary extends Component<{ children: ReactNode }, { err: boolean }> {
@@ -17,9 +16,8 @@ class Boundary extends Component<{ children: ReactNode }, { err: boolean }> {
   }
 }
 
-const calib = import.meta.env.VITE_CALIB === '1' && location.search.includes('calib');
 createRoot(document.getElementById('root')!).render(
-  calib ? <Calib /> : <StrictMode><Boundary><GameProvider><App /></GameProvider></Boundary></StrictMode>,
+  <StrictMode><Boundary><GameProvider><App /></GameProvider></Boundary></StrictMode>,
 );
 
 // 재방문 캐시: 그림·음악·데이터·빌드 파일을 기기에 보관
