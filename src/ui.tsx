@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useRef } from 'react';
 import { IconX } from '@tabler/icons-react';
-import { portrait } from './lib/store';
+import { portrait, asset } from './lib/store';
 
 export function Sheet({ title, onClose, children, wide }: { title: string; onClose: () => void; children: ReactNode; wide?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -25,9 +25,15 @@ export function Sheet({ title, onClose, children, wide }: { title: string; onClo
   );
 }
 
-export function Avatar({ id, size = 40, ring }: { id: string; size?: number; ring?: boolean }) {
-  return <img className={`avatar${ring ? ' ring' : ''}`} src={portrait(id)} alt="" width={size} height={size} loading="lazy"
-    onError={(e) => { (e.currentTarget as HTMLImageElement).style.visibility = 'hidden'; }} />;
+/** 원형 초상 + 그리스 신화 앱의 월계수 원형 테두리(framed=false면 테두리 없이 원만) */
+export function Avatar({ id, size = 40, framed = true }: { id: string; size?: number; framed?: boolean }) {
+  return (
+    <span className="portrait" style={{ width: size, height: size }}>
+      <img className="pt-img" src={portrait(id)} alt="" width={size} height={size} loading="lazy"
+        onError={(e) => { (e.currentTarget as HTMLImageElement).style.visibility = 'hidden'; }} />
+      {framed && <img className="pt-frame" src={asset('assets/ui/frame.webp')} alt="" aria-hidden />}
+    </span>
+  );
 }
 
 export function Starlight({ value }: { value: number }) {

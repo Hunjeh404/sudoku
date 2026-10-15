@@ -4606,6 +4606,15 @@
    "source": "images/ui/favicon.png",
    "output": "assets/ui/favicon.webp",
    "size": null
+  },
+  {
+   "kind": "ui",
+   "source": "images/ui/frame.png",
+   "output": "assets/ui/frame.webp",
+   "size": [
+    320,
+    320
+   ]
   }
  ]
 }

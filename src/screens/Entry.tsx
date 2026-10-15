@@ -65,7 +65,7 @@ export function CreateProfile({ child, onDone, onCancel }: { child?: boolean; on
         <div className="avatar-grid">
           {AVATARS.map((a) => (
             <button key={a} className={`avatar-pick${a === avatar ? ' on' : ''}`} onClick={() => setAvatar(a)} aria-pressed={a === avatar} aria-label={a}>
-              <Avatar id={a} size={56} />
+              <Avatar id={a} size={56} framed={a === avatar} />
             </button>
           ))}
         </div>

@@ -347,7 +347,7 @@ function MirrorPanel({ ctx, onClose }: { ctx: PanelCtx; onClose: () => void }) {
       </div>
       <div className="face-row">
         {faces.map((f) => <button key={f} className={`avatar-pick${face === f ? ' on' : ''}`} aria-pressed={face === f} aria-label={f}
-          onClick={() => { setFace(f); sfx.chime(); ctx.onMirror(ctx.item.uid, f); }}><Avatar id={f} size={48} /></button>)}
+          onClick={() => { setFace(f); sfx.chime(); ctx.onMirror(ctx.item.uid, f); }}><Avatar id={f} size={48} framed={face === f} /></button>)}
       </div>
       <p className="fine">방패를 다시 누르면 고른 얼굴이 잠깐 비쳐요. 이 기기에서만 보여요.</p>
     </Sheet>

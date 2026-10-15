@@ -54,7 +54,7 @@ export function HomeScreen({ goSudoku, visit }: { goSudoku: () => void; visit: (
       <HomeStage key={space} space={space} layout={layout} storageKey={`lit:${profileId}:${profileId}`} reducedMotion={settings.reducedMotion}
         onPanel={(kind, item) => setPanel({ kind, item })} mirrorFace={mirror} label={space === 'room' ? '내 집 실내' : '내 집 정원'} />
       <div className="guide-bubble">
-        <Avatar id={guide.id} size={52} ring />
+        <Avatar id={guide.id} size={52} />
         <div className="grow">
           <p><strong>{guide.name}</strong> {bubble.text}</p>
           {bubble.action && <button className="btn primary small" onClick={bubble.action.run}>{bubble.action.label}</button>}

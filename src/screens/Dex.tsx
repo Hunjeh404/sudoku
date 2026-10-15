@@ -1,11 +1,11 @@
 // 도감: 인물·보물·이야기책. 데이터와 그림은 이 화면을 열 때 불러온다.
 import { useEffect, useMemo, useState } from 'react';
 import { IconSearch } from '@tabler/icons-react';
-import { useGame, portrait } from '../lib/store';
+import { useGame } from '../lib/store';
 import { loadPeople, loadStories, Person, CATEGORY_KO } from '../lib/content';
 import { ITEMS } from '../data/catalog';
 import { StoriesPanel } from '../panels/Panels';
-import { Sheet, Spinner, ErrorLine } from '../ui';
+import { Sheet, Spinner, ErrorLine, Avatar } from '../ui';
 
 export function DexScreen() {
   const { state } = useGame();
@@ -52,7 +52,7 @@ export function DexScreen() {
           <ul className="dex-grid">
             {shown.map((p) => (
               <li key={p.id}><button className="dex-card" onClick={() => setOpen(p)}>
-                <img src={portrait(p.id)} alt="" loading="lazy" width={96} height={96} />
+                <Avatar id={p.id} size={88} />
                 <span>{p.ko}</span>
                 {tab === 'art' && gameTreasures.has(p.id) && <small>{(state!.inventory[p.id] ?? 0) > 0 ? '내 보물' : '집에 둘 수 있음'}</small>}
               </button></li>
@@ -73,7 +73,7 @@ function PersonSheet({ p, onClose }: { p: Person; onClose: () => void }) {
   return (
     <Sheet title={p.ko} onClose={onClose}>
       <div className="person">
-        <img src={portrait(p.id)} alt="" width={160} height={160} />
+        <div className="person-portrait"><Avatar id={p.id} size={150} /></div>
         <p className="fine">{p.en}{p.dom ? `, ${p.dom}` : ''}</p>
         {p.sym?.length > 0 && <p className="fine">상징: {p.sym.join(', ')}</p>}
         <p>{p.ep}</p>

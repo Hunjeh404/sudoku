@@ -43,7 +43,7 @@ export function SettingsSheet({ onClose }: { onClose: () => void }) {
       <section className="set-group">
         <h3>내 프로필과 집</h3>
         <label className="field"><span>이름</span><input value={form.nickname} maxLength={12} onChange={(e) => setForm({ ...form, nickname: e.target.value })} /></label>
-        <div className="avatar-grid small">{AVATARS.map((a) => <button key={a} className={`avatar-pick${form.avatar_id === a ? ' on' : ''}`} aria-pressed={form.avatar_id === a} aria-label={a} onClick={() => setForm({ ...form, avatar_id: a })}><Avatar id={a} size={40} /></button>)}</div>
+        <div className="avatar-grid small">{AVATARS.map((a) => <button key={a} className={`avatar-pick${form.avatar_id === a ? ' on' : ''}`} aria-pressed={form.avatar_id === a} aria-label={a} onClick={() => setForm({ ...form, avatar_id: a })}><Avatar id={a} size={40} framed={form.avatar_id === a} /></button>)}</div>
         <fieldset className="field"><legend>안내 친구</legend>
           <div className="row wrap">{guides.map((g) => <button key={g.id} className={`btn small${form.guide_id === g.id ? ' on' : ''}`} aria-pressed={form.guide_id === g.id} onClick={() => setForm({ ...form, guide_id: g.id })}>{g.name}</button>)}</div>
         </fieldset>
