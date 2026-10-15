@@ -28,6 +28,7 @@ export function Login() {
           <IconBrandGoogle size={22} aria-hidden /> 구글 계정으로 시작하기
         </button>
         <p className="fine">아이는 보호자가 로그인한 뒤 아이 프로필을 만들어 함께 써요. 아이 이메일은 필요하지 않아요.</p>
+        <p className="fine"><a href={`${import.meta.env.BASE_URL}privacy.html`}>개인정보처리방침</a></p>
         {err && <ErrorLine msg={err} />}
       </section>
     </main>
