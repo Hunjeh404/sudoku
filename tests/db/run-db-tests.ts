@@ -334,6 +334,101 @@ async function solveAttempt(u: Awaited<ReturnType<typeof user>>, profile: string
     await expectError('rate_limited', () => C.rpc('accept_invite', { p: pc, code: 'AAAAA-AAAAA' }));
   });
 
+  console.log('칭호·스킬');
+  const unlockTitle = async (p: string, t: string) => { await admin.query(`insert into public.unlocks (profile_id, key) values ($1, $2) on conflict do nothing`, [p, 'title:' + t]); await admin.query(`update public.profiles set title = $2 where id = $1`, [p, t]); };
+  const giveItems = async (p: string, tier: number, n: number) => admin.query(`insert into public.owned_portraits (profile_id, portrait_id, source)
+    select $1, id, 'test' from public.portrait_catalog c where tier = $2 and not exists (select 1 from public.owned_portraits o where o.profile_id = $1 and o.portrait_id = c.id) order by id limit $3`, [p, tier, n]);
+  await check('보물 5개째를 사면 「보물 사냥꾼」을 받고 소식이 뜸, 달면 보물 값 9', async () => {
+    await admin.query(`update public.wallets set balance = 500 where profile_id = $1`, [pe]);
+    const have = (await admin.query(`select count(*)::int n from public.owned_portraits o join public.portrait_catalog c on c.id = o.portrait_id where profile_id = $1 and tier = 0`, [pe])).rows[0].n;
+    await giveItems(pe, 0, 4 - have);
+    const next = (await admin.query(`select id from public.portrait_catalog c where tier = 0 and not exists (select 1 from public.owned_portraits o where o.profile_id = $1 and o.portrait_id = c.id) order by id limit 2`, [pe])).rows;
+    const r = await E.rpc('purchase_portrait', { p: pe, portrait: next[0].id, op_id: randomUUID() });
+    assert(r.price === 10 && r.titles.includes('보물 사냥꾼'), JSON.stringify(r));
+    assert((await admin.query(`select 1 from public.activities where profile_id = $1 and kind = 'title' and payload->>'title' = 'tr5'`, [pe])).rowCount === 1, 'activity');
+    await E.rpc('update_profile', { p: pe, patch: { title: 'tr5' } });
+    const r2 = await E.rpc('purchase_portrait', { p: pe, portrait: next[1].id, op_id: randomUUID() });
+    assert(r2.price === 9, 'price ' + r2.price);
+  });
+  await check('초상화 10장 「초상화 수집가」: 달면 2% 덜(60 → 59)', async () => {
+    await admin.query(`insert into public.unlocks (profile_id, key) values ($1, 'tier:2') on conflict do nothing`, [pe]);
+    await giveItems(pe, 1, 10);
+    const t = await admin.query(`select private.check_titles($1) as r`, [pe]);
+    assert(JSON.stringify(t.rows[0].r).includes('초상화 수집가'), JSON.stringify(t.rows[0].r));
+    await E.rpc('update_profile', { p: pe, patch: { title: 'col10' } });
+    const id = (await admin.query(`select id from public.portrait_catalog c where tier = 2 and not exists (select 1 from public.owned_portraits o where o.profile_id = $1 and o.portrait_id = c.id) limit 1`, [pe])).rows[0].id;
+    const r = await E.rpc('purchase_portrait', { p: pe, portrait: id, op_id: randomUUID() });
+    assert(r.price === 59, 'price ' + r.price);
+  });
+  await check('하루 첫 판 스킬 별빛(수습생 +2)은 지갑에만, 점수엔 안 들어감', async () => {
+    await unlockTitle(pe, 'apprentice');
+    await admin.query(`update public.puzzle_attempts set completed_at = now() - interval '2 days' where profile_id = $1 and status = 'completed'`, [pe]);
+    const bal0 = (await E.rpc('get_state', { p: pe })).balance;
+    const r = await finish(E, pe);
+    assert(r.skill_bonus === 2 && r.reward === 10 && r.balance === bal0 + 12, JSON.stringify(r));
+    const ev = await admin.query(`select points from public.score_events where attempt_id = (select id from public.puzzle_attempts where profile_id = $1 order by completed_at desc nulls last limit 1)`, [pe]);
+    assert(ev.rows[0].points === 10, 'score ' + ev.rows[0].points);
+    const r2 = await finish(E, pe);
+    assert(r2.skill_bonus === 0, 'second game ' + r2.skill_bonus);
+  });
+  await check('미궁 탐험가는 힌트 11번, 현자는 첫 힌트 무료지만 기록에는 안 들어감', async () => {
+    await unlockTitle(pe, 'explorer');
+    const { a } = await solveAttempt(E, pe, 4, 'intro');
+    const s = await E.rpc('save_attempt', { attempt: a.id, expected_revision: a.revision, board: a.givens, notes: {}, hints_used: 15, op_id: randomUUID() });
+    assert((await admin.query(`select hints_used from public.puzzle_attempts where id = $1`, [a.id])).rows[0].hints_used === 11, 'cap 11 ' + JSON.stringify(s));
+    await E.rpc('abandon_attempt', { attempt: a.id });
+    await unlockTitle(pe, 'sage');
+    const r = await finish(E, pe, { hints: 1, elapsed: 5 });
+    assert(r.reward === 10 && r.record === null && r.no_hint === false, JSON.stringify(r));
+  });
+  await check('이야기책: 열린 장만 읽음 기록, 4장 읽으면 「이야기꾼」, 달면 4판마다 열림', async () => {
+    await setCount(pc, 12);
+    await expectError('locked', () => C.rpc('mark_story_read', { p: pc, chapter: 4 }));
+    for (const ch of [1, 2, 3]) await C.rpc('mark_story_read', { p: pc, chapter: ch });
+    await setCount(pc, 15);
+    const r = await C.rpc('mark_story_read', { p: pc, chapter: 4 });
+    assert(r.reads === 4 && r.titles.includes('이야기꾼'), JSON.stringify(r));
+    await C.rpc('update_profile', { p: pc, patch: { title: 'read4' } });
+    await setCount(pc, 16);
+    await C.rpc('mark_story_read', { p: pc, chapter: 5 });
+    assert((await C.rpc('get_state', { p: pc })).reads.length === 5, 'reads');
+  });
+  await check('음유시인은 선물 상자 넷, 무사이의 친구는 하루 한 번 다시 뽑기', async () => {
+    await unlockTitle(pc, 'read8');
+    const gid = (await admin.query(`select private.make_gift($1, 1) as g`, [pc])).rows[0].g;
+    const g = (await C.rpc('get_state', { p: pc })).gifts.find((x: any) => x.id === gid);
+    assert(g.options.length === 4, 'four');
+    await expectError('no_skill', () => C.rpc('reroll_gift', { p: pc, gift: gid }));
+    await unlockTitle(pc, 'read16');
+    const r = await C.rpc('reroll_gift', { p: pc, gift: gid });
+    assert(r.options.length === 4 && r.options.every((o: string) => !g.options.includes(o)), JSON.stringify(r));
+    await expectError('used', () => C.rpc('reroll_gift', { p: pc, gift: gid }));
+  });
+  await check('다정한 이웃만 이모티콘 4종 더', async () => {
+    const item = (await B.rpc('list_feed', { p: pb })).find((x: any) => x.who.id !== pb);
+    if (!item) throw new Error('no feed item');
+    await expectError('bad_emoji', () => B.rpc('set_reaction', { p: pb, activity: item.id, emoji: '🦉' }));
+    await unlockTitle(pb, 'kind30');
+    assert((await B.rpc('set_reaction', { p: pb, activity: item.id, emoji: '🦉' })).emoji === '🦉', 'owl');
+  });
+  await check('칭호 진행도: 7일 내리 판을 끝낸 수, 다섯 난이도', async () => {
+    const ids = (await admin.query(`select id from public.puzzle_attempts where profile_id = $1 and status = 'completed' order by completed_at desc limit 7`, [pe])).rows.map((x: any) => x.id);
+    for (let i = 0; i < 7; i++) await admin.query(`update public.puzzle_attempts set completed_at = now() - make_interval(days => $2) where id = $1`, [ids[i], i]);
+    const st = (await E.rpc('get_state', { p: pe })).stats;
+    assert(st.streak === 7, 'streak ' + st.streak);
+    assert(st.boards >= 1 && st.treasures >= 6 && st.portraits >= 11, JSON.stringify(st));
+  });
+  await check('소급: 조건을 이미 채운 사람에게 소식 없이 칭호(빈 칭호면 바로 닮)', async () => {
+    await admin.query(`delete from public.unlocks where profile_id = $1 and key like 'title:%'`, [pe]);
+    await admin.query(`update public.profiles set title = '' where id = $1`, [pe]);
+    const before = (await admin.query(`select count(*)::int n from public.activities where profile_id = $1`, [pe])).rows[0].n;
+    await admin.query(`select private.check_titles($1, true)`, [pe]);
+    const s = await E.rpc('get_state', { p: pe });
+    assert(['title:tr5', 'title:col10', 'title:streak7'].every((k) => s.unlocks.includes(k)), JSON.stringify(s.unlocks));
+    assert(s.profile.title !== '', 'auto equip');
+    assert((await admin.query(`select count(*)::int n from public.activities where profile_id = $1`, [pe])).rows[0].n === before, 'quiet');
+  });
+
   console.log(`\n${pass} passed, ${fail} failed`);
   for (const u of [A, B, C, E]) await u.c.end();
   await admin.end();

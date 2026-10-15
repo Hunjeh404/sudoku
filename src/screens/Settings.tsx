@@ -1,9 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useGame } from '../lib/store';
 import { rpc, ApiError } from '../lib/api';
-import { TITLES } from '../data/catalog';
+import { TITLES, Title } from '../data/catalog';
 import { Sheet, Avatar, ErrorLine, Spinner, timeAgo, activityPhrase, tierOf } from '../ui';
 import { CreateProfile } from './Entry';
+
+// 못 받은 칭호의 진행도: 23/30, 빠르기는 지금 기록
+function progressText(t: Title, stats?: Partial<Record<string, number | null>>) {
+  if (!t.stat || !stats) return '';
+  const v = stats[t.stat];
+  if (t.stat.startsWith('best_')) return v ? ` (지금 기록 ${Math.floor(v / 60)}분 ${v % 60}초)` : ' (아직 기록 없음)';
+  return ` (${Math.min(v ?? 0, t.need!)}/${t.need})`;
+}
 
 export function SettingsSheet({ onClose }: { onClose: () => void }) {
   const { state, settings, updateSettings, profileId, patchState, toast, selectProfile, signOut, reloadProfiles, session } = useGame();
@@ -59,12 +67,22 @@ export function SettingsSheet({ onClose }: { onClose: () => void }) {
           )}
         </fieldset>
         <fieldset className="field"><legend>칭호</legend>
-          {titles.length === 0 ? <p className="fine">여정을 걸으면 칭호를 받아요.</p> : (
-            <div className="row wrap">
-              <button className={`btn small${form.title === '' ? ' on' : ''}`} aria-pressed={form.title === ''} onClick={() => setForm({ ...form, title: '' })}>달지 않기</button>
-              {titles.map((t) => <button key={t.id} className={`btn small${form.title === t.id ? ' on' : ''}`} aria-pressed={form.title === t.id} onClick={() => setForm({ ...form, title: t.id })}>{t.name}</button>)}
+          <small>칭호는 하나만 달 수 있고, 단 칭호의 스킬만 켜져요. 스킬로 더 받는 별빛은 순위 점수에 들어가지 않아요. 받은 칭호 {titles.length}/{TITLES.length}</small>
+          <div className="row wrap"><button className={`btn small${form.title === '' ? ' on' : ''}`} aria-pressed={form.title === ''} onClick={() => setForm({ ...form, title: '' })}>달지 않기</button></div>
+          {[...new Set(TITLES.map((t) => t.group))].map((g) => (
+            <div key={g} className="title-group"><h4>{g}</h4>
+              <ul className="title-list">
+                {TITLES.filter((t) => t.group === g).map((t) => {
+                  const has = state!.unlocks.includes(`title:${t.id}`);
+                  return <li key={t.id}><button className={`title-card${has ? '' : ' locked'}${form.title === t.id ? ' on' : ''}`} disabled={!has}
+                    aria-pressed={form.title === t.id} onClick={() => setForm({ ...form, title: t.id })}>
+                    <strong>{t.name}</strong><small>{has ? '받음' : `조건: ${t.cond}${progressText(t, state!.stats)}`}</small>
+                    <span>스킬: {t.skill}</span>
+                  </button></li>;
+                })}
+              </ul>
             </div>
-          )}
+          ))}
         </fieldset>
         {err && <ErrorLine msg={err} />}
         <div className="row-end"><button className="btn primary" onClick={saveProfile}>프로필 저장</button></div>

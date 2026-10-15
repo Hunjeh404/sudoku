@@ -20,6 +20,8 @@ export interface GameState {
   active: { id: string; puzzle_id: string; size: number; difficulty: string; updated_at: string }[];
   unread: number;
   family_role: 'guardian' | 'adult' | 'child';
+  stats?: Partial<Record<string, number | null>>; // 칭호 진행도(0014)
+  reads?: number[]; // 끝까지 읽은 이야기책 장
 }
 export interface ProfileSummary { id: string; nickname: string; avatar_id: string; is_child: boolean; mine: boolean }
 
@@ -38,6 +40,7 @@ interface Ctx {
   updateSettings: (patch: Partial<Settings>) => void;
   toast: (msg: string) => void;
   toastMsg: string | null;
+  gotTitles: (names?: string[]) => void; // 서버가 돌려준 새 칭호 알리기 + 상태 새로고침
   signOut: () => Promise<void>;
 }
 
@@ -124,10 +127,15 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const patchState = useCallback((f: (s: GameState) => GameState) => setState((s) => (s ? f(s) : s)), []);
+  const gotTitles = useCallback((names?: string[]) => {
+    if (!names?.length) return;
+    toast(`새 칭호「${names.join('」「')}」를 받았어요. 설정에서 달 수 있어요`);
+    refresh();
+  }, [toast, refresh]);
   const signOut = useCallback(async () => { await supabase.auth.signOut(); setSession(null); }, []);
 
   return (
-    <C.Provider value={{ session, authReady, profiles, profileId, state, settings, error, selectProfile, reloadProfiles, refresh, patchState, updateSettings, toast, toastMsg, signOut }}>
+    <C.Provider value={{ session, authReady, profiles, profileId, state, settings, error, selectProfile, reloadProfiles, refresh, patchState, updateSettings, toast, toastMsg, signOut, gotTitles }}>
       {children}
     </C.Provider>
   );

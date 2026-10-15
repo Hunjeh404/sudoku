@@ -4,7 +4,7 @@ import { IconSearch, IconLock, IconCheck } from '@tabler/icons-react';
 import { useGame, tierOpen } from '../lib/store';
 import { rpc, newOpId, ApiError } from '../lib/api';
 import { loadPeople, loadStories, Person } from '../lib/content';
-import { TIERS, tierOfCat, JOURNEY, TREASURE_PRICE } from '../data/catalog';
+import { TIERS, tierOfCat, JOURNEY, TREASURE_PRICE, priceFor, storyEvery } from '../data/catalog';
 import { StoriesPanel } from './Stories';
 import { Sheet, Spinner, ErrorLine, Avatar, tierOf } from '../ui';
 import { sfx } from '../lib/sound';
@@ -50,7 +50,7 @@ export function DexScreen() {
       </div>
       {tab === 'book' ? (
         <>
-          <p className="fine">그리스 신화 이야기 16장을 그림과 함께 읽어요. 1장은 처음부터, 스도쿠 5판마다 한 장씩 열려요.</p>
+          <p className="fine">그리스 신화 이야기 16장을 그림과 함께 읽어요. 1장은 처음부터, 스도쿠 {storyEvery(state!.profile.title)}판마다 한 장씩 열려요.</p>
           <button className="btn primary" onClick={() => setReading(true)}>이야기책 펼치기</button>
           {reading && <StoriesPanel onClose={() => setReading(false)} />}
         </>
@@ -81,8 +81,8 @@ export function DexScreen() {
                 <li key={p.id}><button className={`dex-card${has ? ' owned' : ''}`} onClick={() => setOpen(p)}>
                   <Avatar id={p.id} size={88} />
                   <span>{p.ko}</span>
-                  {t ? <small>{has ? <><IconCheck size={13} aria-hidden /> 내 초상화</> : tierOpen(state!, t) ? `✦ ${TIERS[t - 1].price}` : <><IconLock size={13} aria-hidden /> {t}티어</>}</small>
-                    : <small>{has ? <><IconCheck size={13} aria-hidden /> {state!.profile.badge === p.id ? '달아 둔 보물' : '내 보물'}</> : `✦ ${TREASURE_PRICE}`}</small>}
+                  {t ? <small>{has ? <><IconCheck size={13} aria-hidden /> 내 초상화</> : tierOpen(state!, t) ? `✦ ${priceFor(t, TIERS[t - 1].price, state!.profile.title)}` : <><IconLock size={13} aria-hidden /> {t}티어</>}</small>
+                    : <small>{has ? <><IconCheck size={13} aria-hidden /> {state!.profile.badge === p.id ? '달아 둔 보물' : '내 보물'}</> : `✦ ${priceFor(0, TREASURE_PRICE, state!.profile.title)}`}</small>}
                 </button></li>
               );
             })}
@@ -96,7 +96,7 @@ export function DexScreen() {
 }
 
 function PersonSheet({ p, onClose }: { p: Person; onClose: () => void }) {
-  const { state, profileId, patchState, toast } = useGame();
+  const { state, profileId, patchState, toast, gotTitles } = useGame();
   const [story, setStory] = useState<[string, string][] | null>(null);
   const [more, setMore] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -108,7 +108,8 @@ function PersonSheet({ p, onClose }: { p: Person; onClose: () => void }) {
   const s = state!;
   const has = s.owned.includes(p.id);
   const open = treasure || (t !== null && tierOpen(s, t));
-  const price = treasure ? TREASURE_PRICE : t ? TIERS[t - 1].price : 0;
+  const base = treasure ? TREASURE_PRICE : t ? TIERS[t - 1].price : 0;
+  const price = priceFor(treasure ? 0 : t ?? 0, base, s.profile.title); // 칭호 할인
   const buy = async () => {
     setBusy(true); setErr(null);
     try {
@@ -116,6 +117,7 @@ function PersonSheet({ p, onClose }: { p: Person; onClose: () => void }) {
       patchState((st) => ({ ...st, balance: r.balance, owned: st.owned.includes(p.id) ? st.owned : [...st.owned, p.id],
         profile: r.badge ? { ...st.profile, badge: r.badge } : st.profile }));
       sfx.success(); toast(`${josa(p.ko, '을/를')} 모았어요`);
+      gotTitles(r.titles);
     } catch (e) { setErr((e as ApiError).message); }
     setBusy(false);
   };

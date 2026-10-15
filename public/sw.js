@@ -1,6 +1,6 @@
 // 서비스워커: 그림·음악·데이터·해시된 빌드 파일은 기기에 저장해 두고(캐시 우선),
 // 화면 틀(index.html)과 서버 요청(supabase)은 항상 네트워크로 받는다.
-const VERSION = 'v8'; // v8: 보물 숫자 버튼, 2·3티어 판
+const VERSION = 'v9'; // v9: 칭호 25종과 스킬
 const ASSET_CACHE = `olympus-assets-${VERSION}`;
 
 self.addEventListener('install', (e) => self.skipWaiting());

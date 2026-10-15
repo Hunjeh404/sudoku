@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { IconCopy, IconMail, IconMoodSmile, IconSend, IconTicket, IconUserPlus, IconX } from '@tabler/icons-react';
 import { useGame } from '../lib/store';
 import { rpc, ApiError } from '../lib/api';
-import { EMOJIS } from '../data/catalog';
+import { emojisFor } from '../data/catalog';
 import { Avatar, ErrorLine, Sheet, Spinner, TitleTag, activityText, timeAgo } from '../ui';
 import { sfx } from '../lib/sound';
 
@@ -51,7 +51,7 @@ export function FeedList({ limit, empty }: { limit?: number; empty: string }) {
 }
 
 function FeedRow({ it, onChange }: { it: FeedItem; onChange: (it: FeedItem) => void }) {
-  const { profileId, state, toast } = useGame();
+  const { profileId, state, toast, gotTitles } = useGame();
   const [picking, setPicking] = useState(false);
   const react = async (emoji: string) => {
     setPicking(false);
@@ -61,7 +61,7 @@ function FeedRow({ it, onChange }: { it: FeedItem; onChange: (it: FeedItem) => v
     const others = it.reactions.filter((r) => r.id !== profileId);
     onChange({ ...it, my_emoji: remove ? null : emoji, reactions: remove ? others : [...others, { ...me, emoji }] });
     sfx.tap();
-    try { await rpc('set_reaction', { p: profileId, activity: it.id, emoji }); }
+    try { const r = await rpc('set_reaction', { p: profileId, activity: it.id, emoji }); gotTitles(r.titles); }
     catch (e) { onChange(prev); toast((e as ApiError).message); }
   };
   return (
@@ -83,7 +83,7 @@ function FeedRow({ it, onChange }: { it: FeedItem; onChange: (it: FeedItem) => v
             </button>
             {picking && (
               <div className="emoji-pick" role="group" aria-label="이모티콘 고르기">
-                {EMOJIS.map((e) => <button key={e} className={it.my_emoji === e ? 'on' : ''} onClick={() => react(e)} aria-label={it.my_emoji === e ? `${e} 지우기` : `${e} 달기`}>{e}</button>)}
+                {emojisFor(state!.profile.title).map((e) => <button key={e} className={it.my_emoji === e ? 'on' : ''} onClick={() => react(e)} aria-label={it.my_emoji === e ? `${e} 지우기` : `${e} 달기`}>{e}</button>)}
                 {it.my_emoji && <button onClick={() => react(it.my_emoji!)} aria-label="이모티콘 지우기"><IconX size={18} aria-hidden /></button>}
               </div>
             )}

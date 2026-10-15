@@ -8,7 +8,7 @@ import { rpc, newOpId, ApiError } from '../lib/api';
 import { getLocal, setLocal, delLocal } from '../lib/local';
 import { Board, Size, parseBoard, boardToString, conflicts, geometry, rowOf, colOf, countSolutions } from '../sudoku/engine';
 import { makeHint, Hint } from '../sudoku/hints';
-import { REWARD_RULES, HINT_MAX, boardName, rewardText, STORY_EVERY } from '../data/catalog';
+import { REWARD_RULES, boardName, rewardText, hintMax, freeFirstHint, storyEvery, TITLE_NAME } from '../data/catalog';
 import { nextJourney } from './Journey';
 import { Sheet, Starlight, ErrorLine, Spinner, Avatar, mmss, secText } from '../ui';
 import { sfx } from '../lib/sound';
@@ -86,7 +86,7 @@ export function SudokuSelect({ onStart }: { onStart: (a: AttemptData) => void })
         ))}
       </ul>
       {err && <ErrorLine msg={err} />}
-      <p className="fine">시간 제한과 실수 제한은 없어요. 힌트 없이 끝낸 판은 푼 시간이 내 기록이 돼요. 힌트는 한 판에 {HINT_MAX}번까지 쓸 수 있고, 한 번 쓸 때마다 받을 별빛이 10%씩 줄어요.</p>
+      <p className="fine">시간 제한과 실수 제한은 없어요. 힌트 없이 끝낸 판은 푼 시간이 내 기록이 돼요. 힌트는 한 판에 {hintMax(state!.profile.title)}번까지 쓸 수 있고, 한 번 쓸 때마다 받을 별빛이 10%씩 줄어요{freeFirstHint(state!.profile.title) ? '(칭호 스킬로 첫 힌트는 줄지 않아요)' : ''}.</p>
       {confirm && (
         <Sheet title="이어서 풀던 판이 있어요" onClose={() => setConfirm(null)}>
           <p>{confirm.size}×{confirm.size} {DIFF_KO[confirm.difficulty]} 판을 풀다가 멈췄어요. 새로 시작하면 이어서 풀던 판은 처음으로 돌아가지 않고 사라져요. 새 판으로 시작할까요?</p>
@@ -120,6 +120,7 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
   const n = attempt.size;
   const badge = state?.profile.badge || '';
   const fx = TREASURE_FX[badge];
+  const HM = hintMax(state?.profile.title ?? ''); // 한 판 힌트 상한(칭호「미궁 탐험가」 11번)
   const themed = boardThemeFor(state?.profile.avatar_id ?? '');
   const theme = themed?.theme;
   const g = geometry(n);
@@ -261,7 +262,7 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
   });
 
   const askHint = () => {
-    if (!hint && hintsUsed >= HINT_MAX) return;
+    if (!hint && hintsUsed >= HM) return;
     const h = makeHint(givens, cur.board, n, sym);
     if (!hint) { setHintsUsed((x) => x + 1); hintsRef.current += 1; dirty.current = true; }
     setHint({ h, level: 1 });
@@ -366,7 +367,7 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
 
       {hint && (
         <section className="hint" aria-live="polite">
-          <div className="hint-who"><Avatar id="athena" size={40} /><p className="hint-step">아테나의 힌트 {hint.level}/4 · 남은 힌트 {HINT_MAX - hintsUsed}번</p></div>
+          <div className="hint-who"><Avatar id="athena" size={40} /><p className="hint-step">아테나의 힌트 {hint.level}/4 · 남은 힌트 {HM - hintsUsed}번</p></div>
           <p>{hint.level >= 1 && (hint.h.kind === 'logic' ? '반짝이는 칸과 줄을 살펴보세요.' : hint.h.rule)}</p>
           {hint.level >= 2 && hint.h.kind === 'logic' && <p>{hint.h.rule}</p>}
           {hint.level >= 3 && <p>{hint.h.detail}</p>}
@@ -384,8 +385,8 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
         <button className="tool" onClick={undo} disabled={hist.i === 0}><IconArrowBackUp aria-hidden />되돌림</button>
         <button className="tool" onClick={redo} disabled={hist.i >= hist.list.length - 1}><IconArrowForwardUp aria-hidden />다시</button>
         <button className="tool" onClick={check}><IconChecks aria-hidden />확인</button>
-        <button className="tool" onClick={askHint} disabled={!hint && hintsUsed >= HINT_MAX}
-          aria-label={`힌트, 남은 횟수 ${HINT_MAX - hintsUsed}번, 쓸 때마다 별빛 10% 줄어요`}><IconBulb aria-hidden />힌트 {HINT_MAX - hintsUsed}</button>
+        <button className="tool" onClick={askHint} disabled={!hint && hintsUsed >= HM}
+          aria-label={`힌트, 남은 횟수 ${HM - hintsUsed}번, 쓸 때마다 별빛 10% 줄어요`}><IconBulb aria-hidden />힌트 {HM - hintsUsed}</button>
       </div>
       <div className={`pad pad${n}`}>
         {Array.from({ length: n }, (_, i) => i + 1).map((d) => {
@@ -418,8 +419,9 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
 }
 
 export function ResultScreen({ result, onHome, onAgain }: { result: any; onHome: () => void; onAgain: () => void }) {
-  const { refresh } = useGame();
+  const { refresh, state } = useGame();
   useEffect(() => { refresh(); }, []);
+  const every = storyEvery(state?.profile.title ?? '');
   const j = result.journey && result.journey.step ? result.journey : null;
   const next = nextJourney(result.completed_count);
   const rec = result.record;
@@ -432,12 +434,14 @@ export function ResultScreen({ result, onHome, onAgain }: { result: any; onHome:
       </div>
       <p>{boardName(result.size, result.difficulty)} · {secText(result.elapsed)} · 지금 별빛 {result.balance} · 누적 점수 {result.points}</p>
       {result.no_hint && <p className="badge-line">힌트 없이 끝냈어요</p>}
-      {result.hints_used > 0 && <p className="fine">힌트 {result.hints_used}번을 써서 별빛이 {result.hints_used * 10}% 줄었어요. 힌트를 쓴 판은 기록에 들어가지 않아요.</p>}
+      {result.hints_used > 0 && <p className="fine">힌트 {result.hints_used}번을 써서 별빛이 {(result.paid_hints ?? result.hints_used) * 10}% 줄었어요{(result.paid_hints ?? result.hints_used) < result.hints_used ? '(첫 힌트는 칭호 스킬로 줄지 않음)' : ''}. 힌트를 쓴 판은 기록에 들어가지 않아요.</p>}
+      {result.skill_bonus > 0 && <p className="record-line">칭호「{TITLE_NAME[result.skill_title] ?? ''}」 스킬로 별빛 +{result.skill_bonus}(점수에는 안 들어가요)</p>}
+      {result.titles?.length > 0 && <p className="record-line">새 칭호「{result.titles.join('」「')}」를 받았어요. 설정에서 달 수 있어요</p>}
       {rec && <p className="record-line">{rec.first ? `첫 기록 ${secText(rec.sec)}` : `자기 기록 경신! ${secText(rec.prev)} → ${secText(rec.sec)}`}</p>}
       {j && <div className="journey-card"><p>여정 {j.step}번째 보상</p><strong>{j.title}</strong><small>{rewardText(j.reward)}</small></div>}
       {!j && next && <p className="fine">다음 여정「{next.title}」까지 {next.need - result.completed_count}판</p>}
-      {result.completed_count % STORY_EVERY === 0 && result.completed_count / STORY_EVERY + 1 <= 16 && (
-        <p className="record-line">이야기책 {result.completed_count / STORY_EVERY + 1}장이 열렸어요. 도감에서 읽어 보세요</p>
+      {result.completed_count % every === 0 && result.completed_count / every + 1 <= 16 && (
+        <p className="record-line">이야기책 {result.completed_count / every + 1}장이 열렸어요. 도감에서 읽어 보세요</p>
       )}
       <div className="stack">
         <button className="btn primary big" onClick={onHome}>{j?.reward?.gift ? '선물 고르러 가기' : '처음 화면으로'}</button>
