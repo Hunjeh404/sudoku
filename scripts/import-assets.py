@@ -46,6 +46,8 @@ if not os.path.exists(pack_dst):
 man = json.load(open(os.path.join(PACK, 'asset-manifest.json'), encoding='utf-8'))
 for a in man['assets']:
     src = os.path.join(PACK, a['file'])
+    if a['id'] == 'room_base':  # 원근을 편 파생본 사용(scripts/straighten-room.py)
+        src = os.path.join(ROOT, 'assets-src', 'derived', 'room_base_parallel.png')
     sub = 'env' if a['kind'] == 'environment' else 'furniture'
     side = 1024 if sub == 'env' else 512
     rel = f'assets/{sub}/{a["id"]}.webp'

@@ -1,0 +1,41 @@
+{
+ "source": "assets-src/quarterview-v1/images/environments/room_base.png",
+ "output": "assets-src/derived/room_base_parallel.png",
+ "method": "column-wise vertical remap, slope 0.65",
+ "sourceFloorCorners": [
+  [
+   633,
+   452
+  ],
+  [
+   1135,
+   738
+  ],
+  [
+   622,
+   1108
+  ],
+  [
+   118,
+   738
+  ]
+ ],
+ "floorCornersPx": [
+  [
+   633,
+   452
+  ],
+  [
+   1135,
+   778
+  ],
+  [
+   622,
+   1114
+  ],
+  [
+   118,
+   787
+  ]
+ ]
+}
