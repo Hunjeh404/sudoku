@@ -1,0 +1,25 @@
+import { chromium } from 'playwright';
+(async () => {
+  const b = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
+  const p = await b.newPage({ viewport: { width: 390, height: 844 } });
+  const audio: string[] = [];
+  p.on('request', (r) => { if (r.url().includes('/assets/audio/')) audio.push(r.url().split('/').pop()!); });
+  await p.goto('http://localhost:4173/sudoku/');
+  await p.getByRole('button', { name: /구글 계정으로 시작/ }).click();
+  await p.fill('#email', `bgm${Date.now()}@test`); await p.click('#go');
+  await p.waitForSelector('text=어떻게 불러 드릴까요?');
+  await p.getByPlaceholder('예: 별빛 정원사').fill('훈제');
+  await p.getByRole('button', { name: '집 받기' }).click();
+  await p.waitForSelector('.space');
+  console.log('before sound on:', audio.length);
+  await p.getByRole('button', { name: '설정', exact: true }).click();
+  await p.getByText('소리 켜기').click();
+  await p.keyboard.press('Escape');
+  await p.waitForTimeout(800);
+  console.log('home:', [...new Set(audio)]);
+  await p.getByRole('button', { name: '스도쿠', exact: true }).click();
+  await p.locator('.size-card', { hasText: '4×4' }).click();
+  await p.waitForSelector('.board'); await p.waitForTimeout(800);
+  console.log('sudoku:', [...new Set(audio)]);
+  await b.close();
+})();

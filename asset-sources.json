@@ -4548,60 +4548,6 @@
    ]
   },
   {
-   "kind": "audio",
-   "source": "audio/Before_the_Stars.mp3",
-   "output": "assets/audio/Before_the_Stars.mp3",
-   "size": null
-  },
-  {
-   "kind": "audio",
-   "source": "audio/Laurel_Crown.mp3",
-   "output": "assets/audio/Laurel_Crown.mp3",
-   "size": null
-  },
-  {
-   "kind": "audio",
-   "source": "audio/Oracle_Quiz.mp3",
-   "output": "assets/audio/Oracle_Quiz.mp3",
-   "size": null
-  },
-  {
-   "kind": "audio",
-   "source": "audio/Orpheus_Lyre.mp3",
-   "output": "assets/audio/Orpheus_Lyre.mp3",
-   "size": null
-  },
-  {
-   "kind": "audio",
-   "source": "audio/Picnic_on_Olympus.mp3",
-   "output": "assets/audio/Picnic_on_Olympus.mp3",
-   "size": null
-  },
-  {
-   "kind": "audio",
-   "source": "audio/Road_of_Heroes.mp3",
-   "output": "assets/audio/Road_of_Heroes.mp3",
-   "size": null
-  },
-  {
-   "kind": "audio",
-   "source": "audio/The_Long_Way_Home.mp3",
-   "output": "assets/audio/The_Long_Way_Home.mp3",
-   "size": null
-  },
-  {
-   "kind": "audio",
-   "source": "audio/Threads_of_Olympus.mp3",
-   "output": "assets/audio/Threads_of_Olympus.mp3",
-   "size": null
-  },
-  {
-   "kind": "audio",
-   "source": "audio/Thunder_on_the_Mountain.mp3",
-   "output": "assets/audio/Thunder_on_the_Mountain.mp3",
-   "size": null
-  },
-  {
    "kind": "ui",
    "source": "images/ui/favicon.png",
    "output": "assets/ui/favicon.webp",
@@ -4615,6 +4561,18 @@
     320,
     320
    ]
+  }
+ ],
+ "music": [
+  {
+   "source": "assets-src/music/Hearth_of_Hestia.mp3",
+   "output": "assets/audio/hearth_of_hestia.mp3",
+   "note": "Suno 생성곡(사용자 제공), 3초 크로스페이드 반복용"
+  },
+  {
+   "source": "assets-src/music/Athenas_Quiet_Study.mp3",
+   "output": "assets/audio/athenas_quiet_study.mp3",
+   "note": "Suno 생성곡(사용자 제공), 3초 크로스페이드 반복용"
   }
  ]
 }

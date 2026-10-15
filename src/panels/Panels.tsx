@@ -1,11 +1,11 @@
 // 가구를 눌렀을 때 열리는 창들
 import { useEffect, useMemo, useState } from 'react';
 import { IconPlayerPlay, IconPlayerStop, IconTrash, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
-import { ITEM_BY_ID, ITEMS, MUSIC, STICKERS } from '../data/catalog';
+import { ITEM_BY_ID, ITEMS, STICKERS } from '../data/catalog';
 import { useGame, asset, Layout, HomeData } from '../lib/store';
 import { rpc, newOpId, ApiError } from '../lib/api';
 import { loadBook, loadPeople, Chapter, Person } from '../lib/content';
-import { playMusic, stopMusic, currentTrack, pluck, sfx, LYRE_NOTES } from '../lib/sound';
+import { pluck, sfx, LYRE_NOTES } from '../lib/sound';
 import { getLocal, setLocal } from '../lib/local';
 import { Sheet, Avatar, ErrorLine, Spinner, timeAgo } from '../ui';
 import type { PanelKind } from '../home/interactions';
@@ -98,30 +98,14 @@ function FriendsPanel({ ctx, onClose }: { ctx: PanelCtx; onClose: () => void }) 
   );
 }
 
-function MusicPanel({ ctx, onClose }: { ctx: PanelCtx; onClose: () => void }) {
+function MusicPanel({ onClose }: { ctx: PanelCtx; onClose: () => void }) {
   const { settings, updateSettings } = useGame();
-  const save = useHomePatch();
-  const [playing, setPlaying] = useState<string | null>(currentTrack);
-  const play = (id: string) => {
-    if (!settings.sound) updateSettings({ sound: true });
-    playMusic(import.meta.env.BASE_URL, id); setPlaying(id);
-  };
   return (
     <Sheet title="악보대" onClose={onClose}>
-      <p className="fine">{ctx.home.music ? `${ctx.ownerName}의 음악: ${MUSIC.find((m) => m.id === ctx.home.music)?.title ?? ''}` : '정해 둔 음악이 없어요.'} 재생 버튼을 눌러야 소리가 나요.</p>
-      <ul className="music-list">
-        {MUSIC.map((m) => (
-          <li key={m.id}>
-            <button className="icon-btn" aria-label={playing === m.id ? `${m.title} 멈추기` : `${m.title} 재생`}
-              onClick={() => (playing === m.id ? (stopMusic(), setPlaying(null)) : play(m.id))}>
-              {playing === m.id ? <IconPlayerStop size={20} /> : <IconPlayerPlay size={20} />}
-            </button>
-            <span className="grow">{m.title}</span>
-            {ctx.isOwner && <button className="btn small" disabled={ctx.home.music === m.id} onClick={() => save({ music: m.id })}>
-              {ctx.home.music === m.id ? '우리 집 음악' : '우리 집 음악으로'}</button>}
-          </li>
-        ))}
-      </ul>
+      <p>집과 정원에서는「헤스티아의 화로」, 스도쿠를 풀 때는「아테나의 조용한 서재」가 흘러요.</p>
+      <label className="toggle"><input type="checkbox" checked={settings.sound} onChange={(e) => updateSettings({ sound: e.target.checked })} />
+        <span><strong>배경음악과 효과음 켜기</strong><small>처음에는 꺼져 있어요</small></span></label>
+      <label className="range">음악 크기<input type="range" min={0} max={1} step={0.1} value={settings.music} onChange={(e) => updateSettings({ music: +e.target.value })} /></label>
     </Sheet>
   );
 }

@@ -37,7 +37,7 @@ export const ITEMS: Item[] = [
   F('laurel_door', '월계수 문', 60, 'wallRight', 2, 1, false, ['room'], 0, 'door_chime', '문을 두드리면 친구 집 목록이 열려요.'),
   F('laurel_rug', '월계수 러그', 60, 'rug', 3, 2, false, ['room'], 0, 'soft_sparkle', '월계수 무늬를 따라 빛이 돌아요.'),
   F('linen_curtain', '리넨 커튼', 60, 'wallRight', 2, 1, false, ['room'], 3, 'curtain_glimmer', '커튼 사이로 햇살이 들어와요.'),
-  F('music_stand', '악보대', 60, 'floor', 1, 1, true, BOTH, 2, 'music_select', '배경 음악을 골라요.'),
+  F('music_stand', '악보대', 60, 'floor', 1, 1, true, BOTH, 2, 'music_select', '배경음악을 켜고 끄고 크기를 정해요.'),
   F('olive_planter', '올리브 화분', 20, 'floor', 1, 1, true, BOTH, 0, 'leaf_rustle', '잎이 바스락.'),
   F('owl_mailbox', '올빼미 우편함', 60, 'floor', 1, 1, true, BOTH, 0, 'mail_panel', '방명록을 읽고 남겨요.'),
   F('picture_frame', '신화 액자', 20, 'supportSlot', 1, 1, false, ['room'], 7, 'gallery', '찻상 위에 세워 두고 신화 그림을 전시해요.'),
@@ -108,14 +108,9 @@ export const STICKERS = [
   { id: 'flower', label: '꽃', glyph: '✿' },
 ];
 
+// 배경음악 두 곡: 스도쿠 풀 때와 그 밖의 화면(Suno로 만든 곡, 끊김 없는 반복용으로 다듬음)
 export const MUSIC = [
-  { id: 'Picnic_on_Olympus', title: '올림포스 소풍' },
-  { id: 'Laurel_Crown', title: '월계관' },
-  { id: 'Orpheus_Lyre', title: '오르페우스의 리라' },
-  { id: 'Before_the_Stars', title: '별이 뜨기 전' },
-  { id: 'Threads_of_Olympus', title: '올림포스의 실' },
-  { id: 'The_Long_Way_Home', title: '먼 귀향길' },
-  { id: 'Road_of_Heroes', title: '영웅의 길' },
-  { id: 'Oracle_Quiz', title: '신탁 퀴즈' },
-  { id: 'Thunder_on_the_Mountain', title: '산 위의 천둥' },
+  { id: 'hearth_of_hestia', title: '헤스티아의 화로', scene: 'home' },
+  { id: 'athenas_quiet_study', title: '아테나의 조용한 서재', scene: 'sudoku' },
 ];
+export const BGM = { home: 'hearth_of_hestia', sudoku: 'athenas_quiet_study' } as const;

@@ -89,7 +89,11 @@ export function playMusic(base: string, id: string | null) {
     currentTrack = id;
   }
   audioEl.volume = musicVolume;
-  return audioEl.play().catch(() => {});
+  return audioEl.play().catch(() => {
+    // 브라우저는 첫 터치 전에는 소리를 막는다 → 첫 터치 때 다시 재생
+    const retry = () => { if (currentTrack) audioEl?.play().catch(() => {}); };
+    window.addEventListener('pointerdown', retry, { once: true });
+  });
 }
 export function stopMusic() {
   audioEl?.pause();

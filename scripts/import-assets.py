@@ -102,16 +102,7 @@ json.dump(chapters, open(os.path.join(DATA_PUBLIC, 'book.json'), 'w', encoding='
 stories = load_js('stories.js', 'window.STORIES')
 json.dump(stories, open(os.path.join(DATA_PUBLIC, 'stories.json'), 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
 
-# ---- 5. 오디오: 9곡을 96kbps로 줄여 지연 로드 ----
-os.makedirs(os.path.join(OUT, 'audio'), exist_ok=True)
-for f in sorted(os.listdir(os.path.join(SRC, 'audio'))):
-    if not f.endswith('.mp3'):
-        continue
-    rel = f'assets/audio/{f}'
-    dst = os.path.join(ROOT, 'public', rel)
-    if not os.path.exists(dst):
-        subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', os.path.join(SRC, 'audio', f), '-b:a', '96k', '-ac', '2', dst], check=True)
-    record('audio', f'audio/{f}', rel, None)
+# ---- 5. 오디오: 원본 사이트 음악은 쓰지 않는다(배경음악 2곡은 scripts/make-loops.sh로 만든다)
 
 # ---- 6. 파비콘 ----
 webp(os.path.join(SRC, 'images/ui/favicon.png'), os.path.join(OUT, 'ui', 'favicon.webp'), 128)

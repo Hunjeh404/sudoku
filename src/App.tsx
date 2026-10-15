@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { playMusic, stopMusic } from './lib/sound';
+import { BGM } from './data/catalog';
 import { IconHome2, IconGridDots, IconUsers, IconBook2, IconMailbox, IconSettings } from '@tabler/icons-react';
 import { useGame } from './lib/store';
 import { configured } from './lib/supabase';
@@ -29,12 +31,19 @@ function Splash() {
 }
 
 function Game() {
-  const { state, toastMsg, refresh } = useGame();
+  const { state, toastMsg, refresh, settings } = useGame();
   const [tab, setTab] = useState<Tab>('home');
   const [attempt, setAttempt] = useState<AttemptData | null>(null);
   const [result, setResult] = useState<any>(null);
   const [visiting, setVisiting] = useState<string | null>(null);
   const [sheet, setSheet] = useState<'settings' | 'mail' | null>(null);
+
+  // 배경음악: 스도쿠 푸는 화면은 아테나, 그 밖은 헤스티아. 소리를 켠 경우에만.
+  const scene = attempt ? 'sudoku' : 'home';
+  useEffect(() => {
+    if (settings.sound) playMusic(import.meta.env.BASE_URL, BGM[scene]);
+    else stopMusic();
+  }, [settings.sound, scene]);
 
   // 휴대폰 뒤로 가기: 퍼즐·방문 화면을 닫는다
   useEffect(() => {
