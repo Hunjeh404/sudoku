@@ -142,6 +142,20 @@
    "seamY": false,
    "alpha": false
   },
+  "resume_card": {
+   "size": [
+    1536,
+    384
+   ],
+   "cell": 384,
+   "cells": [
+    4,
+    1
+   ],
+   "seamX": false,
+   "seamY": false,
+   "alpha": true
+  },
   "garden_fence": {
    "size": [
     2048,

@@ -21,6 +21,7 @@ PIECES = {
     'floor_edge':    dict(size=(2048, 512), cell=512, seamX=True, seamY=False, zones=[('rose', 'vlines', [1024])], alpha=False, cells=(4, 1)),
     'grass':         dict(size=(1024, 1024), cell=512, seamX=True, seamY=True, zones=[], alpha=False, cells=(2, 2)),
     'garden_edge':   dict(size=(2048, 512), cell=512, seamX=True, seamY=False, zones=[('green', 0, 72)], alpha=False, cells=(4, 1)),
+    'resume_card':   dict(size=(1536, 384), cell=384, seamX=False, seamY=False, zones=[('rose', 0, 0), ('gold', 'border', 40), ('blue', 'leftend', 240)], alpha=True, cells=(4, 1)),
     'garden_fence':  dict(size=(2048, 1024), cell=512, seamX=True, seamY=False, zones=[('blue', 'posts', [512, 1536])], alpha=True, cells=(4, 2)),
 }
 spec = {'slope': 0.65, 'note': '조각은 평면 그림. cells=그림 한 장이 덮는 칸 수(가로, 세로). 벽 높이 6칸, 기둥 1칸 폭.', 'pieces': {}}
@@ -36,10 +37,12 @@ for pid, p in PIECES.items():
             b = z[2]; o.rectangle([0, 0, W, H], fill=col); o.rectangle([b, b, W - b, H - b], fill=(0, 0, 0, 0))
         elif z[1] == 'vlines':
             for x in z[2]: o.rectangle([x - 14, 0, x + 14, H], fill=col)
+        elif z[1] == 'leftend':
+            o.rectangle([0, 0, z[2], H], fill=col)
         elif z[1] == 'posts':
             for x in z[2]: o.rectangle([x - 70, 120, x + 70, H], fill=col)
             o.rectangle([0, 200, W, 260], fill=ZONE['gold']); o.rectangle([0, H - 140, W, H], fill=ZONE['gold'])
-        else:
+        elif z[2] > z[1]:
             o.rectangle([0, z[1], W, z[2]], fill=col)
     im.alpha_composite(ov); d = ImageDraw.Draw(im)
     if p['seamX']:
