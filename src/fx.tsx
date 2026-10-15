@@ -35,11 +35,12 @@ export function ThemePreview({ id }: { id: string }) {
   const t = BOARD_THEMES[id];
   if (!t) return null;
   return (
-    <div className={`board themed theme-preview${t.dark ? ' dark' : ''}`} role="img" aria-label={`${t.name} 미리보기`}
-      style={{ ['--n' as any]: 3, ['--br' as any]: 3, ['--bc' as any]: 3, ['--size' as any]: '132px', ...themeVars(t) }}>
-      {SAMPLE.map((v, i) => (
-        <span key={i} className={`cell${v ? ' given' : ''}${i === 4 ? ' same' : ''}`}>{v || SAMPLE_ENTRY[i] || ''}</span>
-      ))}
+    <div className="tablet themed-frame theme-preview" role="img" aria-label={`${t.name} 미리보기`} style={themeVars(id, t, asset(''))}>
+      <div className={`board themed${t.dark ? ' dark' : ''}`} style={{ ['--n' as any]: 3, ['--br' as any]: 3, ['--bc' as any]: 3, ['--size' as any]: '116px' }}>
+        {SAMPLE.map((v, i) => (
+          <span key={i} className={`cell${v ? ' given' : ''}${i === 4 ? ' same' : ''}`}>{v || SAMPLE_ENTRY[i] || ''}</span>
+        ))}
+      </div>
     </div>
   );
 }

@@ -443,10 +443,14 @@ textarea { resize: vertical; }
 .fx-box strong { font-family: var(--font-title); }
 
 /* ---------- 4티어 테마판: 색·선·구역마다 옅은 상징 ---------- */
-.board.themed {
-  background: var(--t-motif) 0 0 / calc(100% * var(--bc) / var(--n)) calc(100% * var(--br) / var(--n)) repeat, var(--t-bg);
-  border-color: var(--t-box);
+.board.themed { position: relative; background: var(--t-bg); border-color: var(--t-box); }
+/* 구역마다 상징 하나(그림 자체는 진하므로 화면에서 옅게) */
+.board.themed::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .22;
+  background: var(--t-emblem) 0 0 / calc(100% * var(--bc) / var(--n)) calc(100% * var(--br) / var(--n)) repeat;
 }
+.board.themed.dark::before { opacity: .3; }
+.tablet.themed-frame { border-image-source: var(--t-frame); }
 .themed .cell { color: var(--t-entry); border-right-color: var(--t-line); border-bottom-color: var(--t-line); }
 .themed .cell.bR { border-right-color: var(--t-box); }
 .themed .cell.bB { border-bottom-color: var(--t-box); }
@@ -457,7 +461,7 @@ textarea { resize: vertical; }
 .themed .notes { color: color-mix(in srgb, var(--t-given) 70%, transparent); }
 .themed.dark .cell.bad, .themed.dark .bad-mark { color: #FF9C8C; text-decoration-color: #FF9C8C; }
 .themed.dark .cell.wrong::after { border-color: #FF9C8C; }
-.theme-preview { --size: 132px; flex: none; }
+.tablet.theme-preview { flex: none; margin: 0; border-width: 12px; border-image-width: 12px; }
 .theme-preview .cell { cursor: default; }
 
 /* ---------- 그림 없는 보물 24개: 판 효과(.tfx-<보물 id>). 움직임은 한 번만, 0.6초 안쪽 ---------- */

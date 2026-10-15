@@ -357,9 +357,9 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
         <span className={`save-state ${status}`} role="status"><StatusIcon size={18} aria-hidden />{statusText}</span>
       </header>
 
-      <div className="tablet">
+      <div className={`tablet${theme ? ' themed-frame' : ''}`} style={theme ? themeVars(state!.profile.avatar_id, theme, asset('')) : undefined}>
       <div className={`board${theme ? ' themed' : ''}${theme?.dark ? ' dark' : ''}`} role="grid" aria-label={`${n}×${n} 스도쿠 판`}
-        style={{ ['--n' as any]: n, ['--br' as any]: g.boxR, ['--bc' as any]: g.boxC, ...(theme ? themeVars(theme) : {}) }}>
+        style={{ ['--n' as any]: n, ['--br' as any]: g.boxR, ['--bc' as any]: g.boxC }}>
         {cur.board.map((v, i) => {
           const r = rowOf(n, i), c = colOf(n, i);
           const cls = ['cell'];
