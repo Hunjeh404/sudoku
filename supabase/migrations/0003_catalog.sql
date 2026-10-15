@@ -1,10 +1,10 @@
 -- 자동 생성: npm run gen:catalog (src/data/catalog.ts가 원본)
 insert into public.item_catalog (id,kind,name_ko,price,surface,fw,fh,blocking,spaces,supports,unlock_step,sort) values
-('cloud_bed','furniture','구름 침대',60,'floor',2,3,true,array['room']::text[],array[]::text[],3,0),
+('cloud_bed','furniture','구름 침대',60,'floor',3,2,true,array['room']::text[],array[]::text[],3,0),
 ('cloud_cushion','furniture','구름 쿠션',20,'floor',1,1,true,array['room','garden']::text[],array[]::text[],0,1),
 ('display_pedestal','furniture','보물 받침대',60,'floor',1,1,true,array['room','garden']::text[],array['artifact']::text[],0,2),
 ('garden_trellis','furniture','꽃 아치',60,'floor',3,1,true,array['garden']::text[],array[]::text[],5,3),
-('laurel_bench','furniture','월계수 벤치',60,'floor',3,1,true,array['room','garden']::text[],array[]::text[],0,4),
+('laurel_bench','furniture','월계수 벤치',60,'floor',1,3,true,array['room','garden']::text[],array[]::text[],0,4),
 ('laurel_door','furniture','월계수 문',60,'wallRight',2,1,false,array['room']::text[],array[]::text[],0,5),
 ('laurel_rug','furniture','월계수 러그',60,'rug',3,2,false,array['room']::text[],array[]::text[],0,6),
 ('linen_curtain','furniture','리넨 커튼',60,'wallRight',2,1,false,array['room']::text[],array[]::text[],3,7),

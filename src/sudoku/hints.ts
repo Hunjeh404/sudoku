@@ -1,5 +1,6 @@
 // 현재 보드에서 실제로 성립하는 논리로 4단계 힌트를 만든다. 생성형 AI 없이 규칙으로만.
 import { Board, Size, geometry, conflicts, rowOf, colOf, countSolutions } from './engine';
+import { josa } from '../lib/josa';
 import { Step, makeState, nextStep, applyStep, TECH_NAME_KO, Technique } from './logic';
 
 export interface Hint {
@@ -19,9 +20,9 @@ export function unitLabel(n: Size, ui: number): string {
   return `${ui - 2 * n + 1}번 상자`;
 }
 export function cellLabel(n: Size, cell: number): string {
-  return `가로줄 ${rowOf(n, cell) + 1}·세로줄 ${colOf(n, cell) + 1} 칸`;
+  return `가로줄 ${rowOf(n, cell) + 1}, 세로줄 ${colOf(n, cell) + 1} 칸`;
 }
-const listDigits = (ds: number[]) => ds.join(', ');
+const listDigits = (ds: (number | string)[]) => ds.join(', ');
 
 export function describeStep(n: Size, st: Step, sym: (d: number) => string = String): string {
   const u0 = st.units[0] !== undefined ? unitLabel(n, st.units[0]) : '';
@@ -32,20 +33,20 @@ export function describeStep(n: Size, st: Step, sym: (d: number) => string = Str
       return `${cellLabel(n, c)}은 같은 가로줄·세로줄·상자에 다른 숫자가 모두 있어서 들어갈 수 있는 숫자가 ${ds[0]} 하나뿐이에요.`;
     }
     case 'hiddenSingle':
-      return `${u0}에서 ${ds[0]}이(가) 들어갈 수 있는 칸은 ${cellLabel(n, st.placement!.cell)} 하나뿐이에요. 다른 빈칸은 같은 줄이나 상자에 이미 ${ds[0]}이(가) 있어요.`;
+      return `${u0}에서 ${josa(ds[0], '이/가')} 들어갈 수 있는 칸은 ${cellLabel(n, st.placement!.cell)} 하나뿐이에요. 다른 빈칸은 같은 줄이나 상자에 이미 ${josa(ds[0], '이/가')} 있어요.`;
     case 'pointing':
-      return `${unitLabel(n, st.units[0])}에서 ${ds[0]}은(는) ${unitLabel(n, st.units[1])} 위의 칸에만 들어갈 수 있어요. 그래서 ${unitLabel(n, st.units[1])}에서 이 상자 바깥 칸에는 ${ds[0]}이(가) 올 수 없어요.`;
+      return `${unitLabel(n, st.units[0])}에서 ${josa(ds[0], '은/는')} ${unitLabel(n, st.units[1])} 위의 칸에만 들어갈 수 있어요. 그래서 ${unitLabel(n, st.units[1])}에서 이 상자 바깥 칸에는 ${josa(ds[0], '이/가')} 올 수 없어요.`;
     case 'claiming':
-      return `${unitLabel(n, st.units[0])}에서 ${ds[0]}은(는) ${unitLabel(n, st.units[1])} 안의 칸에만 들어갈 수 있어요. 그래서 그 상자의 다른 칸에는 ${ds[0]}이(가) 올 수 없어요.`;
+      return `${unitLabel(n, st.units[0])}에서 ${josa(ds[0], '은/는')} ${unitLabel(n, st.units[1])} 안의 칸에만 들어갈 수 있어요. 그래서 그 상자의 다른 칸에는 ${josa(ds[0], '이/가')} 올 수 없어요.`;
     case 'nakedPair':
     case 'nakedTriple':
       return `${u0}의 ${st.cells.length}칸(${st.cells.map((c) => cellLabel(n, c)).join(', ')})에는 ${listDigits(ds)}만 들어갈 수 있어요. 이 숫자들은 그 칸들이 나눠 가지니까 같은 줄의 다른 칸에는 올 수 없어요.`;
     case 'hiddenPair':
     case 'hiddenTriple':
-      return `${u0}에서 ${listDigits(ds)}은(는) ${st.cells.map((c) => cellLabel(n, c)).join(', ')}에만 들어갈 수 있어요. 그러니 그 칸들에는 다른 숫자가 올 수 없어요.`;
+      return `${u0}에서 ${josa(listDigits(ds), '은/는')} ${st.cells.map((c) => cellLabel(n, c)).join(', ')}에만 들어갈 수 있어요. 그러니 그 칸들에는 다른 숫자가 올 수 없어요.`;
     case 'xWing': {
       const [a, b, c, d] = st.units;
-      return `${ds[0]}은(는) ${unitLabel(n, a)}과 ${unitLabel(n, b)}에서 각각 같은 두 자리에만 들어갈 수 있어요. 네모 모양으로 짝이 맞으니 ${unitLabel(n, c)}과 ${unitLabel(n, d)}의 다른 칸에는 ${ds[0]}이(가) 올 수 없어요.`;
+      return `${josa(ds[0], '은/는')} ${josa(unitLabel(n, a), '과/와')} ${unitLabel(n, b)}에서 각각 같은 두 자리에만 들어갈 수 있어요. 네모 모양으로 짝이 맞으니 ${josa(unitLabel(n, c), '과/와')} ${unitLabel(n, d)}의 다른 칸에는 ${josa(ds[0], '이/가')} 올 수 없어요.`;
     }
   }
 }

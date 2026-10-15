@@ -29,11 +29,11 @@ const T = (id: string, nameKo: string, unlockStep: number, interaction: string, 
 
 const BOTH: Space[] = ['room', 'garden'];
 export const ITEMS: Item[] = [
-  F('cloud_bed', '구름 침대', 60, 'floor', 2, 3, true, ['room'], 3, 'bed_bounce', '눌러 보면 폭신하게 눌렸다 돌아와요.'),
+  F('cloud_bed', '구름 침대', 60, 'floor', 3, 2, true, ['room'], 3, 'bed_bounce', '눌러 보면 폭신하게 눌렸다 돌아와요.'),
   F('cloud_cushion', '구름 쿠션', 20, 'floor', 1, 1, true, BOTH, 0, 'cushion_squish', '말랑말랑한 구름 쿠션.'),
   F('display_pedestal', '보물 받침대', 60, 'floor', 1, 1, true, BOTH, 0, 'exhibit_panel', '보물을 하나 올려 전시해요.', ['artifact']),
   F('garden_trellis', '꽃 아치', 60, 'floor', 3, 1, true, ['garden'], 5, 'flower_glimmer', '등나무 꽃이 핀 아치.'),
-  F('laurel_bench', '월계수 벤치', 60, 'floor', 3, 1, true, BOTH, 0, 'bench_bounce', '앉으면 별빛이 반짝.'),
+  F('laurel_bench', '월계수 벤치', 60, 'floor', 1, 3, true, BOTH, 0, 'bench_bounce', '앉으면 별빛이 반짝.'),
   F('laurel_door', '월계수 문', 60, 'wallRight', 2, 1, false, ['room'], 0, 'door_chime', '문을 두드리면 친구 집 목록이 열려요.'),
   F('laurel_rug', '월계수 러그', 60, 'rug', 3, 2, false, ['room'], 0, 'soft_sparkle', '월계수 무늬를 따라 빛이 돌아요.'),
   F('linen_curtain', '리넨 커튼', 60, 'wallRight', 2, 1, false, ['room'], 3, 'curtain_glimmer', '커튼 사이로 햇살이 들어와요.'),

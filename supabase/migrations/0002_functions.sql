@@ -72,9 +72,9 @@ begin
                ('owl_mailbox', 1), ('display_pedestal', 1), ('laurel_bench', 1), ('treasure_chest', 1)) as i(item, q);
   insert into public.homes (profile_id, room_layout, garden_layout) values (p,
     '[{"uid":"r1","item":"laurel_rug","x":4,"y":4},
-      {"uid":"r2","item":"tea_table","x":5,"y":5},
-      {"uid":"r3","item":"round_stool","x":7,"y":5},
-      {"uid":"r4","item":"cloud_cushion","x":4,"y":5},
+      {"uid":"r2","item":"tea_table","x":5,"y":4},
+      {"uid":"r3","item":"round_stool","x":8,"y":5},
+      {"uid":"r4","item":"cloud_cushion","x":2,"y":6},
       {"uid":"r5","item":"laurel_door","x":8},
       {"uid":"r6","item":"display_pedestal","x":1,"y":1},
       {"uid":"r7","item":"treasure_chest","x":9,"y":1}]'::jsonb,

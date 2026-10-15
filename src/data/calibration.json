@@ -1,0 +1,72 @@
+{
+ "note": "배치 보정값. floorCornersPx는 배경 그림 픽셀(1254 기준) back/right/front/left. items: scale(발자국 폭 대비 배율), dx/dy(배경 픽셀 이동), slot(받침 위 물건 위치, 가구 그림 픽셀 기준).",
+ "environments": {
+  "room_base": {
+   "floorCornersPx": [
+    [
+     633,
+     460
+    ],
+    [
+     1130,
+     738
+    ],
+    [
+     625,
+     1100
+    ],
+    [
+     125,
+     738
+    ]
+   ]
+  },
+  "garden_base": {
+   "floorCornersPx": [
+    [
+     627,
+     262
+    ],
+    [
+     1105,
+     568
+    ],
+    [
+     627,
+     880
+    ],
+    [
+     148,
+     568
+    ]
+   ]
+  }
+ },
+ "items": {
+  "display_pedestal": {
+   "slot": {
+    "dx": 0,
+    "dy": -470
+   }
+  },
+  "tea_table": {
+   "scale": 0.9,
+   "slot": {
+    "dx": -190,
+    "dy": -400
+   }
+  },
+  "picture_frame": {
+   "scale": 0.6
+  },
+  "cloud_bed": {
+   "scale": 0.85
+  },
+  "scroll_bookcase": {
+   "scale": 0.85
+  },
+  "treasure_chest": {
+   "scale": 0.9
+  }
+ }
+}
