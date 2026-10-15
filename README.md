@@ -11,8 +11,8 @@
 
 ### 1. Supabase에 데이터베이스 만들기
 1. Supabase 대시보드 → SQL Editor → New query
-2. `supabase/setup-all.sql` 전체를 붙여 넣고 Run. (마이그레이션 0001~0011을 순서대로 합친 파일)
-   이미 0007까지 실행한 프로젝트는 0008·0009를, 0009까지 실행한 프로젝트는 `0010_treasures_badge.sql`, `0011_treasure_data.sql`을 차례로 실행한다.
+2. `supabase/setup-all.sql` 전체를 붙여 넣고 Run. (마이그레이션 0001~0012를 순서대로 합친 파일)
+   이미 0007까지 실행한 프로젝트는 0008·0009를, 0009까지 실행한 프로젝트는 `0010_treasures_badge.sql`, `0011_treasure_data.sql`을, 0011까지 실행한 프로젝트는 `0012_server_timing.sql`을 실행한다.
 3. 같은 SQL을 다시 실행하면 `already exists` 오류가 난다. 처음부터 다시 하려면 새 프로젝트를 쓰는 편이 안전하다.
 
 ### 2. 구글 로그인 연결
@@ -37,7 +37,7 @@
 | `src/sudoku/` | 규칙·유일해(engine), 논리 기법 풀이(logic), 4단계 힌트(hints), 문제 생성(generate) |
 | `src/screens/` | 시작·프로필, 홈, 스도쿠·결과, 순위, 친구(소식·이모티콘·이메일 요청), 도감(초상화 상점·이야기책), 설정·우편함, 여정·선물 |
 | `src/data/catalog.ts` | 초상화 티어·가격, 여정 12단계, 칭호, 보상, 순위표 종류, 이모티콘(서버 데이터 SQL의 원본) |
-| `supabase/migrations/` | 0001 스키마·RLS, 0002 서버 함수, 0005 문제 은행(252문제), 0007 힌트 감점, 0008 초상화·점수·순위·친구·소식, 0009 초상화 목록·여정·기존 사용자 옮기기, 0010 보물 상점·프로필 보물, 0011 보물 목록 (0003·0006은 예전 집 꾸미기용) |
+| `supabase/migrations/` | 0001 스키마·RLS, 0002 서버 함수, 0005 문제 은행(252문제), 0007 힌트 감점, 0008 초상화·점수·순위·친구·소식, 0009 초상화 목록·여정·기존 사용자 옮기기, 0010 보물 상점·프로필 보물, 0011 보물 목록, 0012 걸린 시간을 서버 시계로 (0003·0006은 예전 집 꾸미기용) |
 | `public/assets/` | 게임용 WebP(인물 224px, 장면 900px, 스도쿠 장식)와 96kbps 음악 |
 | `public/sw.js` | 그림·데이터를 기기에 저장하는 서비스워커(재방문 시 전송량 감소) |
 | `tests/` | 엔진 단위 테스트, DB 권한·거래 테스트, 기존 DB 옮기기 테스트, 로컬 E2E |
@@ -50,7 +50,7 @@
 
 ## 테스트
 - `npm test`: 스도쿠 엔진·힌트 11개
-- `tests/db/reset.sh && npm run test:db`: 로컬 Postgres에 Supabase 역할·auth 흉내(`tests/db/supabase-stub.sql`) + 마이그레이션 적용 후 권한·거래 24개
+- `tests/db/reset.sh && npm run test:db`: 로컬 Postgres에 Supabase 역할·auth 흉내(`tests/db/supabase-stub.sql`) + 마이그레이션 적용 후 권한·거래 25개
 - 로컬 E2E: `DB=olympus_e2e tests/db/reset.sh`, `sh tests/e2e/gw.sh`(로그인·RPC 흉내 게이트웨이), `tests/e2e/rebuild.sh`, `npx vite preview --outDir dist-local --port 4173`, `npx tsx tests/e2e/flow.ts`
 
 - 기존 DB 옮기기: `DB=olympus_legacy UNTIL=0007_z sh tests/db/reset.sh && DB=olympus_legacy npx tsx tests/db/legacy-check.ts`

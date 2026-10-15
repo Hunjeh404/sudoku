@@ -78,8 +78,11 @@ export const secText = (sec: number) => {
   return m ? (s ? `${m}분 ${s}초` : `${m}분`) : `${s}초`;
 };
 
-/** 친구 소식 한 줄 */
+/** 친구 소식 한 줄(마침표까지) */
 export function activityText(kind: string, p: any) {
+  return activityPhrase(kind, p) + '.';
+}
+export function activityPhrase(kind: string, p: any) {
   if (kind === 'clears') return `스도쿠 ${p.count}판을 끝냈어요`;
   if (kind === 'points') return `누적 점수 ${p.points.toLocaleString()}점을 넘었어요`;
   if (kind === 'record') return `${boardName(p.size, p.difficulty)} 자기 기록을 ${josa(secText(p.sec), '으로/로')} 앞당겼어요 (전 기록 ${secText(p.prev)})`;

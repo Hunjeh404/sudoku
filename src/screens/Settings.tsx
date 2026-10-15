@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useGame } from '../lib/store';
 import { rpc, ApiError } from '../lib/api';
 import { TITLES } from '../data/catalog';
-import { Sheet, Avatar, ErrorLine, Spinner, timeAgo, activityText, tierOf } from '../ui';
+import { Sheet, Avatar, ErrorLine, Spinner, timeAgo, activityPhrase, tierOf } from '../ui';
 import { CreateProfile } from './Entry';
 
 export function SettingsSheet({ onClose }: { onClose: () => void }) {
@@ -95,7 +95,7 @@ export function MailSheet({ onClose }: { onClose: () => void }) {
   const text = (m: any) => {
     if (m.kind === 'friend_request') return `${m.payload.nickname}님이 친구 요청을 보냈어요`;
     if (m.kind === 'friend_accepted') return `${m.payload.nickname}님이 친구 요청을 수락했어요. 이제 서로의 소식이 보여요`;
-    if (m.kind === 'reaction') return `${m.payload.nickname}님이 내 소식「${activityText(m.payload.activity_kind, m.payload.activity)}」에 ${m.payload.emoji}를 달았어요`;
+    if (m.kind === 'reaction') return `${m.payload.nickname}님이 내 소식「${activityPhrase(m.payload.activity_kind, m.payload.activity)}」에 ${m.payload.emoji}를 달았어요`;
     if (m.kind === 'invite_accepted') return `${m.payload.nickname}님이 같이 쓰기 코드를 받아 아이 프로필을 함께 쓰게 되었어요`;
     return '새 소식이 있어요';
   };

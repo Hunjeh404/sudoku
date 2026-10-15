@@ -96,6 +96,8 @@ async function solveCurrent(p: Page) {
     if ((await balanceOf('아빠')) !== 59) throw new Error('balance after 3 ' + (await balanceOf('아빠')));
     ok('3판째 여정 보상 별빛 30 (잔액 59)');
     await tabTo(a, '도감');
+    if (!(await a.locator('.chips .chip').first().innerText()).startsWith('내 초상화')) throw new Error('mine chip not first');
+    await a.getByRole('button', { name: /^1티어/ }).click();
     await a.locator('.dex-card:not(.owned)').first().click();
     await a.getByRole('button', { name: /✦ 20로 모으기/ }).click();
     await a.getByRole('button', { name: '내 초상화로 쓰기' }).click();

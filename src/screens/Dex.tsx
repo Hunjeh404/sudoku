@@ -6,7 +6,7 @@ import { rpc, newOpId, ApiError } from '../lib/api';
 import { loadPeople, loadStories, Person } from '../lib/content';
 import { TIERS, tierOfCat, JOURNEY, TREASURE_PRICE } from '../data/catalog';
 import { StoriesPanel } from './Stories';
-import { Sheet, Spinner, ErrorLine, Avatar } from '../ui';
+import { Sheet, Spinner, ErrorLine, Avatar, tierOf } from '../ui';
 import { sfx } from '../lib/sound';
 import { josa } from '../lib/josa';
 
@@ -17,7 +17,8 @@ export function DexScreen() {
   const [tab, setTab] = useState<'people' | 'art' | 'book'>('people');
   const [people, setPeople] = useState<Person[] | null>(null);
   const [err, setErr] = useState(false);
-  const [filter, setFilter] = useState<Filter>(1);
+  // 처음엔 내 초상화(가진 게 없으면 1티어)
+  const [filter, setFilter] = useState<Filter>(() => (state!.owned.some((id) => (tierOf(id) ?? 0) >= 1) ? 'mine' : 1));
   const [q, setQ] = useState('');
   const [open, setOpen] = useState<Person | null>(null);
   const [reading, setReading] = useState(false);
@@ -36,7 +37,6 @@ export function DexScreen() {
     // 가진 것이 먼저, 그다음 아직 없는 것(각각 원래 순서)
     return [...list.filter((p) => owned.has(p.id)), ...list.filter((p) => !owned.has(p.id))];
   }, [people, tab, filter, q, owned]);
-  const ownedTreasures = people ? people.filter((p) => p.cat === 'art' && owned.has(p.id)).length : 0;
   const tierInfo = typeof filter === 'number' ? TIERS[filter - 1] : null;
   const opensAt = (t: number) => JOURNEY.find((j) => j.reward.tier === t)?.need;
   return (
@@ -59,21 +59,16 @@ export function DexScreen() {
           {tab === 'people' && !q && (
             <>
               <div className="chips" role="group" aria-label="티어">
+                <button className={`chip${filter === 'mine' ? ' on' : ''}`} aria-pressed={filter === 'mine'} onClick={() => setFilter('mine')}>내 초상화 {state!.owned.filter((id) => tierOfCat(people?.find((x) => x.id === id)?.cat ?? '') !== null).length}</button>
                 {TIERS.map((t) => (
                   <button key={t.tier} className={`chip${filter === t.tier ? ' on' : ''}`} aria-pressed={filter === t.tier} onClick={() => setFilter(t.tier)}>
                     {!tierOpen(state!, t.tier) && <IconLock size={14} aria-label="잠김" />}{t.tier}티어 {t.name}
                   </button>
                 ))}
-                <button className={`chip${filter === 'mine' ? ' on' : ''}`} aria-pressed={filter === 'mine'} onClick={() => setFilter('mine')}>내 초상화 {state!.owned.filter((id) => tierOfCat(people?.find((x) => x.id === id)?.cat ?? '') !== null).length}</button>
               </div>
-              {tierInfo && (
-                <p className="fine">{tierOpen(state!, tierInfo.tier)
-                  ? `한 장에 별빛 ${tierInfo.price}. 지금 별빛 ${state!.balance}.`
-                  : `여정 ${opensAt(tierInfo.tier)}판에서 열려요. 그때부터 한 장에 별빛 ${tierInfo.price}로 모을 수 있어요.`}</p>
-              )}
+              {tierInfo && !tierOpen(state!, tierInfo.tier) && <p className="fine">여정 {opensAt(tierInfo.tier)}판에서 열려요.</p>}
             </>
           )}
-          {tab === 'art' && <p className="fine">보물은 티어 없이 하나에 별빛 {TREASURE_PRICE}. 산 보물은 내 초상화 오른쪽 아래에 달려요. 모은 보물 {ownedTreasures}개.</p>}
           {err && <ErrorLine msg="도감을 불러오지 못했어요." />}
           {!people && !err && <Spinner />}
           <ul className="dex-grid">

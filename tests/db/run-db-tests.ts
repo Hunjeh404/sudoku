@@ -49,11 +49,12 @@ async function solveAttempt(u: Awaited<ReturnType<typeof user>>, profile: string
   const A = await user('a@test'); const B = await user('b@test'); const C = await user('Grandma.C@test'); const E = await user('e@test');
   let pa = '', pb = '', pc = '', pe = '', kid = '';
   const setCount = (p: string, n: number) => admin.query('update public.quest_progress set completed_count = $2 where profile_id = $1', [p, n]);
-  const finish = async (u: typeof A, p: string, opts: { size?: number; diff?: string; hints?: number; elapsed?: number; ago?: string } = {}) => {
+  const finish = async (u: typeof A, p: string, opts: { size?: number; diff?: string; hints?: number; elapsed?: number } = {}) => {
     const { a, sol } = await solveAttempt(u, p, opts.size ?? 4, opts.diff ?? 'intro');
     if (opts.hints) await u.rpc('save_attempt', { attempt: a.id, expected_revision: a.revision, board: a.givens, notes: {}, hints_used: opts.hints, op_id: randomUUID() });
-    await admin.query(`update public.puzzle_attempts set started_at = now() - $2::interval where id = $1`, [a.id, opts.ago ?? '1 hour']);
-    return u.rpc('complete_attempt', { attempt: a.id, board: sol, op_id: randomUUID(), elapsed_sec: opts.elapsed ?? 300 });
+    // 서버가 잰 푼 시간을 흉내: 쌓인 구간 = elapsed, 열린 구간 없음
+    await admin.query(`update public.puzzle_attempts set played_sec = $2, active_since = null where id = $1`, [a.id, opts.elapsed ?? 300]);
+    return u.rpc('complete_attempt', { attempt: a.id, board: sol, op_id: randomUUID() });
   };
 
   console.log('프로필·가족');
@@ -207,16 +208,29 @@ async function solveAttempt(u: Awaited<ReturnType<typeof user>>, profile: string
     assert(r3.record?.prev === 300 && r3.record.sec === 120, 'better');
     const r4 = await finish(E, pe, { elapsed: 60, hints: 1 });
     assert(r4.record === null, 'hint no record');
-    const r5 = await finish(E, pe, { elapsed: 5000, ago: '2 minutes' });
-    assert(r5.elapsed <= 121, 'clamped to wall clock ' + r5.elapsed);
     const s = await E.rpc('get_state', { p: pe });
     assert(s.records['4:intro'] === 120, 'records ' + JSON.stringify(s.records));
     const acts = await admin.query(`select kind from public.activities where profile_id = $1`, [pe]);
     assert(acts.rows.filter((x: any) => x.kind === 'record').length === 1, 'one record news');
   });
+  await check('걸린 시간은 서버 시계: 연 구간만 더하고, 기기가 보낸 시간은 무시', async () => {
+    const { a, sol } = await solveAttempt(B, pb);
+    await B.rpc('open_attempt', { attempt: a.id });
+    await admin.query(`update public.puzzle_attempts set active_since = now() - interval '90 seconds' where id = $1`, [a.id]);
+    const p1 = await B.rpc('pause_attempt', { attempt: a.id });
+    assert(p1.played_sec >= 89 && p1.played_sec <= 92, 'pause ' + p1.played_sec);
+    // 나가 있던 시간은 안 셈: 다시 열고 40초 풀었다가, 앱을 그냥 닫음(마지막 저장은 열고 30초 뒤)
+    await B.rpc('open_attempt', { attempt: a.id });
+    await admin.query(`update public.puzzle_attempts set active_since = now() - interval '2 hours', updated_at = now() - interval '2 hours' + interval '30 seconds' where id = $1`, [a.id]);
+    const o = await B.rpc('open_attempt', { attempt: a.id });
+    assert(o.played_sec >= 119 && o.played_sec <= 122, 'stale segment counts to last save ' + o.played_sec);
+    await admin.query(`update public.puzzle_attempts set active_since = now() - interval '10 seconds' where id = $1`, [a.id]);
+    const r = await B.rpc('complete_attempt', { attempt: a.id, board: sol, op_id: randomUUID(), elapsed_sec: 3 });
+    assert(r.elapsed >= 129 && r.elapsed <= 133, 'server time, not client ' + r.elapsed);
+  });
   await check('판 수 10판·누적 점수 100 소식', async () => {
     await setCount(pe, 9);
-    await admin.query(`update public.score_events set points = points + 50 where id = (select max(id) from public.score_events where profile_id = $1)`, [pe]);
+    await admin.query(`update public.score_events set points = points + 60 where id = (select max(id) from public.score_events where profile_id = $1)`, [pe]);
     await finish(E, pe);
     const acts = await admin.query(`select kind, payload from public.activities where profile_id = $1 order by id`, [pe]);
     assert(acts.rows.some((x: any) => x.kind === 'clears' && x.payload.count === 10), 'clears');
@@ -224,7 +238,7 @@ async function solveAttempt(u: Awaited<ReturnType<typeof user>>, profile: string
   });
   await check('순위: 통합·난이도별·이번 주, 상위 목록과 내 순위', async () => {
     const all = await B.rpc('get_leaderboard', { p: pb, board: 'all', period: 'all' });
-    assert(all.rows[0].id === pe && all.rows.some((r: any) => r.id === pa) && all.me?.points === 21, 'all ' + JSON.stringify(all.me));
+    assert(all.rows[0].id === pe && all.rows.some((r: any) => r.id === pa) && all.me?.points === 31, 'all ' + JSON.stringify(all.me));
     assert(!JSON.stringify(all).includes('@'), 'no email');
     assert(all.rows[0].badge === 'lyre', 'badge in leaderboard');
     const nine = await A.rpc('get_leaderboard', { p: pa, board: '9e', period: 'all' });

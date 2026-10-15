@@ -121,19 +121,22 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
   const dirty = useRef(false);
   const timer = useRef<number | undefined>(undefined);
   const opRef = useRef(newOpId());
-  // 푼 시간: 화면을 보고 있는 동안만 센다(기기에 보관해 이어 풀어도 이어짐). 자기 기록에 쓴다.
-  const elKey = `el:${profileId}:${attempt.id}`;
-  const [seconds, setSeconds] = useState(() => getLocal<number>(elKey, 0));
+  // 푼 시간은 서버가 잰다: 화면을 열면 open_attempt(서버가 시작 시각 저장), 나가거나 화면을 내리면 pause_attempt.
+  // 여기 seconds는 화면에 보여 주는 용도뿐(서버가 알려 준 쌓인 시간에서 이어 센다).
+  const [seconds, setSeconds] = useState(0);
   const picture = n === 4 && settings.pictureMode;
   const sym = (d: number) => (picture ? PICTURE_KO[d - 1] : String(d));
 
   useEffect(() => {
-    const t = window.setInterval(() => {
-      if (document.visibilityState !== 'visible') return;
-      setSeconds((s) => { setLocal(elKey, s + 1); return s + 1; });
-    }, 1000);
-    return () => window.clearInterval(t);
-  }, [elKey]);
+    const open = () => rpc<{ played_sec: number }>('open_attempt', { attempt: attempt.id }).then((r) => setSeconds(r.played_sec)).catch(() => {});
+    const pause = () => rpc('pause_attempt', { attempt: attempt.id }).catch(() => {});
+    open();
+    const onVis = () => (document.visibilityState === 'visible' ? open() : pause());
+    document.addEventListener('visibilitychange', onVis);
+    const t = window.setInterval(() => { if (document.visibilityState === 'visible') setSeconds((x) => x + 1); }, 1000);
+    // 화면을 떠날 때(뒤로 가기 포함)도 구간을 닫는다. 끝난 판이면 서버가 무시한다.
+    return () => { document.removeEventListener('visibilitychange', onVis); window.clearInterval(t); pause(); };
+  }, [attempt.id]);
 
   const pushServer = useCallback(async () => {
     if (!dirty.current) return;
@@ -255,8 +258,8 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
     // 힌트 사용 기록이 서버에 먼저 반영되도록 마지막 진행을 저장(무힌트 배지 판정)
     if (dirty.current) await pushServer();
     try {
-      const r = await rpc('complete_attempt', { attempt: attempt.id, board: boardToString(cur.board), op_id: opRef.current, elapsed_sec: Math.max(1, seconds) });
-      delLocal(localKey); delLocal(elKey);
+      const r = await rpc('complete_attempt', { attempt: attempt.id, board: boardToString(cur.board), op_id: opRef.current });
+      delLocal(localKey);
       sfx.success();
       onComplete(r);
     } catch (e) {
@@ -294,7 +297,7 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
   return (
     <div className={`puzzle n${n}`}>
       <header className="puzzle-head">
-        <button className="icon-btn" aria-label="나가기" onClick={async () => { await pushServer(); onExit(); }}><IconArrowLeft /></button>
+        <button className="icon-btn" aria-label="나가기" onClick={async () => { await pushServer(); await rpc('pause_attempt', { attempt: attempt.id }).catch(() => {}); onExit(); }}><IconArrowLeft /></button>
         <div className="grow"><strong>{n}×{n} {DIFF_KO[attempt.difficulty]}</strong>
           {settings.showTimer && <small> {mmss(seconds)}</small>}</div>
         <span className={`save-state ${status}`} role="status"><StatusIcon size={18} aria-hidden />{statusText}</span>
