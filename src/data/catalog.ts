@@ -81,6 +81,9 @@ export const JOURNEY: JourneyStep[] = [
   { step: 12, title: '올림포스 정원사', desc: '정원사 배지와 별 모빌을 받아요.', reward: { unlock: ['badge:gardener'], items: { star_mobile: 1 } } },
 ];
 
+// 힌트: 한 판에 10번까지, 한 번마다 완료 보상 10%씩 줄어듦(서버 0007_hint_penalty.sql과 같아야 함)
+export const HINT_MAX = 10;
+
 export const REWARD_RULES: { size: number; difficulty: string; amount: number }[] = [
   { size: 4, difficulty: 'intro', amount: 10 },
   { size: 6, difficulty: 'intro', amount: 20 },

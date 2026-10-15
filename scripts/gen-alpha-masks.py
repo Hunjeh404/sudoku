@@ -6,9 +6,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 N = 64
 out = {}
 srcs = {}
-pack = os.path.join(ROOT, 'assets-src', 'quarterview-v1', 'images', 'furniture')
+pack = os.path.join(ROOT, 'public', 'assets', 'furniture')  # 게임용 WebP(좌우 뒤집기 반영본)
 for f in os.listdir(pack):
-    srcs[f[:-4]] = os.path.join(pack, f)
+    srcs[f[:-5]] = os.path.join(pack, f)
 tre = os.path.join(ROOT, 'public', 'assets', 'treasure')
 for f in os.listdir(tre):
     srcs[f[:-5]] = os.path.join(tre, f)

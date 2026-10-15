@@ -83,19 +83,21 @@ async function solveCurrent(p: Page) {
     await a.waitForSelector('text=다 풀었어요!', { timeout: 10000 });
     await shot(a, 'A-result');
     const bal = await db.query(`select balance from public.wallets w join public.profiles p on p.id = w.profile_id where p.nickname = '아빠'`);
-    if (bal.rows[0].balance !== 10) throw new Error('balance ' + bal.rows[0].balance);
-    ok('서버 검증 후 별빛 +10 (DB 잔액 10)');
+    if (bal.rows[0].balance !== 9) throw new Error('balance ' + bal.rows[0].balance);
+    ok('서버 검증 후 별빛 +9 (힌트 1번 → 10%↓, DB 잔액 9)');
     await a.getByRole('button', { name: /집으로/ }).click();
     await a.getByRole('button', { name: '선물 고르기' }).click();
     await a.getByRole('button', { name: /별빛 등불/ }).click();
     ok('첫 선물(별빛 등불) 받기');
 
-    // ---- 한 판 더 → 20 별빛 → 둥근 의자 구매 ----
-    await a.getByRole('tab', { name: '스도쿠' }).or(a.getByRole('button', { name: '스도쿠' })).first().click();
-    await a.getByRole('button', { name: /4×4 입문/ }).click();
-    await solveCurrent(a);
-    await a.waitForSelector('text=다 풀었어요!');
-    await a.getByRole('button', { name: /^집으로$/ }).click();
+    // ---- 두 판 더 → 29 별빛 → 둥근 의자 구매 ----
+    for (let k = 0; k < 2; k++) {
+      await a.getByRole('tab', { name: '스도쿠' }).or(a.getByRole('button', { name: '스도쿠' })).first().click();
+      await a.getByRole('button', { name: /4×4 입문/ }).click();
+      await solveCurrent(a);
+      await a.waitForSelector('text=다 풀었어요!');
+      await a.getByRole('button', { name: /^집으로$/ }).click();
+    }
     await a.getByRole('button', { name: '꾸미기' }).click();
     await a.getByRole('tab', { name: '상점' }).click();
     await a.locator('.item-card', { hasText: '둥근 의자' }).click();

@@ -49,21 +49,29 @@ export function unproject(space: Space, p: Pt): { u: number; v: number } {
 
 export interface SpriteBox { left: number; top: number; width: number; z: number; hit: { x: number; y: number; w: number; h: number }; anchor: Pt; scale: number }
 
-interface ItemCal { scale?: number; dx?: number; dy?: number; slot?: { dx: number; dy: number }; ground?: Pt; topLift?: number }
+interface ItemCal { scale?: number; dx?: number; dy?: number; slot?: { dx: number; dy: number }; ground?: Pt; topLift?: number; bounds?: { x: number; y: number; w: number; h: number }; fitW?: number }
 const cal = (id: string): ItemCal => (calibration as any).items[id] ?? {};
 
-/** 그림 정보: 쿼터뷰 가구는 접지점(그림의 가장 낮은 점), 보물은 정면 그림(512 기준) */
+/** 그림 정보: 쿼터뷰 가구는 실측 범위·접지점(scripts/import-furniture-v2.py), 보물은 정면 그림(512 기준) */
 export function spriteMeta(item: Item) {
   if (item.kind === 'treasure') {
     return { canvas: 512, bounds: { x: 86, y: 86, w: 340, h: 340 }, anchor: { x: 256, y: 420 }, src: `assets/treasure/${item.id}.webp` };
   }
-  const a = byId[item.id];
-  return { canvas: CANVAS, bounds: a.principalBoundsPx, anchor: cal(item.id).ground ?? a.placement.spriteAnchorPx, src: `assets/furniture/${item.id}.webp` };
+  const c = cal(item.id);
+  return { canvas: CANVAS, bounds: c.bounds!, anchor: c.ground!, src: `assets/furniture/${item.id}.webp` };
 }
 
 const floorWidth = (space: Space) => FLOORS[space].right.x - FLOORS[space].left.x;
-const suggested = (id: string): number => byId[id]?.placement?.suggestedVisibleWidthFractionOfFloor ?? 0.09;
-const spriteScale = (space: Space, item: Item) => (floorWidth(space) * suggested(item.id) * (cal(item.id).scale ?? 1)) / spriteMeta(item).bounds.w;
+/** 발자국의 화면 가로 폭(배경 픽셀). 벽 장식은 벽을 따라가는 폭만. */
+function footprintWidth(space: Space, item: Item) {
+  const f = FLOORS[space];
+  const tu = (f.right.x - f.back.x) / COLS, tv = (f.back.x - f.left.x) / ROWS;
+  return item.surface === 'wallRight' ? item.fw * tu : item.fw * tu + item.fh * tv;
+}
+/** 가구: 보이는 그림 폭(fitW)을 발자국 폭에 맞춘다. scale은 눈 보정 배율. */
+const spriteScale = (space: Space, item: Item) => item.kind === 'treasure'
+  ? (floorWidth(space) * 0.09) / spriteMeta(item).bounds.w
+  : (footprintWidth(space, item) * (cal(item.id).scale ?? 1)) / cal(item.id).fitW!;
 
 /** 쌓기 대상: 바닥에 놓는 가구(러그·벽·받침 위 물건 제외) */
 export const stackable = (it: Item | undefined) => !!it && it.surface === 'floor';
@@ -122,9 +130,10 @@ function placeSpriteRaw(space: Space, l: Layout, all: Layout[], depth: number): 
     target = project(space, (l.x ?? 0) + item.fw, 0);
     z = -2000 + target.y;
   } else {
-    // 바닥 가구: 그림의 접지점 = 발자국 앞 꼭짓점
+    // 바닥 가구: 접지점 x = 발자국 좌우 가운데(타일이 화면에서 정사각이 아니라 앞 꼭짓점과 가운데가 다르다), y = 앞 꼭짓점
     const x = l.x ?? 0, y = l.y ?? 0;
-    target = project(space, x + item.fw, y + item.fh);
+    const front = project(space, x + item.fw, y + item.fh);
+    target = { x: (project(space, x, y + item.fh).x + project(space, x + item.fw, y).x) / 2, y: front.y };
     z = item.surface === 'rug' ? -1000 + target.y : target.y;
     const under = stackable(item) ? stackInfo(all).get(l.uid)?.under ?? [] : [];
     let lift = 0;

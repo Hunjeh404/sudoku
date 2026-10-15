@@ -233,12 +233,12 @@ textarea { resize: vertical; }
 .size-list, .resume-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
 .size-card {
   position: relative; width: 100%; display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 16px 14px 10px;
-  border: 1.5px solid var(--bronze); border-radius: 12px; cursor: pointer; font-size: 17px; color: var(--ink);
-  background: linear-gradient(160deg, var(--marble) 0%, var(--marble-vein) 100%);
-  box-shadow: 0 2px 0 rgba(140, 106, 42, .25); transition: transform .15s ease-out, box-shadow .15s ease-out;
+  cursor: pointer; font-size: 17px; color: var(--ink); background: transparent;
+  /* 돌판 그림(plaque.webp 1051×256): 끝 소용돌이 72, 위아래 메안드로스 띠 50은 늘리지 않음 */
+  border: solid; border-width: 13px 18px; border-image: url(/assets/ui/plaque.webp) 50 72 fill / 13px 18px stretch;
+  padding: 12px 8px; filter: drop-shadow(0 2px 1px rgba(140, 106, 42, .25)); transition: transform .15s ease-out;
 }
-.size-card::before { content: ''; position: absolute; left: 10px; right: 10px; top: 4px; height: 8px; background: var(--meander) repeat-x; background-size: auto 8px; opacity: .8; }
-.size-card:active { transform: translateY(1px); box-shadow: 0 1px 0 rgba(140, 106, 42, .25); }
+.size-card:active { transform: translateY(1px); }
 .size-card strong { flex: 1; text-align: left; font-weight: 400; font-family: var(--font-title); }
 .size-mini { display: grid; grid-template-columns: repeat(3, 8px); gap: 2px; padding: 3px; border: 1.5px solid var(--bronze); border-radius: 3px; background: var(--marble); }
 .size-mini i { width: 8px; height: 8px; background: var(--lav); border-radius: 1px; }
@@ -251,23 +251,20 @@ textarea { resize: vertical; }
 
 .puzzle {
   max-width: 520px; margin: 0 auto; min-height: 100dvh; padding: 0 12px 24px;
-  background: radial-gradient(120% 60% at 50% 0%, #F3EDF7 0%, var(--cream) 60%);
+  background: var(--cream) url(/assets/ui/puzzle_bg.webp) center bottom / cover no-repeat;
 }
 .puzzle-head { display: flex; align-items: center; gap: 8px; padding: 8px 0 4px; }
 .puzzle-head strong { font-family: var(--font-title); font-size: 19px; }
 .save-state { display: inline-flex; gap: 4px; align-items: center; font-size: 13px; color: var(--ink-soft); }
 .save-state.offline, .save-state.conflict { color: var(--warn); }
 
-/* 대리석 서판: 위아래 메안드로스 띠, 금빛 안쪽 테두리 */
+/* 대리석 서판: 테두리 그림(board_frame.webp 610×610, 테두리 79·79·81·79, 띠는 통째로 반복) */
 .tablet {
-  --size: min(calc(100vw - 48px), 456px);
-  position: relative; width: fit-content; margin: 6px auto 14px; padding: 18px 10px;
-  border-radius: 16px; background: linear-gradient(170deg, #FBF5E6, #EEE2C6);
-  border: 1.5px solid var(--bronze);
-  box-shadow: inset 0 0 0 4px #FBF5E6, inset 0 0 0 5.5px var(--gold-line), 0 8px 18px rgba(58, 55, 57, .16);
+  --size: min(calc(100vw - 72px), 440px);
+  position: relative; width: fit-content; margin: 6px auto 14px;
+  border: solid; border-width: 24px; border-image: url(/assets/ui/board_frame.webp) 79 79 81 79 / 24px round;
+  filter: drop-shadow(0 6px 10px rgba(58, 55, 57, .18));
 }
-.tablet::before, .tablet::after { content: ''; position: absolute; left: 14px; right: 14px; height: 10px; background: var(--meander) repeat-x; background-size: auto 10px; }
-.tablet::before { top: 4px; } .tablet::after { bottom: 4px; }
 .board {
   width: var(--size); height: var(--size);
   display: grid; grid-template-columns: repeat(var(--n), 1fr); grid-template-rows: repeat(var(--n), 1fr);
@@ -302,7 +299,7 @@ textarea { resize: vertical; }
   display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin: 0 0 12px; padding: 4px;
   background: var(--marble); border: 1px solid #DCCFAE; border-radius: 14px;
 }
-.tool { display: grid; place-items: center; gap: 0; min-height: 52px; border: 0; background: transparent; font-size: 12px; cursor: pointer; border-radius: 10px; color: var(--ink); transition: background-color .15s ease-out; }
+.tool { display: grid; place-items: center; gap: 0; min-height: 52px; white-space: nowrap; border: 0; background: transparent; font-size: 12px; cursor: pointer; border-radius: 10px; color: var(--ink); transition: background-color .15s ease-out; }
 .tool svg { color: var(--bronze); }
 .tool.on { background: var(--gold); box-shadow: inset 0 0 0 1.5px var(--gold-line); }
 .tool:active { background: var(--marble-vein); }
@@ -316,23 +313,22 @@ textarea { resize: vertical; }
 .num {
   position: relative; width: 100%; max-width: 64px; aspect-ratio: 1; min-height: 48px; border-radius: 50%; cursor: pointer;
   display: grid; place-items: center; padding: 0; color: var(--ink); font-size: 26px; font-weight: 700;
-  background: radial-gradient(circle at 35% 30%, #FFF8DE 0%, #F2DFA4 55%, #D8B866 100%);
-  border: 2px solid var(--gold-deep);
-  box-shadow: inset 0 0 0 3px rgba(255, 248, 222, .7), inset 0 0 0 4.5px rgba(184, 145, 58, .55), 0 3px 0 rgba(140, 106, 42, .45);
-  transition: transform .12s ease-out, box-shadow .12s ease-out;
+  background: url(/assets/ui/coin_gold.webp) center / contain no-repeat; border: 0;
+  filter: drop-shadow(0 3px 0 rgba(140, 106, 42, .35));
+  transition: transform .12s ease-out, filter .12s ease-out;
 }
 .n6 .num { font-size: 24px; }
-.num:active { transform: translateY(2px); box-shadow: inset 0 0 0 3px rgba(255, 248, 222, .7), inset 0 0 0 4.5px rgba(184, 145, 58, .55), 0 1px 0 rgba(140, 106, 42, .45); }
-.num.memo { background: radial-gradient(circle at 35% 30%, #FFFFFF 0%, #E9E0F0 60%, #CDBBDD 100%); border-color: var(--plum); font-size: 20px; color: var(--plum); }
+.num:active { transform: translateY(2px); filter: drop-shadow(0 1px 0 rgba(140, 106, 42, .35)); }
+.num.memo { background-image: url(/assets/ui/coin_memo.webp); font-size: 20px; color: var(--plum); }
 .num small { position: absolute; bottom: -2px; right: -2px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: var(--marble); border: 1px solid var(--gold-line); font-size: 11px; line-height: 16px; color: var(--ink-soft); font-weight: 400; }
 .num small:empty { display: none; }
 .num .pic { width: 34px; height: 34px; }
 
 /* 힌트: 아테나의 두루마리 */
 .hint {
-  position: relative; background: var(--parchment); border: 1.5px solid var(--gold-line); border-radius: 6px;
-  padding: 12px 16px; margin: 0 6px 12px;
-  box-shadow: -6px 0 0 -2px #EADBB4, 6px 0 0 -2px #EADBB4, 0 4px 10px rgba(58, 55, 57, .1);
+  /* 두루마리 그림(scroll.webp 934×321): 말린 끝 75, 위 66, 아래 71은 늘리지 않음. 가운데 양피지만 늘림 */
+  position: relative; margin: 0 0 12px; padding: 0 6px;
+  border: solid; border-width: 22px 26px 24px; border-image: url(/assets/ui/scroll.webp) 66 75 71 fill / 22px 26px 24px stretch;
 }
 .hint-who { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
 .hint p { margin: 0 0 6px; }

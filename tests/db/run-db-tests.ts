@@ -129,6 +129,16 @@ async function solveAttempt(u: Awaited<ReturnType<typeof user>>, profile: string
     await expectError('conflict', () => A.rpc('save_attempt', { attempt: a.id, expected_revision: 0, board: a.givens, notes: {}, hints_used: 0, op_id: randomUUID() }));
     await A.rpc('abandon_attempt', { attempt: a.id });
   });
+  await check('힌트 한 번마다 보상 10% 감소, 10번이 상한', async () => {
+    const { a, sol } = await solveAttempt(C, pc, 9, 'easy'); // 보상 30
+    await C.rpc('save_attempt', { attempt: a.id, expected_revision: 0, board: a.givens, notes: {}, hints_used: 3, op_id: randomUUID() });
+    const r = await C.rpc('complete_attempt', { attempt: a.id, board: sol, op_id: randomUUID() });
+    assert(r.reward === 21 && r.hints_used === 3 && r.no_hint === false, JSON.stringify(r));
+    const b = await solveAttempt(C, pc, 9, 'easy');
+    await C.rpc('save_attempt', { attempt: b.a.id, expected_revision: 0, board: b.a.givens, notes: {}, hints_used: 15, op_id: randomUUID() });
+    const r2 = await C.rpc('complete_attempt', { attempt: b.a.id, board: b.sol, op_id: randomUUID() });
+    assert(r2.reward === 0 && r2.hints_used === 10, JSON.stringify(r2));
+  });
 
   console.log('상점·배치');
   await check('잔액 부족·잠긴 물건 구매 거부', async () => {

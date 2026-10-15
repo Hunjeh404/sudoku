@@ -296,6 +296,8 @@ create policy own_quest on public.quest_progress for select to authenticated usi
 create policy own_unlocks on public.unlocks for select to authenticated using (private.can_act(profile_id));
 create policy own_mail on public.notifications for select to authenticated using (private.can_act(recipient_profile_id));
 create policy own_ledger on public.reward_ledger for select to authenticated using (private.can_act(profile_id));
+
+
 -- 서버 함수(RPC). 모두 security definer로 실행하되, 함수 안에서 호출자 인증·프로필 권한·입력을 검증한다.
 -- 오류: message=기계용 코드, detail=사용자용 문구, hint='retry'(다시 시도 가능) 또는 'final'.
 
@@ -924,6 +926,8 @@ begin
   end loop;
 end $$;
 grant execute on function private.can_act(uuid) to authenticated;
+
+
 -- 자동 생성: npm run gen:catalog (src/data/catalog.ts가 원본)
 insert into public.item_catalog (id,kind,name_ko,price,surface,fw,fh,blocking,spaces,supports,unlock_step,sort) values
 ('cloud_bed','furniture','구름 침대',60,'floor',3,2,true,array['room']::text[],array[]::text[],3,0),
@@ -1001,6 +1005,8 @@ insert into public.scene_catalog (file,chapter) values
 ('assets/scenes/c09-05.webp',9),
 ('assets/scenes/c09-06.webp',9)
 on conflict (file) do update set chapter=excluded.chapter;
+
+
 -- 자동 생성: npm run gen:puzzles (유일해·논리 풀이 검증 완료 252문제)
 insert into public.puzzle_catalog (id,size,difficulty,givens,techniques,version) values
 ('p4-001',4,'intro','1..24......43..1','{"nakedSingle":10}'::jsonb,1),
@@ -1511,6 +1517,8 @@ insert into private.puzzle_solutions (puzzle_id,solution) values
 ('p9h-059','985762314617483925423915867842631579739254681561879432298347156176598243354126798'),
 ('p9h-060','796248531384951726215376489832617954679524318451839672127465893548193267963782145')
 on conflict (puzzle_id) do nothing;
+
+
 -- 쌓기: 바닥 가구가 겹치면 나중에 놓은 것이 위로 올라간다(3층까지). 이미 0001~0005를 실행했다면 이 파일만 실행.
 create or replace function private.validate_home(p uuid, home jsonb) returns void
 language plpgsql security definer set search_path = '' as $$
@@ -1597,3 +1605,74 @@ begin
 end $$;
 
 revoke all on function private.validate_home(uuid, jsonb) from public, anon;
+
+
+-- 힌트 규칙: 한 판에 힌트는 10번까지, 한 번 쓸 때마다 완료 보상이 10%씩 줄어든다.
+-- 0002의 save_attempt·complete_attempt를 바꾼다(나머지는 그대로).
+
+create or replace function public.save_attempt(attempt uuid, expected_revision int, board text, notes jsonb, hints_used int, op_id uuid) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare a public.puzzle_attempts; pz public.puzzle_catalog;
+begin
+  select * into a from public.puzzle_attempts where id = attempt for update;
+  if not found then perform private.fail('not_found', '퍼즐을 찾을 수 없어요.'); end if;
+  perform private.require_act(a.profile_id);
+  if a.status <> 'active' then perform private.fail('not_active', '이미 끝난 퍼즐이에요.'); end if;
+  if a.revision <> expected_revision then
+    raise exception using errcode = 'P0001', message = 'conflict', detail = '다른 기기에서 먼저 저장했어요.', hint = 'final:' || a.revision;
+  end if;
+  select * into pz from public.puzzle_catalog where id = a.puzzle_id;
+  perform private.check_board(board, pz.givens, pz.size);
+  if pg_column_size(notes) > 8000 then perform private.fail('bad_notes', '메모가 너무 많아요.'); end if;
+  update public.puzzle_attempts set board = save_attempt.board, notes = coalesce(save_attempt.notes, '{}'::jsonb),
+    hints_used = least(10, greatest(a.hints_used, coalesce(save_attempt.hints_used, 0))),
+    revision = a.revision + 1, updated_at = now() where id = attempt;
+  return jsonb_build_object('revision', a.revision + 1);
+end $$;
+
+create or replace function public.complete_attempt(attempt uuid, board text, op_id uuid) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare
+  a public.puzzle_attempts; pz public.puzzle_catalog; sol text; amount int; q public.quest_progress;
+  step public.journey_steps; res jsonb; unlocked jsonb := '[]'::jsonb; k text; it record; bal int;
+begin
+  select * into a from public.puzzle_attempts where id = attempt for update;
+  if not found then perform private.fail('not_found', '퍼즐을 찾을 수 없어요.'); end if;
+  perform private.require_act(a.profile_id);
+  if a.status = 'completed' then return a.result || jsonb_build_object('repeat', true); end if;
+  if a.status <> 'active' then perform private.fail('not_active', '그만둔 퍼즐이에요.'); end if;
+  select * into pz from public.puzzle_catalog where id = a.puzzle_id;
+  perform private.check_board(board, pz.givens, pz.size);
+  select solution into sol from private.puzzle_solutions where puzzle_id = a.puzzle_id;
+  if board <> sol then perform private.fail('not_solved', '아직 맞지 않는 칸이 있어요.'); end if;
+
+  select r.amount into amount from public.reward_rules r where r.size = pz.size and r.difficulty = pz.difficulty;
+  -- 힌트 한 번마다 보상 10%씩 줄어듦(10번이면 0)
+  amount := amount * (10 - least(a.hints_used, 10)) / 10;
+  insert into public.reward_ledger (profile_id, event_key, amount, reason)
+    values (a.profile_id, 'complete:' || a.id, amount, 'puzzle:' || pz.id);
+  update public.wallets set balance = balance + amount where profile_id = a.profile_id returning balance into bal;
+  update public.quest_progress set completed_count = completed_count + 1,
+    no_hint_count = no_hint_count + case when a.hints_used = 0 then 1 else 0 end
+    where profile_id = a.profile_id returning * into q;
+
+  select * into step from public.journey_steps where journey_steps.step = q.completed_count;
+  if found then
+    for it in select key, value from jsonb_each_text(coalesce(step.reward->'items', '{}'::jsonb)) loop
+      perform private.grant_item(a.profile_id, it.key, it.value::int);
+    end loop;
+    for k in select jsonb_array_elements_text(coalesce(step.reward->'unlock', '[]'::jsonb)) loop
+      insert into public.unlocks (profile_id, key) values (a.profile_id, k) on conflict do nothing;
+    end loop;
+    if (step.reward->>'choice')::boolean then
+      update public.quest_progress set choice_pending = true where profile_id = a.profile_id;
+    end if;
+    unlocked := jsonb_build_object('step', step.step, 'title', step.title, 'reward', step.reward);
+  end if;
+
+  res := jsonb_build_object('reward', amount, 'balance', bal, 'completed_count', q.completed_count,
+    'no_hint', a.hints_used = 0, 'hints_used', least(a.hints_used, 10), 'journey', unlocked, 'puzzle_id', pz.id);
+  update public.puzzle_attempts set status = 'completed', board = complete_attempt.board, completed_at = now(),
+    updated_at = now(), result = res where id = attempt;
+  return res;
+end $$;

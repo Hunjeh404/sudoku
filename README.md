@@ -11,7 +11,7 @@
 
 ### 1. Supabase에 데이터베이스 만들기
 1. Supabase 대시보드 → SQL Editor → New query
-2. `supabase/setup-all.sql` 전체를 붙여 넣고 Run. (마이그레이션 0001~0006을 순서대로 합친 파일)
+2. `supabase/setup-all.sql` 전체를 붙여 넣고 Run. (마이그레이션 0001~0007을 순서대로 합친 파일)
    이미 0001~0005를 실행한 프로젝트는 `supabase/migrations/0006_stacking.sql`만 추가로 실행한다.
 3. 같은 SQL을 다시 실행하면 `already exists` 오류가 난다. 처음부터 다시 하려면 새 프로젝트를 쓰는 편이 안전하다.
 
@@ -56,7 +56,7 @@
 
 ## 테스트
 - `npm test`: 스도쿠 엔진·힌트 11개
-- `tests/db/reset.sh && npm run test:db`: 로컬 Postgres에 Supabase 역할·auth 흉내(`tests/db/supabase-stub.sql`) + 마이그레이션 적용 후 권한·거래 24개
+- `tests/db/reset.sh && npm run test:db`: 로컬 Postgres에 Supabase 역할·auth 흉내(`tests/db/supabase-stub.sql`) + 마이그레이션 적용 후 권한·거래 25개
 - 로컬 E2E: `DB=olympus_e2e tests/db/reset.sh`, `sh tests/e2e/gw.sh`(로그인·RPC 흉내 게이트웨이), `tests/e2e/rebuild.sh`, `npx vite preview --outDir dist-local --port 4173`, `npx tsx tests/e2e/flow.ts`
 
 결과와 미완료 항목은 `docs/TEST-RESULTS.md`.

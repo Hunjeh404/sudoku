@@ -8,7 +8,7 @@ import { rpc, newOpId, ApiError } from '../lib/api';
 import { getLocal, setLocal, delLocal } from '../lib/local';
 import { Board, Size, parseBoard, boardToString, conflicts, geometry, rowOf, colOf, countSolutions } from '../sudoku/engine';
 import { makeHint, Hint } from '../sudoku/hints';
-import { JOURNEY, ITEM_BY_ID, REWARD_RULES } from '../data/catalog';
+import { JOURNEY, ITEM_BY_ID, REWARD_RULES, HINT_MAX } from '../data/catalog';
 import { Sheet, Starlight, ErrorLine, Spinner, Avatar } from '../ui';
 import { sfx } from '../lib/sound';
 
@@ -73,7 +73,7 @@ export function SudokuSelect({ onStart }: { onStart: (a: AttemptData) => void })
         ))}
       </ul>
       {err && <ErrorLine msg={err} />}
-      <p className="fine">시간 제한과 실수 제한은 없어요. 힌트는 몇 번을 써도 별빛이 줄지 않아요.</p>
+      <p className="fine">시간 제한과 실수 제한은 없어요. 힌트는 한 판에 {HINT_MAX}번까지 쓸 수 있고, 한 번 쓸 때마다 받을 별빛이 10%씩 줄어요.</p>
       {tutorial && (
         <Sheet title="4×4 스도쿠 규칙" onClose={() => setTutorial(false)}>
           <ol className="rules">
@@ -223,6 +223,7 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
   });
 
   const askHint = () => {
+    if (!hint && hintsUsed >= HINT_MAX) return;
     const h = makeHint(givens, cur.board, n, sym);
     if (!hint) { setHintsUsed((x) => x + 1); hintsRef.current += 1; dirty.current = true; }
     setHint({ h, level: 1 });
@@ -324,7 +325,7 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
 
       {hint && (
         <section className="hint" aria-live="polite">
-          <div className="hint-who"><Avatar id="athena" size={40} /><p className="hint-step">아테나의 힌트 {hint.level}/4</p></div>
+          <div className="hint-who"><Avatar id="athena" size={40} /><p className="hint-step">아테나의 힌트 {hint.level}/4 · 남은 힌트 {HINT_MAX - hintsUsed}번</p></div>
           <p>{hint.level >= 1 && (hint.h.kind === 'logic' ? '반짝이는 칸과 줄을 살펴보세요.' : hint.h.rule)}</p>
           {hint.level >= 2 && hint.h.kind === 'logic' && <p>{hint.h.rule}</p>}
           {hint.level >= 3 && <p>{hint.h.detail}</p>}
@@ -342,7 +343,8 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
         <button className="tool" onClick={undo} disabled={hist.i === 0}><IconArrowBackUp aria-hidden />되돌림</button>
         <button className="tool" onClick={redo} disabled={hist.i >= hist.list.length - 1}><IconArrowForwardUp aria-hidden />다시</button>
         <button className="tool" onClick={check}><IconChecks aria-hidden />확인</button>
-        <button className="tool" onClick={askHint}><IconBulb aria-hidden />힌트</button>
+        <button className="tool" onClick={askHint} disabled={!hint && hintsUsed >= HINT_MAX}
+          aria-label={`힌트, 남은 횟수 ${HINT_MAX - hintsUsed}번, 쓸 때마다 별빛 10% 줄어요`}><IconBulb aria-hidden />힌트 {HINT_MAX - hintsUsed}</button>
       </div>
       <div className={`pad pad${n}`}>
         {Array.from({ length: n }, (_, i) => i + 1).map((d) => {
@@ -389,6 +391,7 @@ export function ResultScreen({ result, onHome, onAgain }: { result: any; onHome:
       </div>
       <p>지금 별빛 {result.balance}</p>
       {result.no_hint && <p className="badge-line">힌트 없이 끝냈어요</p>}
+      {result.hints_used > 0 && <p className="fine">힌트 {result.hints_used}번을 써서 별빛이 {result.hints_used * 10}% 줄었어요</p>}
       {j && <div className="journey-card"><p>여정 {j.step}칸 도착</p><strong>{j.title}</strong><small>{JOURNEY[j.step - 1]?.desc}</small></div>}
       {!j && next && <p className="fine">다음 여정「{next.title}」까지 한 판</p>}
       {goal && <p className="fine">목표「{goal.nameKo}」까지 {Math.max(0, goal.price - result.balance) || '이제 살 수 있어요!'}{goal.price > result.balance ? ' 남음' : ''}</p>}

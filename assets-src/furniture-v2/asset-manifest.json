@@ -1,0 +1,1343 @@
+{
+  "version": 1,
+  "status": "all_requested_art_generated_not_fully_spec_compliant",
+  "generatedAssetCount": 26,
+  "groundAxisSlope": 0.65,
+  "boundsNote": "Visible pixel bounds are not floor contact anchors. Geometry targets are requested values, not measured image alignment.",
+  "assets": [
+    {
+      "id": "cloud_bed",
+      "kind": "furniture",
+      "path": "images/furniture/cloud_bed.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        214,
+        356,
+        1109,
+        1160
+      ],
+      "sha256": "bea9127f2e2c83505c6c0f3baaf7e378ffcc9f633afdf84f3551b0915f9db3a0",
+      "geometryTarget": {
+        "footprint": [
+          3,
+          2
+        ],
+        "surface": "floor",
+        "tilePx": 170.0,
+        "frontPx": [
+          712.0,
+          1130.0
+        ],
+        "cornersPx": [
+          [
+            542.0,
+            577.5
+          ],
+          [
+            1052.0,
+            909.0
+          ],
+          [
+            712.0,
+            1130.0
+          ],
+          [
+            202.0,
+            798.5
+          ]
+        ]
+      },
+      "exactGuideMatchVerified": false,
+      "registrationStatus": "requires_correction_or_manual_verification"
+    },
+    {
+      "id": "cloud_cushion",
+      "kind": "furniture",
+      "path": "images/furniture/cloud_cushion.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        434,
+        908,
+        821,
+        1203
+      ],
+      "sha256": "711c1459617170cb4d41c13f55fdd9faba1fadef73b9d14b30d8cfef8bfb0663",
+      "geometryTarget": {
+        "footprint": [
+          1,
+          1
+        ],
+        "surface": "floor",
+        "tilePx": 170.0,
+        "frontPx": [
+          627.0,
+          1130.0
+        ],
+        "cornersPx": [
+          [
+            627.0,
+            909.0
+          ],
+          [
+            797.0,
+            1019.5
+          ],
+          [
+            627.0,
+            1130.0
+          ],
+          [
+            457.0,
+            1019.5
+          ]
+        ]
+      },
+      "exactGuideMatchVerified": false,
+      "registrationStatus": "requires_correction_or_manual_verification"
+    },
+    {
+      "id": "display_pedestal",
+      "kind": "furniture",
+      "path": "images/furniture/display_pedestal.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        379,
+        804,
+        876,
+        1201
+      ],
+      "sha256": "dd4330bea699d2e137b78d72bea23fb3b12d9e4d57d9478703d01a526be2fe10",
+      "geometryTarget": {
+        "footprint": [
+          1,
+          1
+        ],
+        "surface": "floor",
+        "tilePx": 170.0,
+        "frontPx": [
+          627.0,
+          1130.0
+        ],
+        "cornersPx": [
+          [
+            627.0,
+            909.0
+          ],
+          [
+            797.0,
+            1019.5
+          ],
+          [
+            627.0,
+            1130.0
+          ],
+          [
+            457.0,
+            1019.5
+          ]
+        ]
+      },
+      "exactGuideMatchVerified": false,
+      "registrationStatus": "requires_correction_or_manual_verification"
+    },
+    {
+      "id": "garden_trellis",
+      "kind": "furniture",
+      "path": "images/furniture/garden_trellis.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        329,
+        413,
+        990,
+        1191
+      ],
+      "sha256": "4d3f0a725994cbd559835fed8c31485d545b9556bee385ae802fbbb901ddfd6a",
+      "geometryTarget": {
+        "footprint": [
+          3,
+          1
+        ],
+        "surface": "floor",
+        "tilePx": 170.0,
+        "frontPx": [
+          797.0,
+          1130.0
+        ],
+        "cornersPx": [
+          [
+            457.0,
+            688.0
+          ],
+          [
+            967.0,
+            1019.5
+          ],
+          [
+            797.0,
+            1130.0
+          ],
+          [
+            287.0,
+            798.5
+          ]
+        ]
+      },
+      "exactGuideMatchVerified": false,
+      "registrationStatus": "requires_correction_or_manual_verification"
+    },
+    {
+      "id": "laurel_bench",
+      "kind": "furniture",
+      "path": "images/furniture/laurel_bench.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        272,
+        271,
+        1097,
+        1134
+      ],
+      "sha256": "e2c15c06929704361d29f776b4c2105a39af757ffa1fd64a43d90141f7f82de2",
+      "geometryTarget": {
+        "footprint": [
+          1,
+          3
+        ],
+        "surface": "floor",
+        "tilePx": 170.0,
+        "frontPx": [
+          457.0,
+          1130.0
+        ],
+        "cornersPx": [
+          [
+            797.0,
+            688.0
+          ],
+          [
+            967.0,
+            798.5
+          ],
+          [
+            457.0,
+            1130.0
+          ],
+          [
+            287.0,
+            1019.5
+          ]
+        ]
+      },
+      "exactGuideMatchVerified": false,
+      "registrationStatus": "requires_correction_or_manual_verification"
+    },
+    {
+      "id": "laurel_door",
+      "kind": "furniture",
+      "path": "images/furniture/laurel_door.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        351,
+        141,
+        915,
+        1163
+      ],
+      "sha256": "209bae7392adec84c3d6a576b0e0f7b444e313ac00f3e21f5820aecc2122d3ea",
+      "geometryTarget": {
+        "footprint": [
+          2,
+          1
+        ],
+        "surface": "wallRight",
+        "tilePx": 170.0,
+        "frontPx": [
+          797.0,
+          1130.0
+        ],
+        "cornersPx": [
+          [
+            457.0,
+            909.0
+          ],
+          [
+            797.0,
+            1130.0
+          ]
+        ]
+      },
+      "exactGuideMatchVerified": false,
+      "registrationStatus": "requires_correction_or_manual_verification"
+    },
+    {
+      "id": "laurel_rug",
+      "kind": "furniture",
+      "path": "images/furniture/laurel_rug.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        200,
+        575,
+        1056,
+        1141
+      ],
+      "sha256": "dca49d044526f2f8c7b8c5e8bbfecfd72db6b19487e3b58afadf4c950523e48b",
+      "geometryTarget": {
+        "footprint": [
+          3,
+          2
+        ],
+        "surface": "rug",
+        "tilePx": 170.0,
+        "frontPx": [
+          712.0,
+          1130.0
+        ],
+        "cornersPx": [
+          [
+            542.0,
+            577.5
+          ],
+          [
+            1052.0,
+            909.0
+          ],
+          [
+            712.0,
+            1130.0
+          ],
+          [
+            202.0,
+            798.5
+          ]
+        ]
+      },
+      "exactGuideMatchVerified": false,
+      "registrationStatus": "requires_correction_or_manual_verification"
+    },
+    {
+      "id": "linen_curtain",
+      "kind": "furniture",
+      "path": "images/furniture/linen_curtain.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        388,
+        302,
+        922,
+        1079
+      ],
+      "sha256": "276a3ca817b30f1f2733b1f4040bbf5b90e7b67983febcd10e9a2e755c05495e",
+      "geometryTarget": {
+        "footprint": [
+          2,
+          1
+        ],
+        "surface": "wallRight",
+        "tilePx": 170.0,
+        "frontPx": [
+          797.0,
+          1130.0
+        ],
+        "cornersPx": [
+          [
+            457.0,
+            909.0
+          ],
+          [
+            797.0,
+            1130.0
+          ]
+        ]
+      },
+      "exactGuideMatchVerified": false,
+      "registrationStatus": "requires_correction_or_manual_verification"
+    },
+    {
+      "id": "music_stand",
+      "kind": "furniture",
+      "path": "images/furniture/music_stand.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        452,
+        545,
+        845,
+        1168
+      ],
+      "sha256": "7325daf6e0dd506600f38583e3f462a04998a967a0e0a63474127abd92a7db9c",
+      "geometryTarget": {
+        "footprint": [
+          1,
+          1
+        ],
+        "surface": "floor",
+        "tilePx": 170.0,
+        "frontPx": [
+          627.0,
+          1130.0
+        ],
+        "cornersPx": [
+          [
+            627.0,
+            909.0
+          ],
+          [
+            797.0,
+            1019.5
+          ],
+          [
+            627.0,
+            1130.0
+          ],
+          [
+            457.0,
+            1019.5
+          ]
+        ]
+      },
+      "exactGuideMatchVerified": false,
+      "registrationStatus": "requires_correction_or_manual_verification"
+    },
+    {
+      "id": "olive_planter",
+      "kind": "furniture",
+      "path": "images/furniture/olive_planter.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        406,
+        582,
+        863,
+        1158
+      ],
+      "sha256": "679a0ab3c98696493553e7a3e8334e12d2ca8bca8424d68c054e156962dd0af2",
+      "geometryTarget": {
+        "footprint": [
+          1,
+          1
+        ],
+        "surface": "floor",
+        "tilePx": 170.0,
+        "frontPx": [
+          627.0,
+          1130.0
+        ],
+        "cornersPx": [
+          [
+            627.0,
+            909.0
+          ],
+          [
+            797.0,
+            1019.5
+          ],
+          [
+            627.0,
+            1130.0
+          ],
+          [
+            457.0,
+            1019.5
+          ]
+        ]
+      },
+      "exactGuideMatchVerified": false,
+      "registrationStatus": "requires_correction_or_manual_verification"
+    },
+    {
+      "id": "owl_mailbox",
+      "kind": "furniture",
+      "path": "images/furniture/owl_mailbox.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        416,
+        536,
+        866,
+        1210
+      ],
+      "sha256": "cf4e44d61c475fa4d4fc690646dd6804a153f5be5faf3afd93bd35d544bbe257",
+      "geometryTarget": {
+        "footprint": [
+          1,
+          1
+        ],
+        "surface": "floor",
+        "tilePx": 170.0,
+        "frontPx": [
+          627.0,
+          1130.0
+        ],
+        "cornersPx": [
+          [
+            627.0,
+            909.0
+          ],
+          [
+            797.0,
+            1019.5
+          ],
+          [
+            627.0,
+            1130.0
+          ],
+          [
+            457.0,
+            1019.5
+          ]
+        ]
+      },
+      "exactGuideMatchVerified": false,
+      "registrationStatus": "requires_correction_or_manual_verification"
+    },
+    {
+      "id": "picture_frame",
+      "kind": "furniture",
+      "path": "images/furniture/picture_frame.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        388,
+        526,
+        926,
+        1172
+      ],
+      "sha256": "664db3a6adce90d6c2fb384d18b4d3da771f5460792c43964188a4450006670a",
+      "geometryTarget": {
+        "footprint": [
+          1,
+          1
+        ],
+        "surface": "supportSlot",
+        "tilePx": 170.0,
+        "frontPx": [
+          627.0,
+          1130.0
+        ],
+        "cornersPx": [
+          [
+            627.0,
+            909.0
+          ],
+          [
+            797.0,
+            1019.5
+          ],
+          [
+            627.0,
+            1130.0
+          ],
+          [
+            457.0,
+            1019.5
+          ]
+        ]
+      },
+      "exactGuideMatchVerified": false,
+      "registrationStatus": "requires_correction_or_manual_verification"
+    },
+    {
+      "id": "round_stool",
+      "kind": "furniture",
+      "path": "images/furniture/round_stool.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        373,
+        659,
+        882,
+        1135
+      ],
+      "sha256": "9ceabd4a64a989e4b5822de0c6f57417c199da728dae89d0a92ff050116a3af4",
+      "geometryTarget": {
+        "footprint": [
+          1,
+          1
+        ],
+        "surface": "floor",
+        "tilePx": 170.0,
+        "frontPx": [
+          627.0,
+          1130.0
+        ],
+        "cornersPx": [
+          [
+            627.0,
+            909.0
+          ],
+          [
+            797.0,
+            1019.5
+          ],
+          [
+            627.0,
+            1130.0
+          ],
+          [
+            457.0,
+            1019.5
+          ]
+        ]
+      },
+      "exactGuideMatchVerified": false,
+      "registrationStatus": "requires_correction_or_manual_verification"
+    },
+    {
+      "id": "scroll_bookcase",
+      "kind": "furniture",
+      "path": "images/furniture/scroll_bookcase.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        242,
+        97,
+        1031,
+        1210
+      ],
+      "sha256": "c32fda056abede52539a4e38674249eca11020f22ed4dbae554ee5e876c8b553",
+      "geometryTarget": {
+        "footprint": [
+          2,
+          1
+        ],
+        "surface": "floor",
+        "tilePx": 170.0,
+        "frontPx": [
+          712.0,
+          1130.0
+        ],
+        "cornersPx": [
+          [
+            542.0,
+            798.5
+          ],
+          [
+            882.0,
+            1019.5
+          ],
+          [
+            712.0,
+            1130.0
+          ],
+          [
+            372.0,
+            909.0
+          ]
+        ]
+      },
+      "exactGuideMatchVerified": false,
+      "registrationStatus": "requires_correction_or_manual_verification"
+    },
+    {
+      "id": "shell_fountain",
+      "kind": "furniture",
+      "path": "images/furniture/shell_fountain.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        124,
+        254,
+        1131,
+        1115
+      ],
+      "sha256": "da5a22199fb758a79a7e9abe10532604379cd95ca283841091ce5e8c211a47ce",
+      "geometryTarget": {
+        "footprint": [
+          3,
+          3
+        ],
+        "surface": "floor",
+        "tilePx": 146.3,
+        "frontPx": [
+          627.0,
+          1130.0
+        ],
+        "cornersPx": [
+          [
+            627.0,
+            559.4
+          ],
+          [
+            1065.9,
+            844.7
+          ],
+          [
+            627.0,
+            1130.0
+          ],
+          [
+            188.1,
+            844.7
+          ]
+        ]
+      },
+      "exactGuideMatchVerified": false,
+      "registrationStatus": "requires_correction_or_manual_verification"
+    },
+    {
+      "id": "star_lantern",
+      "kind": "furniture",
+      "path": "images/furniture/star_lantern.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        331,
+        321,
+        924,
+        1167
+      ],
+      "sha256": "4444f0c8c93a92bd8ffca3d94a2f782d1ac86bf28ae300d5e29c577990d37792",
+      "geometryTarget": {
+        "footprint": [
+          1,
+          1
+        ],
+        "surface": "floor",
+        "tilePx": 170.0,
+        "frontPx": [
+          627.0,
+          1130.0
+        ],
+        "cornersPx": [
+          [
+            627.0,
+            909.0
+          ],
+          [
+            797.0,
+            1019.5
+          ],
+          [
+            627.0,
+            1130.0
+          ],
+          [
+            457.0,
+            1019.5
+          ]
+        ]
+      },
+      "exactGuideMatchVerified": false,
+      "registrationStatus": "requires_correction_or_manual_verification"
+    },
+    {
+      "id": "star_mobile",
+      "kind": "furniture",
+      "path": "images/furniture/star_mobile.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        429,
+        321,
+        925,
+        1174
+      ],
+      "sha256": "ad160489187a5332c0285208086d0347703dcf1f72c6715c7e773dc857550756",
+      "geometryTarget": {
+        "footprint": [
+          1,
+          1
+        ],
+        "surface": "floor",
+        "tilePx": 170.0,
+        "frontPx": [
+          627.0,
+          1130.0
+        ],
+        "cornersPx": [
+          [
+            627.0,
+            909.0
+          ],
+          [
+            797.0,
+            1019.5
+          ],
+          [
+            627.0,
+            1130.0
+          ],
+          [
+            457.0,
+            1019.5
+          ]
+        ]
+      },
+      "exactGuideMatchVerified": false,
+      "registrationStatus": "requires_correction_or_manual_verification"
+    },
+    {
+      "id": "stepping_stones",
+      "kind": "furniture",
+      "path": "images/furniture/stepping_stones.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        226,
+        589,
+        1095,
+        1184
+      ],
+      "sha256": "c936258364ee6cb940df5f1108319f7fb07a54255bbf5779921a630aae24916d",
+      "geometryTarget": {
+        "footprint": [
+          3,
+          1
+        ],
+        "surface": "floor",
+        "tilePx": 170.0,
+        "frontPx": [
+          797.0,
+          1130.0
+        ],
+        "cornersPx": [
+          [
+            457.0,
+            688.0
+          ],
+          [
+            967.0,
+            1019.5
+          ],
+          [
+            797.0,
+            1130.0
+          ],
+          [
+            287.0,
+            798.5
+          ]
+        ]
+      },
+      "exactGuideMatchVerified": false,
+      "registrationStatus": "requires_correction_or_manual_verification"
+    },
+    {
+      "id": "tea_table",
+      "kind": "furniture",
+      "path": "images/furniture/tea_table.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        258,
+        570,
+        1017,
+        1190
+      ],
+      "sha256": "f6dd39aee2363ee84954bbdfd7e6a91f2ec5809b933b8ff42e519c097c2140a6",
+      "geometryTarget": {
+        "footprint": [
+          2,
+          2
+        ],
+        "surface": "floor",
+        "tilePx": 170.0,
+        "frontPx": [
+          627.0,
+          1130.0
+        ],
+        "cornersPx": [
+          [
+            627.0,
+            688.0
+          ],
+          [
+            967.0,
+            909.0
+          ],
+          [
+            627.0,
+            1130.0
+          ],
+          [
+            287.0,
+            909.0
+          ]
+        ]
+      },
+      "exactGuideMatchVerified": false,
+      "registrationStatus": "requires_correction_or_manual_verification"
+    },
+    {
+      "id": "treasure_chest",
+      "kind": "furniture",
+      "path": "images/furniture/treasure_chest.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        287,
+        512,
+        1013,
+        1177
+      ],
+      "sha256": "4900393a1e6a96debb58170b5e555633e033641c142401320abfd036c3102f92",
+      "geometryTarget": {
+        "footprint": [
+          2,
+          1
+        ],
+        "surface": "floor",
+        "tilePx": 170.0,
+        "frontPx": [
+          712.0,
+          1130.0
+        ],
+        "cornersPx": [
+          [
+            542.0,
+            798.5
+          ],
+          [
+            882.0,
+            1019.5
+          ],
+          [
+            712.0,
+            1130.0
+          ],
+          [
+            372.0,
+            909.0
+          ]
+        ]
+      },
+      "exactGuideMatchVerified": false,
+      "registrationStatus": "requires_correction_or_manual_verification"
+    },
+    {
+      "id": "board_frame",
+      "kind": "ui",
+      "path": "images/ui/board_frame.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        1254,
+        1254
+      ],
+      "sizeMatches": true,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        0,
+        1,
+        1254,
+        1247
+      ],
+      "sha256": "4fa86c8a7eeb3b973c4668a978819963f8570a25b682e88877badd4eb2064aac",
+      "requestedInnerOpening": [
+        125,
+        125,
+        1129,
+        1129
+      ],
+      "nonTransparentPixelsInRequestedOpening": 209306,
+      "exactInnerOpeningPass": false
+    },
+    {
+      "id": "coin_gold",
+      "kind": "ui",
+      "path": "images/ui/coin_gold.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        512,
+        512
+      ],
+      "sizeMatches": false,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        50,
+        46,
+        1204,
+        1200
+      ],
+      "sha256": "5aab1b57fc4ae81905de15a607cd2c1a42b138cd5f2dca93543160110d5c9c4e"
+    },
+    {
+      "id": "coin_memo",
+      "kind": "ui",
+      "path": "images/ui/coin_memo.png",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "requestedSize": [
+        512,
+        512
+      ],
+      "sizeMatches": false,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        42,
+        42,
+        1212,
+        1209
+      ],
+      "sha256": "2083fcd90c1149a5f648d9e0569890f3d46083bd6f5c64148436a70f5a5a8761"
+    },
+    {
+      "id": "scroll",
+      "kind": "ui",
+      "path": "images/ui/scroll.png",
+      "actualSize": [
+        1942,
+        809
+      ],
+      "requestedSize": [
+        1536,
+        640
+      ],
+      "sizeMatches": false,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        36,
+        82,
+        1905,
+        727
+      ],
+      "sha256": "544e15b2db3713e7c211b010767e0f3fe6cfefa85664689be5454d71a18271a9"
+    },
+    {
+      "id": "plaque",
+      "kind": "ui",
+      "path": "images/ui/plaque.png",
+      "actualSize": [
+        2172,
+        724
+      ],
+      "requestedSize": [
+        1536,
+        320
+      ],
+      "sizeMatches": false,
+      "mode": "RGBA",
+      "hasTransparentPixels": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        34,
+        102,
+        2138,
+        615
+      ],
+      "sha256": "25b6c46c90b7c9cdc02c099d06b3368ed5c28e34af569b3d0bac359baaea9c04"
+    },
+    {
+      "id": "puzzle_bg",
+      "kind": "ui",
+      "path": "images/ui/puzzle_bg.png",
+      "actualSize": [
+        940,
+        1672
+      ],
+      "requestedSize": [
+        1080,
+        1920
+      ],
+      "sizeMatches": false,
+      "mode": "RGB",
+      "hasTransparentPixels": false,
+      "alphaRange": [
+        255,
+        255
+      ],
+      "visibleBoundsAlphaAtLeast8": [
+        0,
+        0,
+        940,
+        1672
+      ],
+      "sha256": "2f97ae10fe93d761ca2be736e1c0d6436276f8fc5c0d12198cce4be574309c66"
+    }
+  ]
+}

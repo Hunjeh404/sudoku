@@ -11,7 +11,8 @@ export function configureSound(opts: { enabled: boolean; fx: number; music: numb
   fxEnabled = opts.enabled;
   fxVolume = opts.fx;
   musicVolume = opts.music;
-  if (audioEl) audioEl.volume = opts.enabled ? musicVolume : 0;
+  const d = currentTrack ? decks.get(currentTrack) : null;
+  if (d) rampTo(d, level(), 0.2);
 }
 
 function ac() {
@@ -70,38 +71,80 @@ export const sfx = {
 };
 
 // ---------- 배경음악 ----------
-let audioEl: HTMLAudioElement | null = null;
+// 곡마다 오디오를 하나씩 두고, 바꿀 때 이전 곡은 천천히 줄이고 새 곡은 천천히 키운다(엇갈려 페이드).
+// 음량은 Web Audio 게인으로 조절한다(아이폰은 audio.volume을 바꿀 수 없음).
+// 되돌아온 곡은 멈췄던 자리부터 이어서 나온다.
+const FADE_SEC = 2.5;
+interface Deck { el: HTMLAudioElement; gain: GainNode; timer?: number }
+const decks = new Map<string, Deck>();
 let musicVolume = 0.4;
+let duck = 1;
+let hooked = false;
 export let currentTrack: string | null = null;
+
+const level = () => (fxEnabled ? musicVolume * duck : 0);
+
+function deckFor(base: string, id: string): Deck | null {
+  let d = decks.get(id);
+  if (d) return d;
+  const c = ac();
+  if (!c) return null;
+  const el = new Audio(`${base}assets/audio/${id}.mp3`);
+  el.loop = true;
+  const gain = c.createGain();
+  gain.gain.value = 0;
+  c.createMediaElementSource(el).connect(gain).connect(c.destination);
+  d = { el, gain };
+  decks.set(id, d);
+  return d;
+}
+
+function rampTo(d: Deck, target: number, sec: number, then?: () => void) {
+  clearTimeout(d.timer);
+  const g = d.gain.gain, t = ctx!.currentTime;
+  g.cancelScheduledValues(t);
+  g.setValueAtTime(g.value, t);
+  g.linearRampToValueAtTime(target, t + sec);
+  if (then) d.timer = window.setTimeout(then, sec * 1000 + 50);
+}
+
+function start(d: Deck) {
+  if (ctx && ctx.state !== 'running') window.addEventListener('pointerdown', () => { ctx?.resume(); }, { once: true });
+  d.el.play().catch(() => {
+    // 브라우저는 첫 터치 전에는 소리를 막는다 → 첫 터치 때 다시 재생
+    window.addEventListener('pointerdown', () => { ctx?.resume(); if (decks.get(currentTrack ?? '') === d) d.el.play().catch(() => {}); }, { once: true });
+  });
+}
 
 export function playMusic(base: string, id: string | null) {
   if (!id) return stopMusic();
-  if (!audioEl) {
-    audioEl = new Audio();
-    audioEl.loop = true;
+  if (!hooked) {
+    hooked = true;
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) audioEl?.pause();
-      else if (currentTrack && fxEnabled) audioEl?.play().catch(() => {});
+      const d = currentTrack ? decks.get(currentTrack) : null;
+      if (!d) return;
+      if (document.hidden) d.el.pause();
+      else if (fxEnabled) start(d);
     });
   }
-  if (currentTrack !== id) {
-    audioEl.src = `${base}assets/audio/${id}.mp3`;
-    currentTrack = id;
-  }
-  audioEl.volume = musicVolume;
-  return audioEl.play().catch(() => {
-    // 브라우저는 첫 터치 전에는 소리를 막는다 → 첫 터치 때 다시 재생
-    const retry = () => { if (currentTrack) audioEl?.play().catch(() => {}); };
-    window.addEventListener('pointerdown', retry, { once: true });
-  });
+  const prev = currentTrack ? decks.get(currentTrack) : null;
+  const d = deckFor(base, id);
+  if (!d) return;
+  if (prev && prev !== d) rampTo(prev, 0, FADE_SEC, () => prev.el.pause());
+  currentTrack = id;
+  rampTo(d, level(), FADE_SEC);
+  if (d.el.paused) start(d);
 }
 export function stopMusic() {
-  audioEl?.pause();
+  const d = currentTrack ? decks.get(currentTrack) : null;
   currentTrack = null;
+  if (d) rampTo(d, 0, 1, () => d.el.pause());
 }
 /** 다른 소리가 날 때 배경음악을 잠깐 줄인다 */
 export function duckMusic(ms = 1200) {
-  if (!audioEl || audioEl.paused) return;
-  audioEl.volume = musicVolume * 0.3;
-  setTimeout(() => { if (audioEl) audioEl.volume = musicVolume; }, ms);
+  const d = currentTrack ? decks.get(currentTrack) : null;
+  if (!d || d.el.paused) return;
+  duck = 0.3;
+  rampTo(d, level(), 0.1);
+  setTimeout(() => { duck = 1; if (decks.get(currentTrack ?? '') === d) rampTo(d, level(), 0.4); }, ms);
 }

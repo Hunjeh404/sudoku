@@ -1,5 +1,5 @@
 {
- "note": "배치 보정값. floorCornersPx는 배경 그림 픽셀(1254 기준) back/right/front/left. items: scale(발자국 폭 대비 배율), dx/dy(배경 픽셀 이동), slot(받침 위 물건 위치, 가구 그림 픽셀 기준). ground: 그림의 접지점(가장 낮은 점, 정사각 발자국은 가로 가운데). topLift: 쌓을 때 이 물건 윗면까지 높이(가구 그림 픽셀, 눈 보정).",
+ "note": "배치 보정값. floorCornersPx는 배경 그림 픽셀(1254 기준) back/right/front/left. items: bounds·fitW·ground·topLift는 scripts/import-furniture-v2.py 실측, scale(발자국 폭 대비 눈 보정 배율)·dx/dy·slot(받침 위 물건 위치, 가구 그림 픽셀)은 손 보정.",
  "environments": {
   "room_base": {
    "floorCornersPx": [
@@ -48,155 +48,300 @@
   "display_pedestal": {
    "slot": {
     "dx": 0,
-    "dy": -470
+    "dy": -190
    },
+   "bounds": {
+    "x": 380,
+    "y": 805,
+    "w": 495,
+    "h": 395
+   },
+   "fitW": 495,
    "ground": {
-    "x": 630.5,
-    "y": 1094
+    "x": 627.0,
+    "y": 1199
    },
-   "topLift": 470
+   "topLift": 160,
+   "topLiftByEye": true
   },
   "tea_table": {
-   "scale": 0.9,
    "slot": {
-    "dx": -190,
-    "dy": -400
+    "dx": 90,
+    "dy": -330
    },
+   "bounds": {
+    "x": 259,
+    "y": 571,
+    "w": 758,
+    "h": 617
+   },
+   "fitW": 758,
    "ground": {
-    "x": 637.0,
-    "y": 1075
+    "x": 637.5,
+    "y": 1187
    },
-   "topLift": 380
+   "topLift": 200,
+   "topLiftByEye": true
   },
   "picture_frame": {
    "scale": 0.6,
-   "ground": {
-    "x": 645.0,
-    "y": 1172
+   "bounds": {
+    "x": 389,
+    "y": 527,
+    "w": 536,
+    "h": 641
    },
-   "topLift": 0
+   "fitW": 536,
+   "ground": {
+    "x": 656.5,
+    "y": 1167
+   },
+   "topLift": 276
   },
   "cloud_bed": {
-   "scale": 0.85,
-   "ground": {
-    "x": 697.9,
-    "y": 1113
+   "bounds": {
+    "x": 215,
+    "y": 357,
+    "w": 893,
+    "h": 802
    },
-   "topLift": 330
+   "fitW": 893,
+   "ground": {
+    "x": 661.0,
+    "y": 1158
+   },
+   "topLift": 240,
+   "topLiftByEye": true
   },
   "scroll_bookcase": {
-   "scale": 0.85,
-   "ground": {
-    "x": 892.2,
-    "y": 1211
+   "bounds": {
+    "x": 244,
+    "y": 98,
+    "w": 783,
+    "h": 1110
    },
-   "topLift": 800
+   "fitW": 783,
+   "ground": {
+    "x": 635.0,
+    "y": 1207
+   },
+   "topLift": 620,
+   "topLiftByEye": true
   },
   "treasure_chest": {
-   "scale": 0.9,
-   "ground": {
-    "x": 855.2,
-    "y": 1106
+   "bounds": {
+    "x": 288,
+    "y": 513,
+    "w": 724,
+    "h": 663
    },
-   "topLift": 420
+   "fitW": 724,
+   "ground": {
+    "x": 649.5,
+    "y": 1175
+   },
+   "topLift": 300,
+   "topLiftByEye": true
   },
   "cloud_cushion": {
-   "ground": {
-    "x": 626.5,
-    "y": 1028
+   "bounds": {
+    "x": 434,
+    "y": 909,
+    "w": 387,
+    "h": 293
    },
-   "topLift": 200
-  },
-  "garden_trellis": {
-   "ground": {
-    "x": 965.2,
-    "y": 1141
-   },
-   "topLift": 0
-  },
-  "laurel_bench": {
-   "ground": {
-    "x": 499.5,
-    "y": 1126
-   },
-   "topLift": 330
-  },
-  "laurel_door": {
-   "ground": {
-    "x": 888.9,
-    "y": 1189
-   },
-   "topLift": 0
-  },
-  "laurel_rug": {
-   "ground": {
-    "x": 628.8,
-    "y": 1058
-   },
-   "topLift": 0
-  },
-  "linen_curtain": {
-   "ground": {
-    "x": 970.5,
-    "y": 1173
-   },
-   "topLift": 0
-  },
-  "music_stand": {
-   "ground": {
-    "x": 643.5,
-    "y": 1157
-   },
-   "topLift": 520
-  },
-  "olive_planter": {
-   "ground": {
-    "x": 629.0,
-    "y": 1140
-   },
-   "topLift": 330
-  },
-  "owl_mailbox": {
-   "ground": {
-    "x": 635.5,
-    "y": 1169
-   },
-   "topLift": 560
-  },
-  "round_stool": {
-   "ground": {
-    "x": 631.0,
-    "y": 1065
-   },
-   "topLift": 300
-  },
-  "shell_fountain": {
+   "fitW": 387,
    "ground": {
     "x": 627.0,
-    "y": 1082
+    "y": 1201
    },
-   "topLift": 260
+   "topLift": 36
+  },
+  "garden_trellis": {
+   "bounds": {
+    "x": 330,
+    "y": 414,
+    "w": 658,
+    "h": 774
+   },
+   "fitW": 658,
+   "ground": {
+    "x": 658.5,
+    "y": 1187
+   },
+   "topLift": 517
+  },
+  "laurel_bench": {
+   "bounds": {
+    "x": 273,
+    "y": 272,
+    "w": 823,
+    "h": 861
+   },
+   "fitW": 823,
+   "ground": {
+    "x": 684.0,
+    "y": 1132
+   },
+   "topLift": 250,
+   "topLiftByEye": true
+  },
+  "laurel_door": {
+   "bounds": {
+    "x": 352,
+    "y": 142,
+    "w": 562,
+    "h": 1020
+   },
+   "fitW": 562,
+   "ground": {
+    "x": 829.9,
+    "y": 1161
+   },
+   "topLift": 787
+  },
+  "laurel_rug": {
+   "bounds": {
+    "x": 201,
+    "y": 576,
+    "w": 854,
+    "h": 565
+   },
+   "fitW": 854,
+   "ground": {
+    "x": 627.5,
+    "y": 1140
+   },
+   "topLift": 71
+  },
+  "linen_curtain": {
+   "bounds": {
+    "x": 389,
+    "y": 303,
+    "w": 532,
+    "h": 775
+   },
+   "fitW": 532,
+   "ground": {
+    "x": 813.2,
+    "y": 1077
+   },
+   "topLift": 548
+  },
+  "music_stand": {
+   "bounds": {
+    "x": 453,
+    "y": 546,
+    "w": 391,
+    "h": 617
+   },
+   "fitW": 391,
+   "ground": {
+    "x": 648.0,
+    "y": 1162
+   },
+   "topLift": 360
+  },
+  "olive_planter": {
+   "bounds": {
+    "x": 407,
+    "y": 584,
+    "w": 455,
+    "h": 573
+   },
+   "fitW": 455,
+   "ground": {
+    "x": 634.0,
+    "y": 1156
+   },
+   "topLift": 225,
+   "topLiftByEye": true
+  },
+  "owl_mailbox": {
+   "bounds": {
+    "x": 417,
+    "y": 537,
+    "w": 448,
+    "h": 667
+   },
+   "fitW": 448,
+   "ground": {
+    "x": 640.5,
+    "y": 1203
+   },
+   "topLift": 374,
+   "dx": 7
+  },
+  "round_stool": {
+   "bounds": {
+    "x": 374,
+    "y": 660,
+    "w": 507,
+    "h": 474
+   },
+   "fitW": 507,
+   "ground": {
+    "x": 627.0,
+    "y": 1133
+   },
+   "topLift": 190,
+   "topLiftByEye": true
+  },
+  "shell_fountain": {
+   "bounds": {
+    "x": 125,
+    "y": 255,
+    "w": 1005,
+    "h": 859
+   },
+   "fitW": 1005,
+   "ground": {
+    "x": 627.0,
+    "y": 1113
+   },
+   "topLift": 205
   },
   "star_lantern": {
-   "ground": {
-    "x": 626.0,
-    "y": 1195
+   "bounds": {
+    "x": 332,
+    "y": 322,
+    "w": 591,
+    "h": 844
    },
-   "topLift": 700
+   "fitW": 591,
+   "ground": {
+    "x": 627.0,
+    "y": 1165
+   },
+   "topLift": 459
   },
   "star_mobile": {
-   "ground": {
-    "x": 701.0,
-    "y": 1178
+   "bounds": {
+    "x": 430,
+    "y": 322,
+    "w": 494,
+    "h": 849
    },
-   "topLift": 0
+   "fitW": 494,
+   "ground": {
+    "x": 676.5,
+    "y": 1170
+   },
+   "topLift": 454
   },
   "stepping_stones": {
-   "ground": {
-    "x": 932.8,
-    "y": 1032
+   "bounds": {
+    "x": 227,
+    "y": 590,
+    "w": 866,
+    "h": 594
    },
-   "topLift": 40
+   "fitW": 866,
+   "ground": {
+    "x": 659.5,
+    "y": 1183
+   },
+   "topLift": 175
   }
  }
 }

@@ -37,7 +37,7 @@ async function solve(p: Page) {
     await p.getByRole('button', { name: '메모', exact: true }).click();
     await p.waitForTimeout(300);
     await p.screenshot({ path: `${OUT}/sd${w}-puzzle.png` });
-    await p.getByRole('button', { name: '힌트', exact: true }).click();
+    await p.getByRole('button', { name: /^힌트, 남은/ }).click();
     await p.getByRole('button', { name: '더 알려 줘' }).click();
     await p.getByRole('button', { name: '더 알려 줘' }).click();
     await p.waitForTimeout(300);

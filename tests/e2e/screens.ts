@@ -20,7 +20,7 @@ const OUT = process.env.OUT ?? '/tmp';
   for (const d of [1, 5, 9]) await p.getByRole('button', { name: new RegExp(`^${d} 넣기`) }).click();
   await p.getByRole('button', { name: '메모', exact: true }).click();
   await shot('puzzle9');
-  await p.getByRole('button', { name: '힌트', exact: true }).click();
+  await p.getByRole('button', { name: /^힌트, 남은/ }).click();
   for (let i = 0; i < 2; i++) await p.getByRole('button', { name: '더 알려 줘' }).click().catch(() => {});
   await p.screenshot({ path: `${OUT}/s360-hint9.png`, fullPage: true });
   await p.getByRole('button', { name: '나가기' }).click();
