@@ -135,7 +135,7 @@ textarea { resize: vertical; }
 .home-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 4px 0 0; }
 .home-name { font-size: 18px; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .space {
-  position: relative; margin: 8px -16px 0; overflow: hidden; touch-action: manipulation;
+  position: relative; margin: 8px -16px 0; overflow: hidden; touch-action: manipulation; isolation: isolate;
   background: radial-gradient(120% 80% at 50% 10%, #F7F2FA 0%, var(--lav) 45%, var(--sky) 100%);
 }
 .space-garden { background: radial-gradient(120% 80% at 50% 0%, #FFF8E6 0%, var(--sky) 55%, #A9C2D9 100%); }

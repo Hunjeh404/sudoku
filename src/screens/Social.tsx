@@ -23,7 +23,7 @@ const SAMPLE: { owner: any; home: HomeData } = {
     ],
     garden_layout: [
       { uid: 'g1', item: 'shell_fountain', x: 4, y: 3 }, { uid: 'g2', item: 'garden_trellis', x: 4, y: 0 }, { uid: 'g3', item: 'stepping_stones', x: 4, y: 7 },
-      { uid: 'g4', item: 'laurel_bench', x: 8, y: 6 }, { uid: 'g5', item: 'olive_planter', x: 1, y: 2 }, { uid: 'g6', item: 'olive_planter', x: 10, y: 1 },
+      { uid: 'g4', item: 'laurel_bench', x: 10, y: 4 }, { uid: 'g5', item: 'olive_planter', x: 1, y: 2 }, { uid: 'g6', item: 'olive_planter', x: 10, y: 1 },
       { uid: 'g7', item: 'display_pedestal', x: 1, y: 7 }, { uid: 'g8', item: 'cornucopia', parent: 'g7' }, { uid: 'g9', item: 'owl_mailbox', x: 9, y: 9 },
     ],
     exhibits: { s3: 'assets/scenes/c01-00.webp' }, notes: { s5: '견본 집 책장에는 첫 이야기가 꽂혀 있어요.' }, featured_uid: 's8', music: 'Picnic_on_Olympus', revision: 0, saved_at: '',
