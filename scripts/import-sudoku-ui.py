@@ -14,9 +14,11 @@ JOBS = {  # 이름: (자를 범위, 출력 배율)
     'plaque': ((35, 103, 2137, 614), 0.5),        # 끝 소용돌이 145, 위아래 띠 100 → ×0.5
     'scroll': ((36, 83, 1904, 725), 0.5),          # 말린 끝 150, 위 132, 아래 142 → ×0.5
     'puzzle_bg': (None, 1.0),
+    'resume_card': ((7, 80, 2164, 646), 0.5),      # 원본 assets-src/resume-card-v1. 왼쪽 장식 260, 위·오른쪽·아래 테두리 95 → ×0.5
 }
 for name, (box, k) in JOBS.items():
-    im = Image.open(os.path.join(SRC, name + '.png'))
+    src = os.path.join(ROOT, 'assets-src', 'resume-card-v1', 'images', 'ui') if name == 'resume_card' else SRC
+    im = Image.open(os.path.join(src, name + '.png'))
     im = im.convert('RGB') if name == 'puzzle_bg' else im.convert('RGBA')
     if box: im = im.crop(box)
     im = im.resize((round(im.width * k), round(im.height * k)), Image.LANCZOS)

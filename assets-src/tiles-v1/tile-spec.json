@@ -1,0 +1,160 @@
+{
+ "slope": 0.65,
+ "note": "조각은 평면 그림. cells=그림 한 장이 덮는 칸 수(가로, 세로). 벽 높이 6칸, 기둥 1칸 폭.",
+ "pieces": {
+  "floor_slab_a": {
+   "size": [
+    1024,
+    1024
+   ],
+   "cell": 512,
+   "cells": [
+    2,
+    2
+   ],
+   "seamX": false,
+   "seamY": false,
+   "alpha": false
+  },
+  "floor_slab_b": {
+   "size": [
+    1024,
+    1024
+   ],
+   "cell": 512,
+   "cells": [
+    2,
+    2
+   ],
+   "seamX": false,
+   "seamY": false,
+   "alpha": false
+  },
+  "floor_slab_c": {
+   "size": [
+    1024,
+    1024
+   ],
+   "cell": 512,
+   "cells": [
+    2,
+    2
+   ],
+   "seamX": false,
+   "seamY": false,
+   "alpha": false
+  },
+  "wall_section": {
+   "size": [
+    1024,
+    1536
+   ],
+   "cell": 256,
+   "cells": [
+    4,
+    6
+   ],
+   "seamX": true,
+   "seamY": false,
+   "alpha": false
+  },
+  "pillar_capital": {
+   "size": [
+    512,
+    512
+   ],
+   "cell": 512,
+   "cells": [
+    1,
+    1
+   ],
+   "seamX": false,
+   "seamY": false,
+   "alpha": false
+  },
+  "pillar_shaft": {
+   "size": [
+    512,
+    1024
+   ],
+   "cell": 512,
+   "cells": [
+    1,
+    2
+   ],
+   "seamX": false,
+   "seamY": true,
+   "alpha": false
+  },
+  "pillar_base": {
+   "size": [
+    512,
+    512
+   ],
+   "cell": 512,
+   "cells": [
+    1,
+    1
+   ],
+   "seamX": false,
+   "seamY": false,
+   "alpha": false
+  },
+  "floor_edge": {
+   "size": [
+    2048,
+    512
+   ],
+   "cell": 512,
+   "cells": [
+    4,
+    1
+   ],
+   "seamX": true,
+   "seamY": false,
+   "alpha": false
+  },
+  "grass": {
+   "size": [
+    1024,
+    1024
+   ],
+   "cell": 512,
+   "cells": [
+    2,
+    2
+   ],
+   "seamX": true,
+   "seamY": true,
+   "alpha": false
+  },
+  "garden_edge": {
+   "size": [
+    2048,
+    512
+   ],
+   "cell": 512,
+   "cells": [
+    4,
+    1
+   ],
+   "seamX": true,
+   "seamY": false,
+   "alpha": false
+  },
+  "garden_fence": {
+   "size": [
+    2048,
+    1024
+   ],
+   "cell": 512,
+   "cells": [
+    4,
+    2
+   ],
+   "seamX": true,
+   "seamY": false,
+   "alpha": true
+  }
+ }
+}

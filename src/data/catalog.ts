@@ -94,10 +94,10 @@ export const REWARD_RULES: { size: number; difficulty: string; amount: number }[
 
 // 안내 친구(게임 속 역할 배정이며 원전 설명과 구분)
 export const GUIDES = [
-  { id: 'hestia', name: '헤스티아', role: '집 안내', line: '어서 와. 따뜻한 집부터 둘러보자.' },
-  { id: 'athena', name: '아테나', role: '퍼즐 안내', line: '천천히 생각하면 길이 보여.' },
-  { id: 'apollo', name: '아폴론', role: '음악·전시', line: '오늘은 어떤 노래를 틀어 볼까?' },
-  { id: 'artemis', name: '아르테미스', role: '정원', line: '정원에 별빛이 내려앉았어.' },
+  { id: 'hestia', name: '헤스티아', role: '집 안내', line: '어서 오세요. 따뜻한 집부터 둘러봐요.' },
+  { id: 'athena', name: '아테나', role: '퍼즐 안내', line: '천천히 생각하면 길이 보여요.' },
+  { id: 'apollo', name: '아폴론', role: '음악·전시', line: '오늘은 어떤 노래를 틀어 볼까요?' },
+  { id: 'artemis', name: '아르테미스', role: '정원', line: '정원에 별빛이 내려앉았어요.' },
 ];
 
 export const AVATARS = ['hestia', 'athena', 'apollo', 'artemis', 'hermes', 'persephone', 'pegasus', 'iris', 'nike', 'pan', 'eros', 'demeter'];

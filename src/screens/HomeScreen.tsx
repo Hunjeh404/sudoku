@@ -31,14 +31,14 @@ export function HomeScreen({ goSudoku, visit }: { goSudoku: () => void; visit: (
   };
 
   let bubble: { text: string; action?: { label: string; run: () => void } };
-  if (q.choice_pending) bubble = { text: '첫 별빛을 모았구나! 집에 둘 선물을 하나 골라 봐.', action: { label: '선물 고르기', run: () => setChoice(true) } };
-  else if (q.completed_count === 0) bubble = { text: `${guide.line} 스도쿠 한 판으로 첫 별빛을 모아 볼까?`, action: { label: '스도쿠 하러 가기', run: goSudoku } };
+  if (q.choice_pending) bubble = { text: '첫 별빛을 모았네요! 집에 둘 선물을 하나 골라 보세요.', action: { label: '선물 고르기', run: () => setChoice(true) } };
+  else if (q.completed_count === 0) bubble = { text: `${guide.line} 스도쿠 한 판으로 첫 별빛을 모아 볼까요?`, action: { label: '스도쿠 하러 가기', run: goSudoku } };
   else if (goal) {
     const need = Math.max(0, goal.price - state.balance);
     bubble = need > 0
-      ? { text: `목표「${goal.nameKo}」까지 별빛 ${need}만큼 남았어.`, action: { label: '한 판 더', run: goSudoku } }
-      : { text: `별빛이 모였어! 꾸미기 상점에서「${goal.nameKo}」${josa(goal.nameKo, '을/를').slice(goal.nameKo.length)} 살 수 있어.`, action: { label: '꾸미러 가기', run: () => setEditing(true) } };
-  } else bubble = { text: '물건을 눌러 보면 저마다 다르게 반응해. 꾸미기 상점에서 다음 목표도 정해 봐.' };
+      ? { text: `목표「${goal.nameKo}」까지 별빛 ${need}만큼 남았어요.`, action: { label: '한 판 더', run: goSudoku } }
+      : { text: `별빛이 모였어요! 꾸미기 상점에서「${goal.nameKo}」${josa(goal.nameKo, '을/를').slice(goal.nameKo.length)} 살 수 있어요.`, action: { label: '꾸미러 가기', run: () => setEditing(true) } };
+  } else bubble = { text: '물건을 눌러 보면 저마다 다르게 반응해요. 꾸미기 상점에서 다음 목표도 정해 보세요.' };
 
   const nextStep = JOURNEY[q.completed_count];
 

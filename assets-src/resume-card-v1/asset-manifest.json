@@ -1,0 +1,28 @@
+{
+  "actualSize": [
+    2172,
+    724
+  ],
+  "requestedSize": [
+    1536,
+    384
+  ],
+  "mode": "RGBA",
+  "alphaRange": [
+    0,
+    255
+  ],
+  "visibleBoundsAlphaAtLeast8": [
+    6,
+    79,
+    2166,
+    647
+  ],
+  "aspectRatioMatches": false,
+  "id": "resume_card",
+  "path": "images/ui/resume_card.png",
+  "sha256": "bffc269110f2f3c079a617e72605472625f68a88576f6bb0d060b3cdc61eaa46",
+  "status": "generated_requires_canvas_and_layout_finishing",
+  "generationMethod": "built-in image generation and editing",
+  "exactLayoutVerified": false
+}

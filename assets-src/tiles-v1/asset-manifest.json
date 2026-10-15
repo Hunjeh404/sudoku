@@ -1,0 +1,441 @@
+{
+  "status": "11_assets_generated_with_unresolved_spec_deviations",
+  "generationMethod": "built-in image generation and editing",
+  "assetCount": 11,
+  "aspectRatioMatches": 9,
+  "opacityRequirementsMatch": 11,
+  "assets": [
+    {
+      "id": "floor_slab_a",
+      "size": [
+        1254,
+        1254
+      ],
+      "alphaRange": [
+        255,
+        255
+      ],
+      "aspectMatches": true,
+      "path": "images/tiles/floor_slab_a.png",
+      "requested": {
+        "size": [
+          1024,
+          1024
+        ],
+        "cell": 512,
+        "cells": [
+          2,
+          2
+        ],
+        "seamX": false,
+        "seamY": false,
+        "alpha": false
+      },
+      "sha256": "309e007a69ce5b084367eb603de31353abaa671501755b8844d90484680153db",
+      "notes": "연보라 무늬를 줄인 수정본. 테두리 폭이 목표 28px의 비율보다 두껍습니다.",
+      "seamlessCertified": null,
+      "visibleBoundsAlphaAtLeast8": [
+        0,
+        0,
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "floor_slab_b",
+      "size": [
+        1254,
+        1254
+      ],
+      "alphaRange": [
+        255,
+        255
+      ],
+      "aspectMatches": true,
+      "path": "images/tiles/floor_slab_b.png",
+      "requested": {
+        "size": [
+          1024,
+          1024
+        ],
+        "cell": 512,
+        "cells": [
+          2,
+          2
+        ],
+        "seamX": false,
+        "seamY": false,
+        "alpha": false
+      },
+      "sha256": "e08ab911660659ef23bf269af60e9dc7cda34344d1f7ae382374a30ab3a3c006",
+      "notes": "따뜻한 크림색과 옅은 금빛 무늬로 수정. 테두리 폭은 정밀 규격 보정이 필요합니다.",
+      "seamlessCertified": null,
+      "visibleBoundsAlphaAtLeast8": [
+        0,
+        0,
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "floor_slab_c",
+      "size": [
+        1254,
+        1254
+      ],
+      "alphaRange": [
+        255,
+        255
+      ],
+      "aspectMatches": true,
+      "path": "images/tiles/floor_slab_c.png",
+      "requested": {
+        "size": [
+          1024,
+          1024
+        ],
+        "cell": 512,
+        "cells": [
+          2,
+          2
+        ],
+        "seamX": false,
+        "seamY": false,
+        "alpha": false
+      },
+      "sha256": "04014caf63b99ef73da0137b5f559fc0aa84129344eed4eb7ee3e9713544f721",
+      "notes": "연한 푸른 얼룩 중심으로 단순화. 테두리 폭은 정밀 규격 보정이 필요합니다.",
+      "seamlessCertified": null,
+      "visibleBoundsAlphaAtLeast8": [
+        0,
+        0,
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "wall_section",
+      "size": [
+        1024,
+        1536
+      ],
+      "alphaRange": [
+        255,
+        255
+      ],
+      "aspectMatches": true,
+      "seam_x": {
+        "edgeMeanAbsoluteDifferenceRGBA": 7.261,
+        "edgeMaxDifferenceRGBA": 179,
+        "exactEdgeEquality": false
+      },
+      "path": "images/tiles/wall_section.png",
+      "requested": {
+        "size": [
+          1024,
+          1536
+        ],
+        "cell": 256,
+        "cells": [
+          4,
+          6
+        ],
+        "seamX": true,
+        "seamY": false,
+        "alpha": false
+      },
+      "sha256": "268416cab029bc4473553e95c646bcf18c36574709dc589ce69ff99f487227b6",
+      "notes": "정면, 상단 물결 4회 반복. 밴드 높이와 좌우 연결부는 정확한 가이드 정합 미확정.",
+      "seamlessCertified": false,
+      "visibleBoundsAlphaAtLeast8": [
+        0,
+        0,
+        1024,
+        1536
+      ]
+    },
+    {
+      "id": "pillar_capital",
+      "size": [
+        1254,
+        1254
+      ],
+      "alphaRange": [
+        255,
+        255
+      ],
+      "aspectMatches": true,
+      "path": "images/tiles/pillar_capital.png",
+      "requested": {
+        "size": [
+          512,
+          512
+        ],
+        "cell": 512,
+        "cells": [
+          1,
+          1
+        ],
+        "seamX": false,
+        "seamY": false,
+        "alpha": false
+      },
+      "sha256": "09045109a72448455fb6e1ed2d81754910dde1a407af4940d31f0f6c61f659ad",
+      "notes": "네 줄 홈과 간소한 소용돌이 장식으로 수정. 몸통과 홈 위치·너비·색의 정밀 연결은 추가 보정 필요.",
+      "seamlessCertified": null,
+      "visibleBoundsAlphaAtLeast8": [
+        0,
+        0,
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "pillar_shaft",
+      "size": [
+        887,
+        1774
+      ],
+      "alphaRange": [
+        255,
+        255
+      ],
+      "aspectMatches": true,
+      "seam_y": {
+        "edgeMeanAbsoluteDifferenceRGBA": 4.403,
+        "edgeMaxDifferenceRGBA": 32,
+        "exactEdgeEquality": false
+      },
+      "path": "images/tiles/pillar_shaft.png",
+      "requested": {
+        "size": [
+          512,
+          1024
+        ],
+        "cell": 512,
+        "cells": [
+          1,
+          2
+        ],
+        "seamX": false,
+        "seamY": true,
+        "alpha": false
+      },
+      "sha256": "44fea5087ba414f543e15f9b3c6a8f3b2a7b507888ca0debdb6235c1f12e3988",
+      "notes": "홈의 위아래 마감선을 제거하여 세로로 이어지게 수정. 끝단 색상은 완전 동일하지 않습니다.",
+      "seamlessCertified": false,
+      "visibleBoundsAlphaAtLeast8": [
+        0,
+        0,
+        887,
+        1774
+      ]
+    },
+    {
+      "id": "pillar_base",
+      "size": [
+        1254,
+        1254
+      ],
+      "alphaRange": [
+        255,
+        255
+      ],
+      "aspectMatches": true,
+      "path": "images/tiles/pillar_base.png",
+      "requested": {
+        "size": [
+          512,
+          512
+        ],
+        "cell": 512,
+        "cells": [
+          1,
+          1
+        ],
+        "seamX": false,
+        "seamY": false,
+        "alpha": false
+      },
+      "sha256": "5a5e77efe23acf93f1acf493e25c71fc417c40d67ea273ff6d26ff55404e5608",
+      "notes": "정방형과 네 줄 홈, 단순 몰딩으로 수정. 몸통과 경계 맞춤은 추가 보정 필요.",
+      "seamlessCertified": null,
+      "visibleBoundsAlphaAtLeast8": [
+        0,
+        0,
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "floor_edge",
+      "size": [
+        2172,
+        724
+      ],
+      "alphaRange": [
+        255,
+        255
+      ],
+      "aspectMatches": false,
+      "seam_x": {
+        "edgeMeanAbsoluteDifferenceRGBA": 8.461,
+        "edgeMaxDifferenceRGBA": 43,
+        "exactEdgeEquality": false
+      },
+      "path": "images/tiles/floor_edge.png",
+      "requested": {
+        "size": [
+          2048,
+          512
+        ],
+        "cell": 512,
+        "cells": [
+          4,
+          1
+        ],
+        "seamX": true,
+        "seamY": false,
+        "alpha": false
+      },
+      "sha256": "72080146eab5c3bef7905ec223cbfa941431fda4f82b882a1399d18df43fdc4a",
+      "notes": "불필요한 장식 제거. 요청 4:1과 달리 실제 3:1이므로 필수 규격 미충족.",
+      "seamlessCertified": false,
+      "visibleBoundsAlphaAtLeast8": [
+        0,
+        0,
+        2172,
+        724
+      ]
+    },
+    {
+      "id": "grass",
+      "size": [
+        1254,
+        1254
+      ],
+      "alphaRange": [
+        255,
+        255
+      ],
+      "aspectMatches": true,
+      "seam_x": {
+        "edgeMeanAbsoluteDifferenceRGBA": 9.408,
+        "edgeMaxDifferenceRGBA": 90,
+        "exactEdgeEquality": false
+      },
+      "seam_y": {
+        "edgeMeanAbsoluteDifferenceRGBA": 8.426,
+        "edgeMaxDifferenceRGBA": 93,
+        "exactEdgeEquality": false
+      },
+      "path": "images/tiles/grass.png",
+      "requested": {
+        "size": [
+          1024,
+          1024
+        ],
+        "cell": 512,
+        "cells": [
+          2,
+          2
+        ],
+        "seamX": true,
+        "seamY": true,
+        "alpha": false
+      },
+      "sha256": "aa5354d1c4e0b68cb91709667b0b408b034137a246a51bfcdb178220b72b52f5",
+      "notes": "위에서 본 잔디. 반복 시 무늬의 반복성과 경계 색상 차이 재검토 필요.",
+      "seamlessCertified": false,
+      "visibleBoundsAlphaAtLeast8": [
+        0,
+        0,
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "garden_edge",
+      "size": [
+        2172,
+        724
+      ],
+      "alphaRange": [
+        255,
+        255
+      ],
+      "aspectMatches": false,
+      "seam_x": {
+        "edgeMeanAbsoluteDifferenceRGBA": 10.171,
+        "edgeMaxDifferenceRGBA": 138,
+        "exactEdgeEquality": false
+      },
+      "path": "images/tiles/garden_edge.png",
+      "requested": {
+        "size": [
+          2048,
+          512
+        ],
+        "cell": 512,
+        "cells": [
+          4,
+          1
+        ],
+        "seamX": true,
+        "seamY": false,
+        "alpha": false
+      },
+      "sha256": "995008850fa62e0cdf067700bf6cba82d8bb7a082949037b1599fa751b4bf67b",
+      "notes": "잔디·흙·돌 구성. 요청 4:1과 달리 실제 3:1이므로 필수 규격 미충족. 상단 풀 주변 밝은 빈틈도 확인 필요.",
+      "seamlessCertified": false,
+      "visibleBoundsAlphaAtLeast8": [
+        0,
+        0,
+        2172,
+        724
+      ]
+    },
+    {
+      "id": "garden_fence",
+      "size": [
+        1774,
+        887
+      ],
+      "alphaRange": [
+        0,
+        255
+      ],
+      "aspectMatches": true,
+      "seam_x": {
+        "edgeMeanAbsoluteDifferenceRGBA": 4.491,
+        "edgeMaxDifferenceRGBA": 150,
+        "exactEdgeEquality": false
+      },
+      "path": "images/tiles/garden_fence.png",
+      "requested": {
+        "size": [
+          2048,
+          1024
+        ],
+        "cell": 512,
+        "cells": [
+          4,
+          2
+        ],
+        "seamX": true,
+        "seamY": false,
+        "alpha": true
+      },
+      "sha256": "9afbcc7a2f4626a03fd6c0685914ca1a0f009604ae76a4766032932bf3141cd5",
+      "notes": "실제 투명 PNG. 기둥 2개와 연결 난간. 하단 투명 여백이 남아 받침대의 바닥 밀착 좌표가 지시서와 다릅니다. 레일 두께 및 연결부 정밀 수정 필요.",
+      "seamlessCertified": false,
+      "visibleBoundsAlphaAtLeast8": [
+        0,
+        151,
+        1774,
+        762
+      ]
+    }
+  ],
+  "edgeMetricExplanation": "0..255 premultiplied RGBA opposite-edge mean absolute difference. Nonzero does not alone establish a visible seam, and zero does not alone certify texture continuity. No universal pass threshold was applied."
+}

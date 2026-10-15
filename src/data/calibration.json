@@ -4,44 +4,46 @@
   "room_base": {
    "floorCornersPx": [
     [
-     633,
-     452
+     579.0,
+     436.1
     ],
     [
-     1135,
-     778
+     1155.0,
+     810.5
     ],
     [
-     622,
-     1114
+     675.0,
+     1122.5
     ],
     [
-     118,
-     787
+     99.0,
+     748.1
     ]
    ],
-   "image": "assets-src/derived/room_base_parallel.png",
-   "note": "원본의 원근을 펴서 가구(기울기 0.65)와 맞춘 파생본 기준"
+   "image": "assets-src/tiles-v1/room_base.png",
+   "note": "scripts/compose-env.py로 조각을 조립한 배경. 바닥 칸은 화면에서 정사각 마름모."
   },
   "garden_base": {
    "floorCornersPx": [
     [
-     627,
-     262
+     579.0,
+     436.1
     ],
     [
-     1105,
-     568
+     1155.0,
+     810.5
     ],
     [
-     627,
-     880
+     675.0,
+     1122.5
     ],
     [
-     148,
-     568
+     99.0,
+     748.1
     ]
-   ]
+   ],
+   "image": "assets-src/tiles-v1/garden_base.png",
+   "note": "scripts/compose-env.py로 조각을 조립한 배경. 바닥 칸은 화면에서 정사각 마름모."
   }
  },
  "items": {

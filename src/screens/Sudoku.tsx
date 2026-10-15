@@ -40,7 +40,7 @@ export function SudokuSelect({ onStart }: { onStart: (a: AttemptData) => void })
   return (
     <div className="page">
       <h1 className="page-title">스도쿠</h1>
-      <div className="athena-line"><Avatar id="athena" size={48} /><p><strong>아테나</strong> 오늘은 어떤 판을 풀어 볼까? 천천히 생각하면 길이 보여.</p></div>
+      <div className="athena-line"><Avatar id="athena" size={48} /><p><strong>아테나</strong> 오늘은 어떤 판을 풀어 볼까요? 천천히 생각하면 길이 보여요.</p></div>
       {state!.active.length > 0 && (
         <section>
           <h2 className="sub">이어서 풀기</h2>
