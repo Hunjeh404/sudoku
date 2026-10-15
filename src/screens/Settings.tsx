@@ -2,13 +2,15 @@ import { useEffect, useState } from 'react';
 import { useGame } from '../lib/store';
 import { rpc, ApiError } from '../lib/api';
 import { TITLES } from '../data/catalog';
-import { Sheet, Avatar, ErrorLine, Spinner, timeAgo, activityText } from '../ui';
+import { Sheet, Avatar, ErrorLine, Spinner, timeAgo, activityText, tierOf } from '../ui';
 import { CreateProfile } from './Entry';
 
 export function SettingsSheet({ onClose }: { onClose: () => void }) {
   const { state, settings, updateSettings, profileId, patchState, toast, selectProfile, signOut, reloadProfiles, session } = useGame();
   const p = state!.profile;
-  const [form, setForm] = useState({ nickname: p.nickname, avatar_id: p.avatar_id, title: p.title });
+  const [form, setForm] = useState({ nickname: p.nickname, avatar_id: p.avatar_id, badge: p.badge, title: p.title });
+  const portraits = state!.owned.filter((id) => (tierOf(id) ?? 0) >= 1);
+  const treasures = state!.owned.filter((id) => tierOf(id) === 0);
   const [err, setErr] = useState<string | null>(null);
   const [childForm, setChildForm] = useState(false);
   const titles = TITLES.filter((t) => state!.unlocks.includes(`title:${t.id}`));
@@ -44,9 +46,17 @@ export function SettingsSheet({ onClose }: { onClose: () => void }) {
         <h3>내 프로필</h3>
         <label className="field"><span>이름</span><input value={form.nickname} maxLength={12} onChange={(e) => setForm({ ...form, nickname: e.target.value })} /><small>순위표와 친구 소식에 보여요. 아이는 실명 대신 별명을 쓰는 게 좋아요.</small></label>
         <fieldset className="field"><legend>내 초상화</legend>
-          {state!.owned.length === 0
+          {portraits.length === 0
             ? <p className="fine">아직 모은 초상화가 없어요. 첫 판을 끝내면 선물로 받고, 도감에서 별빛으로 모을 수 있어요.</p>
-            : <div className="avatar-grid small">{state!.owned.map((a) => <button key={a} className={`avatar-pick${form.avatar_id === a ? ' on' : ''}`} aria-pressed={form.avatar_id === a} aria-label={a} onClick={() => setForm({ ...form, avatar_id: a })}><Avatar id={a} size={44} framed={form.avatar_id === a} /></button>)}</div>}
+            : <div className="avatar-grid small">{portraits.map((a) => <button key={a} className={`avatar-pick${form.avatar_id === a ? ' on' : ''}`} aria-pressed={form.avatar_id === a} aria-label={a} onClick={() => setForm({ ...form, avatar_id: a })}><Avatar id={a} size={44} /></button>)}</div>}
+        </fieldset>
+        <fieldset className="field"><legend>초상화에 다는 보물</legend>
+          {treasures.length === 0 ? <p className="fine">도감의 보물 칸에서 별빛 10으로 보물을 모으면 초상화 오른쪽 아래에 달 수 있어요.</p> : (
+            <div className="avatar-grid small">
+              <button className={`avatar-pick${form.badge === '' ? ' on' : ''}`} aria-pressed={form.badge === ''} aria-label="달지 않기" onClick={() => setForm({ ...form, badge: '' })}><Avatar id={form.avatar_id} size={44} /></button>
+              {treasures.map((t) => <button key={t} className={`avatar-pick${form.badge === t ? ' on' : ''}`} aria-pressed={form.badge === t} aria-label={t} onClick={() => setForm({ ...form, badge: t })}><Avatar id={form.avatar_id} size={44} badge={t} /></button>)}
+            </div>
+          )}
         </fieldset>
         <fieldset className="field"><legend>칭호</legend>
           {titles.length === 0 ? <p className="fine">여정을 걸으면 칭호를 받아요.</p> : (

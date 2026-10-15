@@ -8,7 +8,7 @@ import { rpc, newOpId, ApiError } from '../lib/api';
 import { getLocal, setLocal, delLocal } from '../lib/local';
 import { Board, Size, parseBoard, boardToString, conflicts, geometry, rowOf, colOf, countSolutions } from '../sudoku/engine';
 import { makeHint, Hint } from '../sudoku/hints';
-import { REWARD_RULES, HINT_MAX, boardName, rewardText } from '../data/catalog';
+import { REWARD_RULES, HINT_MAX, boardName, rewardText, STORY_EVERY } from '../data/catalog';
 import { nextJourney } from './Journey';
 import { Sheet, Starlight, ErrorLine, Spinner, Avatar, mmss, secText } from '../ui';
 import { sfx } from '../lib/sound';
@@ -400,6 +400,9 @@ export function ResultScreen({ result, onHome, onAgain }: { result: any; onHome:
       {rec && <p className="record-line">{rec.first ? `첫 기록 ${secText(rec.sec)}` : `자기 기록 경신! ${secText(rec.prev)} → ${secText(rec.sec)}`}</p>}
       {j && <div className="journey-card"><p>여정 {j.step}번째 보상</p><strong>{j.title}</strong><small>{rewardText(j.reward)}</small></div>}
       {!j && next && <p className="fine">다음 여정「{next.title}」까지 {next.need - result.completed_count}판</p>}
+      {result.completed_count % STORY_EVERY === 0 && result.completed_count / STORY_EVERY + 1 <= 16 && (
+        <p className="record-line">이야기책 {result.completed_count / STORY_EVERY + 1}장이 열렸어요. 도감에서 읽어 보세요</p>
+      )}
       <div className="stack">
         <button className="btn primary big" onClick={onHome}>{j?.reward?.gift ? '선물 고르러 가기' : '처음 화면으로'}</button>
         <button className="btn big" onClick={onAgain}>한 판 더</button>

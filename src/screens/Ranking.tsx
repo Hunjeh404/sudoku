@@ -6,7 +6,7 @@ import { rpc } from '../lib/api';
 import { BOARDS } from '../data/catalog';
 import { Avatar, ErrorLine, Spinner, TitleTag } from '../ui';
 
-interface Row { rank: number; id: string; nickname: string; avatar_id: string; title: string; points: number; games: number; me: boolean }
+interface Row { rank: number; id: string; nickname: string; avatar_id: string; badge?: string; title: string; points: number; games: number; me: boolean }
 interface Board { rows: Row[]; me: { rank: number; points: number; games: number } | null }
 
 export function RankingScreen() {
@@ -40,7 +40,7 @@ export function RankingScreen() {
       {data && !meInTop && (
         <div className="rank-me">
           {data.me
-            ? <RankRow r={{ rank: data.me.rank, id: profileId!, nickname: state!.profile.nickname, avatar_id: state!.profile.avatar_id, title: state!.profile.title, points: data.me.points, games: data.me.games, me: true }} />
+            ? <RankRow r={{ rank: data.me.rank, id: profileId!, nickname: state!.profile.nickname, avatar_id: state!.profile.avatar_id, badge: state!.profile.badge, title: state!.profile.title, points: data.me.points, games: data.me.games, me: true }} />
             : <p className="fine">아직 이 순위표에 내 점수가 없어요.</p>}
         </div>
       )}
@@ -52,7 +52,7 @@ function RankRow({ r }: { r: Row }) {
   return (
     <li className={`rank-row${r.me ? ' me' : ''}${r.rank <= 3 ? ` top${r.rank}` : ''}`}>
       <span className="rank-n">{r.rank <= 3 ? <IconTrophy size={20} aria-label={`${r.rank}등`} /> : r.rank}</span>
-      <Avatar id={r.avatar_id} size={40} />
+      <Avatar id={r.avatar_id} size={40} badge={r.badge} />
       <span className="grow"><strong>{r.nickname}</strong>{r.me && <small className="me-tag">나</small>} <TitleTag id={r.title} /><small>{r.games}판</small></span>
       <span className="rank-pts">{r.points.toLocaleString()}<small>점</small></span>
     </li>

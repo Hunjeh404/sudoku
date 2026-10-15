@@ -8,6 +8,10 @@ export const TIERS = [
   { tier: 3, name: '신·티탄', price: 150, cats: ['god', 'tit'] },
   { tier: 4, name: '올림포스·태초신', price: 400, cats: ['oly', 'pri'] },
 ] as const;
+// 보물(물건 그림)은 티어 없이 하나 값
+export const TREASURE_PRICE = 10;
+export const STORY_EVERY = 5; // 이야기책: 1장은 처음부터, 이후 끝낸 판 수 5판마다 한 장
+export const chapterOpen = (n: number, completed: number) => completed >= (n - 1) * STORY_EVERY;
 export const tierOfCat = (cat: string) => TIERS.find((t) => (t.cats as readonly string[]).includes(cat))?.tier ?? null;
 
 export const TITLES: { id: string; name: string }[] = [

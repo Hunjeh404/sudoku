@@ -22,7 +22,7 @@ const bank: { id: string; solution: string }[] = JSON.parse(readFileSync('puzzle
   }
   await admin.query(`insert into public.friendships values (least($1::uuid, $2::uuid), greatest($1::uuid, $2::uuid))`, [p, p]).catch(() => {});
   await c.query('reset role');
-  for (const f of ['0008_portraits_scores_social.sql', '0009_portrait_data.sql']) await admin.query(readFileSync(`supabase/migrations/${f}`, 'utf8'));
+  for (const f of ['0008_portraits_scores_social.sql', '0009_portrait_data.sql', '0010_treasures_badge.sql', '0011_treasure_data.sql']) await admin.query(readFileSync(`supabase/migrations/${f}`, 'utf8'));
   await c.query('set role authenticated');
   const s = await one('select public.get_state(p => $1) as r', [p]);
   const ok = s.owned.includes('athena') && s.profile.avatar_id === 'athena' && s.points.total === 20 && s.balance === 20 && s.quest.completed_count === 2 && s.gifts.length === 0;

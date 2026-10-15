@@ -152,7 +152,7 @@ async function solveAttempt(u: Awaited<ReturnType<typeof user>>, profile: string
     await expectError('not_enough', () => A.rpc('purchase_portrait', { p: pa, portrait: 'heracles', op_id: randomUUID() }));
     const owned = (await A.rpc('get_state', { p: pa })).owned[0];
     await expectError('owned', () => A.rpc('purchase_portrait', { p: pa, portrait: owned, op_id: randomUUID() }));
-    await expectError('bad_item', () => A.rpc('purchase_portrait', { p: pa, portrait: 'lyre', op_id: randomUUID() }));
+    await expectError('bad_item', () => A.rpc('purchase_portrait', { p: pa, portrait: 'no_such_one', op_id: randomUUID() }));
   });
   await check('구매 이중 탭(같은 op_id 동시 2회)에도 거래 1회, 산 초상화만 얼굴로', async () => {
     await admin.query('update public.wallets set balance = 100 where profile_id = $1', [pa]);
@@ -171,6 +171,22 @@ async function solveAttempt(u: Awaited<ReturnType<typeof user>>, profile: string
     await expectError('not_owned', () => A.rpc('update_profile', { p: pa, patch: { avatar_id: rows[1].id } }));
     await A.rpc('update_profile', { p: pa, patch: { avatar_id: rows[0].id } });
     await expectError('locked', () => A.rpc('update_profile', { p: pa, patch: { title: 'sage' } }));
+  });
+  await check('보물: 티어 없이 별빛 10, 사면 바로 프로필 보물로, 얼굴로는 못 씀', async () => {
+    await admin.query('update public.wallets set balance = 25 where profile_id = $1', [pe]);
+    const r = await E.rpc('purchase_portrait', { p: pe, portrait: 'lyre', op_id: randomUUID() });
+    assert(r.price === 10 && r.balance === 15 && r.badge === 'lyre', JSON.stringify(r));
+    let st = await E.rpc('get_state', { p: pe });
+    assert(st.profile.badge === 'lyre' && st.owned.includes('lyre'), 'badge');
+    await expectError('not_owned', () => E.rpc('update_profile', { p: pe, patch: { avatar_id: 'lyre' } }));
+    await expectError('not_owned', () => E.rpc('update_profile', { p: pe, patch: { badge: 'golden_fleece' } }));
+    await E.rpc('purchase_portrait', { p: pe, portrait: 'golden_fleece', op_id: randomUUID() });
+    await E.rpc('update_profile', { p: pe, patch: { badge: 'lyre' } });
+    st = await E.rpc('get_state', { p: pe });
+    assert(st.profile.badge === 'lyre' && st.balance === 5, 'switch');
+    await E.rpc('update_profile', { p: pe, patch: { badge: '' } });
+    assert((await E.rpc('get_state', { p: pe })).profile.badge === '', 'removed');
+    await E.rpc('update_profile', { p: pe, patch: { badge: 'lyre' } });
   });
   await check('잔액·초상화·점수를 직접 고칠 수 없음, 남의 것은 안 보임', async () => {
     await expectError('permission denied', () => A.sql('update public.wallets set balance = 9999'));
@@ -210,6 +226,7 @@ async function solveAttempt(u: Awaited<ReturnType<typeof user>>, profile: string
     const all = await B.rpc('get_leaderboard', { p: pb, board: 'all', period: 'all' });
     assert(all.rows[0].id === pe && all.rows.some((r: any) => r.id === pa) && all.me?.points === 21, 'all ' + JSON.stringify(all.me));
     assert(!JSON.stringify(all).includes('@'), 'no email');
+    assert(all.rows[0].badge === 'lyre', 'badge in leaderboard');
     const nine = await A.rpc('get_leaderboard', { p: pa, board: '9e', period: 'all' });
     assert(nine.rows.length === 1 && nine.rows[0].id === pb && nine.me === null, 'nine ' + JSON.stringify(nine));
     await admin.query(`update public.score_events set created_at = now() - interval '30 days' where profile_id = $1`, [pb]);
@@ -251,6 +268,7 @@ async function solveAttempt(u: Awaited<ReturnType<typeof user>>, profile: string
   await check('친구 소식: 친구·가족 것만 보임', async () => {
     const feedC = await C.rpc('list_feed', { p: pc });
     assert(feedC.some((x: any) => x.who.id === pa && x.kind === 'tier') && feedC.every((x: any) => x.who.id !== pe), 'C feed');
+    assert(feedC.every((x: any) => 'badge' in x.who), 'badge in feed');
     const feedE = await E.rpc('list_feed', { p: pe });
     assert(feedE.every((x: any) => x.who.id === pe), 'E sees only own');
   });

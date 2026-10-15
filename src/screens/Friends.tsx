@@ -7,7 +7,7 @@ import { EMOJIS } from '../data/catalog';
 import { Avatar, ErrorLine, Sheet, Spinner, TitleTag, activityText, timeAgo } from '../ui';
 import { sfx } from '../lib/sound';
 
-interface Person { id: string; nickname: string; avatar_id: string; title?: string; is_child?: boolean; points?: number }
+interface Person { id: string; nickname: string; avatar_id: string; badge?: string; title?: string; is_child?: boolean; points?: number }
 interface FeedItem { id: number; kind: string; payload: any; created_at: string; mine: boolean; who: Person; my_emoji: string | null;
   reactions: { emoji: string; id: string; nickname: string; avatar_id: string }[] }
 interface FriendsData { family: Person[]; friends: { family: string; since: string; members: Person[] }[];
@@ -66,7 +66,7 @@ function FeedRow({ it, onChange }: { it: FeedItem; onChange: (it: FeedItem) => v
   };
   return (
     <li className={`feed-item${it.mine ? ' mine' : ''}`}>
-      <Avatar id={it.who.avatar_id} size={44} />
+      <Avatar id={it.who.avatar_id} size={44} badge={it.who.badge} />
       <div className="grow">
         <p className="feed-who"><strong>{it.mine ? '나' : it.who.nickname}</strong> <TitleTag id={it.who.title ?? ''} /> <small>{timeAgo(it.created_at)}</small></p>
         <p className="feed-text">{activityText(it.kind, it.payload)}</p>
@@ -130,7 +130,7 @@ function FriendList() {
   };
   const makeInvite = async () => { try { setInvite(await rpc('create_invite', { p: profileId, kind: 'family' })); } catch (e) { toast((e as ApiError).message); } };
   const Member = ({ m }: { m: Person }) => (
-    <li className="member"><Avatar id={m.avatar_id} size={40} /><span className="grow"><strong>{m.nickname}</strong> <TitleTag id={m.title ?? ''} />
+    <li className="member"><Avatar id={m.avatar_id} size={40} badge={m.badge} /><span className="grow"><strong>{m.nickname}</strong> <TitleTag id={m.title ?? ''} />
       <small>{m.is_child ? '아이 · ' : ''}누적 {m.points?.toLocaleString() ?? 0}점</small></span></li>
   );
   return (

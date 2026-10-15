@@ -104,6 +104,17 @@ async function solveCurrent(p: Page) {
     if ((await balanceOf('아빠')) !== 39) throw new Error('buy');
     ok('도감에서 1티어 초상화 구입(별빛 20) → 내 초상화로 쓰기');
     await a.keyboard.press('Escape');
+    await a.getByRole('tab', { name: '보물' }).click();
+    if (!(await a.locator('.dex-card:not(.owned) .pt-img').first().evaluate((el) => getComputedStyle(el).filter.includes('grayscale')))) throw new Error('not grayscale');
+    await a.locator('.dex-card:not(.owned)').first().click();
+    if (!(await a.getByText('모으면 긴 이야기를 읽을 수 있어요').count())) throw new Error('story not locked');
+    await a.getByRole('button', { name: /✦ 10로 모으기/ }).click();
+    await a.waitForSelector('text=프로필에 달려 있어요');
+    await a.keyboard.press('Escape');
+    await a.waitForSelector('.topbar .pt-badge');
+    if ((await balanceOf('아빠')) !== 29) throw new Error('treasure buy');
+    await shot(a, 'A-dex-treasure');
+    ok('보물(흑백·긴 이야기 잠김) 별빛 10으로 사면 초상화 오른쪽 아래에 달림');
 
     // ---- 순위 ----
     await tabTo(a, '순위');

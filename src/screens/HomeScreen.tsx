@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { IconGift, IconRoute, IconChevronRight } from '@tabler/icons-react';
 import { useGame } from '../lib/store';
 import { GUIDES, rewardText } from '../data/catalog';
-import { Avatar, TitleTag } from '../ui';
+import { Avatar, TitleTag, tierOf } from '../ui';
 import { JourneySheet, GiftSheet, nextJourney } from './Journey';
 import { FeedList } from './Friends';
 
@@ -27,7 +27,7 @@ export function HomeScreen({ goSudoku, goFriends, goDex }: { goSudoku: () => voi
   return (
     <div className="page">
       <section className="me-card">
-        <Avatar id={s.profile.avatar_id} size={96} />
+        <Avatar id={s.profile.avatar_id} size={96} badge={s.profile.badge} />
         <div className="grow">
           <h1 className="me-nick">{s.profile.nickname}</h1>
           <TitleTag id={s.profile.title} />
@@ -38,7 +38,7 @@ export function HomeScreen({ goSudoku, goFriends, goDex }: { goSudoku: () => voi
         <div><dt>별빛</dt><dd>✦ {s.balance.toLocaleString()}</dd></div>
         <div><dt>누적 점수</dt><dd>{s.points.total.toLocaleString()}</dd></div>
         <div><dt>이번 주</dt><dd>{s.points.week.toLocaleString()}</dd></div>
-        <div><dt>모은 초상화</dt><dd><button className="link" onClick={goDex}>{s.owned.length}<small>/{TOTAL_PORTRAITS}</small></button></dd></div>
+        <div><dt>모은 초상화</dt><dd><button className="link" onClick={goDex}>{s.owned.filter((id) => (tierOf(id) ?? 0) >= 1).length}<small>/{TOTAL_PORTRAITS}</small></button></dd></div>
       </dl>
 
       {s.gifts.length > 0 && (

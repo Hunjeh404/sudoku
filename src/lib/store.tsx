@@ -9,7 +9,7 @@ export interface Settings { sound: boolean; fx: number; music: number; reducedMo
 export const DEFAULT_SETTINGS: Settings = { sound: false, fx: 0.6, music: 0.4, reducedMotion: false, autoNotes: true, showTimer: false, pictureMode: false };
 
 export interface GameState {
-  profile: { id: string; nickname: string; avatar_id: string; title: string; is_child: boolean; settings: Partial<Settings> };
+  profile: { id: string; nickname: string; avatar_id: string; badge: string; title: string; is_child: boolean; settings: Partial<Settings> };
   balance: number;
   quest: { completed_count: number; no_hint_count: number };
   unlocks: string[];

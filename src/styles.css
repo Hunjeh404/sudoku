@@ -413,3 +413,16 @@ textarea { resize: vertical; }
 .record-line { display: inline-block; background: var(--gold); padding: 4px 12px; border-radius: 999px; margin: 4px; }
 .mail-list li { display: flex; gap: 10px; align-items: flex-start; }
 .mail-list .row { margin-top: 6px; gap: 6px; }
+
+/* ---------- 티어 테두리·보물 동그라미 ---------- */
+/* 금빛·별빛 테두리 그림이 오기 전 임시 색입히기 */
+.pt-frame.tint-gold { filter: sepia(1) saturate(4) hue-rotate(-12deg) brightness(1.08) contrast(1.05); }
+.pt-frame.tint-star { filter: grayscale(.4) hue-rotate(185deg) saturate(1.6) brightness(1.25) drop-shadow(0 0 2px rgba(255, 246, 200, .95)) drop-shadow(0 0 5px rgba(196, 180, 255, .7)); }
+.pt-badge { position: absolute; right: 0; bottom: 0; border-radius: 50%; background: var(--paper); box-shadow: 0 0 0 2px var(--paper), 0 1px 3px rgba(58, 55, 57, .35); z-index: 2; }
+.pt-badge.framed { box-shadow: none; background: transparent; }
+.pt-badge .pt-img { border-radius: 50%; }
+.pt-badge.framed .pt-img { background: var(--paper); }
+/* 도감: 아직 갖지 않은 것은 흑백 */
+.dex-card:not(.owned) .pt-img, .person.locked .person-portrait .pt-img { filter: grayscale(1); opacity: .75; }
+.dex-card:not(.owned) .pt-frame, .person.locked .person-portrait .pt-frame { filter: grayscale(1); opacity: .6; }
+.story-lock { background: var(--parchment); border: 1.5px dashed var(--gold-line); border-radius: var(--radius-s); padding: 8px 12px; font-size: 14px; }

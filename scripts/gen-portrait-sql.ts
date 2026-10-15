@@ -1,7 +1,7 @@
-// npm run gen:portraits → supabase/migrations/0009_portrait_data.sql
+// npm run gen:portraits → supabase/migrations/0009_portrait_data.sql, 0011_treasure_data.sql, src/data/tiers.json
 // 초상화 목록(public/data/people.json의 분류로 티어), 칭호, 새 여정, 기존 사용자 옮기기
 import { readFileSync, writeFileSync } from 'node:fs';
-import { TIERS, tierOfCat, TITLES, JOURNEY } from '../src/data/catalog';
+import { TIERS, tierOfCat, TITLES, JOURNEY, TREASURE_PRICE } from '../src/data/catalog';
 
 const q = (s: string) => `'${s.replace(/'/g, "''")}'`;
 const people: { id: string; ko: string; cat: string }[] = JSON.parse(readFileSync('public/data/people.json', 'utf8'));
@@ -53,3 +53,16 @@ do \$\$ begin
 end \$\$;
 `);
 console.log('portraits', rows.length, counts);
+
+// 보물(물건 그림): 티어 0, 값 하나
+const treasures = people.filter((p) => p.cat === 'art');
+writeFileSync('supabase/migrations/0011_treasure_data.sql', `-- 자동 생성: npm run gen:portraits. 보물 ${treasures.length}개, 하나에 별빛 ${TREASURE_PRICE}
+insert into public.portrait_catalog (id,tier,price,name_ko) values
+${treasures.map((p) => `(${q(p.id)},0,${TREASURE_PRICE},${q(p.ko)})`).join(',\n')}
+on conflict (id) do update set tier=excluded.tier,price=excluded.price,name_ko=excluded.name_ko;
+`);
+// 화면용 티어 표(테두리·정렬). 0=보물
+const tiers: Record<string, number> = {};
+for (const p of people) { const t = p.cat === 'art' ? 0 : tierOfCat(p.cat); if (t !== null) tiers[p.id] = t; }
+writeFileSync('src/data/tiers.json', JSON.stringify(tiers));
+console.log('treasures', treasures.length, 'tier map', Object.keys(tiers).length);

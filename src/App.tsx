@@ -68,7 +68,7 @@ function Game() {
     <div className="app">
       <header className="topbar">
         <button className="me" onClick={() => setSheet('settings')} aria-label="설정과 프로필">
-          <Avatar id={state!.profile.avatar_id} size={34} /><span className="me-name">{state!.profile.nickname}</span>
+          <Avatar id={state!.profile.avatar_id} size={34} badge={state!.profile.badge} /><span className="me-name">{state!.profile.nickname}</span>
         </button>
         <Starlight value={state!.balance} />
         <button className="icon-btn badge-wrap" aria-label={`우편함${state!.unread ? `, 새 소식 ${state!.unread}개` : ''}`} onClick={() => setSheet('mail')}>

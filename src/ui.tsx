@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useRef } from 'react';
 import { IconX, IconUser } from '@tabler/icons-react';
 import { portrait, asset } from './lib/store';
 import { TITLE_NAME, boardName } from './data/catalog';
+import TIER_MAP from './data/tiers.json';
 import { josa } from './lib/josa';
 
 export function Sheet({ title, onClose, children, wide }: { title: string; onClose: () => void; children: ReactNode; wide?: boolean }) {
@@ -27,15 +28,41 @@ export function Sheet({ title, onClose, children, wide }: { title: string; onClo
   );
 }
 
-/** 원형 초상 + 월계수 원형 테두리. id가 비어 있으면 아직 초상화가 없는 빈칸 */
-export function Avatar({ id, size = 40, framed = true }: { id: string; size?: number; framed?: boolean }) {
+// 티어별 테두리: 1티어 없음, 2티어 월계수, 3티어 금빛 월계수, 4티어 별빛 월계수, 보물(0)·빈칸 없음.
+// 금빛·별빛 그림이 오기 전까지는 월계수 그림에 색을 입혀 대신 쓴다(tint-*).
+const FRAME: Record<number, { src: string; cls: string }> = {
+  2: { src: 'assets/ui/frame.webp', cls: '' },
+  3: { src: 'assets/ui/frame.webp', cls: ' tint-gold' },
+  4: { src: 'assets/ui/frame.webp', cls: ' tint-star' },
+};
+export const tierOf = (id: string): number | null => (id ? (TIER_MAP as Record<string, number>)[id] ?? null : null);
+
+function Ring({ id, size, frame }: { id: string; size: number; frame: boolean }) {
+  const f = frame ? FRAME[tierOf(id) ?? 0] : undefined;
   return (
-    <span className={`portrait${id ? '' : ' blank'}`} style={{ width: size, height: size }}>
+    <>
       {id
         ? <img className="pt-img" src={portrait(id)} alt="" width={size} height={size} loading="lazy"
             onError={(e) => { (e.currentTarget as HTMLImageElement).style.visibility = 'hidden'; }} />
         : <span className="pt-img pt-blank" aria-hidden><IconUser size={Math.round(size * 0.42)} stroke={1.6} /></span>}
-      {framed && <img className="pt-frame" src={asset('assets/ui/frame.webp')} alt="" aria-hidden />}
+      {f && <img className={`pt-frame${f.cls}`} src={asset(f.src)} alt="" aria-hidden />}
+    </>
+  );
+}
+
+/** 원형 초상 + 티어 테두리. id가 비면 빈칸. badge(보물)는 오른쪽 아래 작은 동그라미에 초상과 같은 테두리로. framed=false면 테두리 없이 */
+export function Avatar({ id, size = 40, framed = true, badge }: { id: string; size?: number; framed?: boolean; badge?: string }) {
+  const bs = Math.round(size * 0.4);
+  const tier = tierOf(id);
+  return (
+    <span className={`portrait${id ? '' : ' blank'}${tier !== null ? ` tier${tier}` : ''}`} style={{ width: size, height: size }}>
+      <Ring id={id} size={size} frame={framed} />
+      {badge && size >= 28 && (
+        <span className={`pt-badge${FRAME[tier ?? 0] ? ' framed' : ''}`} style={{ width: bs, height: bs }} aria-hidden>
+          <img className="pt-img" src={portrait(badge)} alt="" loading="lazy" />
+          {FRAME[tier ?? 0] && <img className={`pt-frame${FRAME[tier!].cls}`} src={asset(FRAME[tier!].src)} alt="" />}
+        </span>
+      )}
     </span>
   );
 }

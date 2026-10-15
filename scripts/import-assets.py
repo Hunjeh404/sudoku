@@ -61,9 +61,9 @@ for t in TREASURES:
     size = webp(os.path.join(SRC, 'images/portraits', t + '.png'), os.path.join(ROOT, 'public', rel), 384, 84)
     record('treasure', f'images/portraits/{t}.png', rel, size)
 
-# ---- 3. 이야기책: 첫 출시 공개 3장 ----
+# ---- 3. 이야기책: 16장 모두 ----
 book = load_js('book.js', 'window.BOOK')
-OPEN_CHAPTERS = [1, 4, 9]
+OPEN_CHAPTERS = [c['n'] for c in book]  # 16장 모두(화면에서 끝낸 판 수로 차례로 연다)
 chapters = []
 for ch in book:
     entry = {'n': ch['n'], 't': ch['t'], 'sub': ch.get('sub', ''), 'open': ch['n'] in OPEN_CHAPTERS}

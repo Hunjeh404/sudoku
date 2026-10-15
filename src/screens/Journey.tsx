@@ -1,7 +1,7 @@
 // 여정(끝낸 판 수로 받는 보상)과 초상화 선물 고르기
 import { useEffect, useState } from 'react';
 import { IconCheck } from '@tabler/icons-react';
-import { JOURNEY, rewardText } from '../data/catalog';
+import { JOURNEY, rewardText, STORY_EVERY } from '../data/catalog';
 import { useGame } from '../lib/store';
 import { rpc, ApiError } from '../lib/api';
 import { loadPeople, Person } from '../lib/content';
@@ -30,6 +30,7 @@ export function JourneySheet({ onClose }: { onClose: () => void }) {
         })}
       </ol>
       {n >= JOURNEY[JOURNEY.length - 1].need && <p>여정을 모두 마쳤어요. 이제 마음껏 풀면서 별빛과 초상화를 모으세요.</p>}
+      <p className="fine">이야기책: 1장은 처음부터, 이후 {STORY_EVERY}판마다 한 장씩 열려요. 지금 {Math.min(16, Math.floor(n / STORY_EVERY) + 1)}장까지 열렸어요{n < 15 * STORY_EVERY ? `. 다음 장까지 ${STORY_EVERY - (n % STORY_EVERY)}판` : ''}.</p>
       <p className="fine">힌트 없이 끝낸 판: {state!.quest.no_hint_count}판</p>
     </Sheet>
   );

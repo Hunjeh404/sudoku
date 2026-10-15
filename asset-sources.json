@@ -3,204 +3,6 @@
  "sourceCommit": "286dfbce4bef3a9d4ca09ae6b61956043d792451",
  "files": [
   {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/environments/garden_base.png",
-   "output": "assets/env/garden_base.webp",
-   "size": [
-    1024,
-    1024
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/environments/room_base.png",
-   "output": "assets/env/room_base.webp",
-   "size": [
-    1024,
-    1024
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/furniture/cloud_bed.png",
-   "output": "assets/furniture/cloud_bed.webp",
-   "size": [
-    512,
-    512
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/furniture/cloud_cushion.png",
-   "output": "assets/furniture/cloud_cushion.webp",
-   "size": [
-    512,
-    512
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/furniture/display_pedestal.png",
-   "output": "assets/furniture/display_pedestal.webp",
-   "size": [
-    512,
-    512
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/furniture/garden_trellis.png",
-   "output": "assets/furniture/garden_trellis.webp",
-   "size": [
-    512,
-    512
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/furniture/laurel_bench.png",
-   "output": "assets/furniture/laurel_bench.webp",
-   "size": [
-    512,
-    512
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/furniture/laurel_door.png",
-   "output": "assets/furniture/laurel_door.webp",
-   "size": [
-    512,
-    512
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/furniture/laurel_rug.png",
-   "output": "assets/furniture/laurel_rug.webp",
-   "size": [
-    512,
-    512
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/furniture/linen_curtain.png",
-   "output": "assets/furniture/linen_curtain.webp",
-   "size": [
-    512,
-    512
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/furniture/music_stand.png",
-   "output": "assets/furniture/music_stand.webp",
-   "size": [
-    512,
-    512
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/furniture/olive_planter.png",
-   "output": "assets/furniture/olive_planter.webp",
-   "size": [
-    512,
-    512
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/furniture/owl_mailbox.png",
-   "output": "assets/furniture/owl_mailbox.webp",
-   "size": [
-    512,
-    512
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/furniture/picture_frame.png",
-   "output": "assets/furniture/picture_frame.webp",
-   "size": [
-    512,
-    512
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/furniture/round_stool.png",
-   "output": "assets/furniture/round_stool.webp",
-   "size": [
-    512,
-    512
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/furniture/scroll_bookcase.png",
-   "output": "assets/furniture/scroll_bookcase.webp",
-   "size": [
-    512,
-    512
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/furniture/shell_fountain.png",
-   "output": "assets/furniture/shell_fountain.webp",
-   "size": [
-    512,
-    512
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/furniture/star_lantern.png",
-   "output": "assets/furniture/star_lantern.webp",
-   "size": [
-    512,
-    512
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/furniture/star_mobile.png",
-   "output": "assets/furniture/star_mobile.webp",
-   "size": [
-    512,
-    512
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/furniture/stepping_stones.png",
-   "output": "assets/furniture/stepping_stones.webp",
-   "size": [
-    512,
-    512
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/furniture/tea_table.png",
-   "output": "assets/furniture/tea_table.webp",
-   "size": [
-    512,
-    512
-   ]
-  },
-  {
-   "kind": "quarterview",
-   "source": "sudoku-assets/quarterview-v1/images/furniture/treasure_chest.png",
-   "output": "assets/furniture/treasure_chest.webp",
-   "size": [
-    512,
-    512
-   ]
-  },
-  {
    "kind": "portrait",
    "source": "images/portraits/chaos.png",
    "output": "assets/portraits/chaos.webp",
@@ -4432,6 +4234,105 @@
   },
   {
    "kind": "scene",
+   "source": "images/scenes/c02-00.png",
+   "output": "assets/scenes/c02-00.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c02-01.png",
+   "output": "assets/scenes/c02-01.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c02-02.png",
+   "output": "assets/scenes/c02-02.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c02-03.png",
+   "output": "assets/scenes/c02-03.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c02-04.png",
+   "output": "assets/scenes/c02-04.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c03-00.png",
+   "output": "assets/scenes/c03-00.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c03-01.png",
+   "output": "assets/scenes/c03-01.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c03-03.png",
+   "output": "assets/scenes/c03-03.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c03-02.png",
+   "output": "assets/scenes/c03-02.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c03-04.png",
+   "output": "assets/scenes/c03-04.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c03-05.png",
+   "output": "assets/scenes/c03-05.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
    "source": "images/scenes/c04-00.png",
    "output": "assets/scenes/c04-00.webp",
    "size": [
@@ -4479,6 +4380,240 @@
    "kind": "scene",
    "source": "images/scenes/c04-05.png",
    "output": "assets/scenes/c04-05.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c05-00.png",
+   "output": "assets/scenes/c05-00.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c05-01.png",
+   "output": "assets/scenes/c05-01.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c05-02.png",
+   "output": "assets/scenes/c05-02.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c05-03.png",
+   "output": "assets/scenes/c05-03.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c05-04.png",
+   "output": "assets/scenes/c05-04.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c05-05.png",
+   "output": "assets/scenes/c05-05.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c06-00.png",
+   "output": "assets/scenes/c06-00.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c06-01.png",
+   "output": "assets/scenes/c06-01.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c06-02.png",
+   "output": "assets/scenes/c06-02.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c06-03.png",
+   "output": "assets/scenes/c06-03.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c06-04.png",
+   "output": "assets/scenes/c06-04.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c06-05.png",
+   "output": "assets/scenes/c06-05.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c07-00.png",
+   "output": "assets/scenes/c07-00.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c07-01.png",
+   "output": "assets/scenes/c07-01.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c07-02.png",
+   "output": "assets/scenes/c07-02.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c07-03.png",
+   "output": "assets/scenes/c07-03.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c07-04.png",
+   "output": "assets/scenes/c07-04.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c07-05.png",
+   "output": "assets/scenes/c07-05.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c08-00.png",
+   "output": "assets/scenes/c08-00.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c08-01.png",
+   "output": "assets/scenes/c08-01.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c08-02.png",
+   "output": "assets/scenes/c08-02.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c08-03.png",
+   "output": "assets/scenes/c08-03.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c08-04.png",
+   "output": "assets/scenes/c08-04.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c08-05.png",
+   "output": "assets/scenes/c08-05.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c08-06.png",
+   "output": "assets/scenes/c08-06.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c08-07.png",
+   "output": "assets/scenes/c08-07.webp",
    "size": [
     900,
     675
@@ -4548,31 +4683,406 @@
    ]
   },
   {
+   "kind": "scene",
+   "source": "images/scenes/c10-00.png",
+   "output": "assets/scenes/c10-00.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c10-01.png",
+   "output": "assets/scenes/c10-01.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c10-02.png",
+   "output": "assets/scenes/c10-02.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c10-03.png",
+   "output": "assets/scenes/c10-03.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c10-04.png",
+   "output": "assets/scenes/c10-04.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c10-05.png",
+   "output": "assets/scenes/c10-05.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c10-06.png",
+   "output": "assets/scenes/c10-06.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c11-00.png",
+   "output": "assets/scenes/c11-00.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c11-01.png",
+   "output": "assets/scenes/c11-01.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c11-02.png",
+   "output": "assets/scenes/c11-02.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c11-03.png",
+   "output": "assets/scenes/c11-03.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c11-04.png",
+   "output": "assets/scenes/c11-04.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c11-05.png",
+   "output": "assets/scenes/c11-05.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c12-00.png",
+   "output": "assets/scenes/c12-00.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c12-01.png",
+   "output": "assets/scenes/c12-01.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c12-02.png",
+   "output": "assets/scenes/c12-02.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c12-03.png",
+   "output": "assets/scenes/c12-03.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c12-04.png",
+   "output": "assets/scenes/c12-04.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c12-05.png",
+   "output": "assets/scenes/c12-05.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c12-06.png",
+   "output": "assets/scenes/c12-06.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c12-07.png",
+   "output": "assets/scenes/c12-07.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c13-00.png",
+   "output": "assets/scenes/c13-00.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c13-01.png",
+   "output": "assets/scenes/c13-01.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c13-02.png",
+   "output": "assets/scenes/c13-02.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c14-00.png",
+   "output": "assets/scenes/c14-00.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c14-01.png",
+   "output": "assets/scenes/c14-01.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c14-02.png",
+   "output": "assets/scenes/c14-02.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c14-03.png",
+   "output": "assets/scenes/c14-03.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c14-04.png",
+   "output": "assets/scenes/c14-04.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c15-00.png",
+   "output": "assets/scenes/c15-00.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c15-01.png",
+   "output": "assets/scenes/c15-01.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c15-02.png",
+   "output": "assets/scenes/c15-02.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c15-03.png",
+   "output": "assets/scenes/c15-03.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c15-04.png",
+   "output": "assets/scenes/c15-04.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c15-05.png",
+   "output": "assets/scenes/c15-05.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c15-06.png",
+   "output": "assets/scenes/c15-06.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c16-00.png",
+   "output": "assets/scenes/c16-00.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c16-01.png",
+   "output": "assets/scenes/c16-01.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c16-02.png",
+   "output": "assets/scenes/c16-02.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c16-03.png",
+   "output": "assets/scenes/c16-03.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c16-04.png",
+   "output": "assets/scenes/c16-04.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c16-05.png",
+   "output": "assets/scenes/c16-05.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c16-06.png",
+   "output": "assets/scenes/c16-06.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c16-07.png",
+   "output": "assets/scenes/c16-07.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
    "kind": "ui",
    "source": "images/ui/favicon.png",
    "output": "assets/ui/favicon.webp",
    "size": null
-  },
-  {
-   "kind": "ui",
-   "source": "images/ui/frame.png",
-   "output": "assets/ui/frame.webp",
-   "size": [
-    320,
-    320
-   ]
-  }
- ],
- "music": [
-  {
-   "source": "assets-src/music/Hearth_of_Hestia.mp3",
-   "output": "assets/audio/hearth_of_hestia.mp3",
-   "note": "Suno 생성곡(사용자 제공), 3초 크로스페이드 반복용"
-  },
-  {
-   "source": "assets-src/music/Athenas_Quiet_Study.mp3",
-   "output": "assets/audio/athenas_quiet_study.mp3",
-   "note": "Suno 생성곡(사용자 제공), 3초 크로스페이드 반복용"
   }
  ]
 }

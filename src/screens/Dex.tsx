@@ -1,10 +1,10 @@
-// 도감 겸 초상화 상점: 인물(티어별, 가진 것 표시, 별빛으로 모으기)·보물·이야기책
+// 도감 겸 상점: 초상화(티어별)·보물(티어 없음). 가진 것이 앞에, 아직 없는 것은 흑백. 긴 이야기는 가진 것만. 이야기책
 import { useEffect, useMemo, useState } from 'react';
 import { IconSearch, IconLock, IconCheck } from '@tabler/icons-react';
 import { useGame, tierOpen } from '../lib/store';
 import { rpc, newOpId, ApiError } from '../lib/api';
 import { loadPeople, loadStories, Person } from '../lib/content';
-import { TIERS, tierOfCat, JOURNEY } from '../data/catalog';
+import { TIERS, tierOfCat, JOURNEY, TREASURE_PRICE } from '../data/catalog';
 import { StoriesPanel } from './Stories';
 import { Sheet, Spinner, ErrorLine, Avatar } from '../ui';
 import { sfx } from '../lib/sound';
@@ -26,11 +26,17 @@ export function DexScreen() {
   const shown = useMemo(() => {
     if (!people) return [];
     const term = q.trim().toLowerCase();
-    if (tab === 'art') return people.filter((p) => p.cat === 'art' && (!term || p.ko.includes(term) || p.en.toLowerCase().includes(term)));
-    const list = people.filter((p) => tierOfCat(p.cat) !== null);
-    if (term) return list.filter((p) => p.ko.includes(term) || p.en.toLowerCase().includes(term));
-    return filter === 'mine' ? list.filter((p) => owned.has(p.id)) : list.filter((p) => tierOfCat(p.cat) === filter);
+    const match = (p: Person) => !term || p.ko.includes(term) || p.en.toLowerCase().includes(term);
+    let list: Person[];
+    if (tab === 'art') list = people.filter((p) => p.cat === 'art' && match(p));
+    else {
+      list = people.filter((p) => tierOfCat(p.cat) !== null && match(p));
+      if (!term) list = filter === 'mine' ? list.filter((p) => owned.has(p.id)) : list.filter((p) => tierOfCat(p.cat) === filter);
+    }
+    // 가진 것이 먼저, 그다음 아직 없는 것(각각 원래 순서)
+    return [...list.filter((p) => owned.has(p.id)), ...list.filter((p) => !owned.has(p.id))];
   }, [people, tab, filter, q, owned]);
+  const ownedTreasures = people ? people.filter((p) => p.cat === 'art' && owned.has(p.id)).length : 0;
   const tierInfo = typeof filter === 'number' ? TIERS[filter - 1] : null;
   const opensAt = (t: number) => JOURNEY.find((j) => j.reward.tier === t)?.need;
   return (
@@ -42,7 +48,7 @@ export function DexScreen() {
       </div>
       {tab === 'book' ? (
         <>
-          <p className="fine">그리스 신화 이야기를 그림과 함께 읽어요.</p>
+          <p className="fine">그리스 신화 이야기 16장을 그림과 함께 읽어요. 1장은 처음부터, 스도쿠 5판마다 한 장씩 열려요.</p>
           <button className="btn primary" onClick={() => setReading(true)}>이야기책 펼치기</button>
           {reading && <StoriesPanel onClose={() => setReading(false)} />}
         </>
@@ -58,7 +64,7 @@ export function DexScreen() {
                     {!tierOpen(state!, t.tier) && <IconLock size={14} aria-label="잠김" />}{t.tier}티어 {t.name}
                   </button>
                 ))}
-                <button className={`chip${filter === 'mine' ? ' on' : ''}`} aria-pressed={filter === 'mine'} onClick={() => setFilter('mine')}>내 초상화 {state!.owned.length}</button>
+                <button className={`chip${filter === 'mine' ? ' on' : ''}`} aria-pressed={filter === 'mine'} onClick={() => setFilter('mine')}>내 초상화 {state!.owned.filter((id) => tierOfCat(people?.find((x) => x.id === id)?.cat ?? '') !== null).length}</button>
               </div>
               {tierInfo && (
                 <p className="fine">{tierOpen(state!, tierInfo.tier)
@@ -67,6 +73,7 @@ export function DexScreen() {
               )}
             </>
           )}
+          {tab === 'art' && <p className="fine">보물은 티어 없이 하나에 별빛 {TREASURE_PRICE}. 산 보물은 내 초상화 오른쪽 아래에 달려요. 모은 보물 {ownedTreasures}개.</p>}
           {err && <ErrorLine msg="도감을 불러오지 못했어요." />}
           {!people && !err && <Spinner />}
           <ul className="dex-grid">
@@ -75,9 +82,10 @@ export function DexScreen() {
               const has = owned.has(p.id);
               return (
                 <li key={p.id}><button className={`dex-card${has ? ' owned' : ''}`} onClick={() => setOpen(p)}>
-                  <Avatar id={p.id} size={88} framed={has} />
+                  <Avatar id={p.id} size={88} />
                   <span>{p.ko}</span>
-                  {t && <small>{has ? <><IconCheck size={13} aria-hidden /> 내 초상화</> : tierOpen(state!, t) ? `✦ ${TIERS[t - 1].price}` : <><IconLock size={13} aria-hidden /> {t}티어</>}</small>}
+                  {t ? <small>{has ? <><IconCheck size={13} aria-hidden /> 내 초상화</> : tierOpen(state!, t) ? `✦ ${TIERS[t - 1].price}` : <><IconLock size={13} aria-hidden /> {t}티어</>}</small>
+                    : <small>{has ? <><IconCheck size={13} aria-hidden /> {state!.profile.badge === p.id ? '달아 둔 보물' : '내 보물'}</> : `✦ ${TREASURE_PRICE}`}</small>}
                 </button></li>
               );
             })}
@@ -99,15 +107,17 @@ function PersonSheet({ p, onClose }: { p: Person; onClose: () => void }) {
   const [op] = useState(newOpId);
   useEffect(() => { if (more) loadStories().then((s) => setStory(s[p.id]?.s ?? [])).catch(() => setStory([])); }, [more, p.id]);
   const t = tierOfCat(p.cat);
+  const treasure = p.cat === 'art';
   const s = state!;
   const has = s.owned.includes(p.id);
-  const open = t !== null && tierOpen(s, t);
-  const price = t ? TIERS[t - 1].price : 0;
+  const open = treasure || (t !== null && tierOpen(s, t));
+  const price = treasure ? TREASURE_PRICE : t ? TIERS[t - 1].price : 0;
   const buy = async () => {
     setBusy(true); setErr(null);
     try {
       const r = await rpc('purchase_portrait', { p: profileId, portrait: p.id, op_id: op });
-      patchState((st) => ({ ...st, balance: r.balance, owned: st.owned.includes(p.id) ? st.owned : [...st.owned, p.id] }));
+      patchState((st) => ({ ...st, balance: r.balance, owned: st.owned.includes(p.id) ? st.owned : [...st.owned, p.id],
+        profile: r.badge ? { ...st.profile, badge: r.badge } : st.profile }));
       sfx.success(); toast(`${josa(p.ko, '을/를')} 모았어요`);
     } catch (e) { setErr((e as ApiError).message); }
     setBusy(false);
@@ -119,10 +129,28 @@ function PersonSheet({ p, onClose }: { p: Person; onClose: () => void }) {
       toast('내 초상화를 바꿨어요');
     } catch (e) { setErr((e as ApiError).message); }
   };
+  const setBadge = async (id: string) => {
+    try {
+      await rpc('update_profile', { p: profileId, patch: { badge: id } });
+      patchState((st) => ({ ...st, profile: { ...st.profile, badge: id } }));
+      toast(id ? '프로필에 보물을 달았어요' : '프로필에서 보물을 뗐어요');
+    } catch (e) { setErr((e as ApiError).message); }
+  };
   return (
     <Sheet title={p.ko} onClose={onClose}>
-      <div className="person">
-        <div className="person-portrait"><Avatar id={p.id} size={150} framed={has} /></div>
+      <div className={`person${has ? '' : ' locked'}`}>
+        <div className="person-portrait"><Avatar id={p.id} size={150} /></div>
+        {treasure && (
+          <div className="buy-box">
+            <span className="tier-badge">보물</span>
+            {has ? (s.profile.badge === p.id
+                ? <><span className="fine">프로필에 달려 있어요</span><button className="btn small" onClick={() => setBadge('')}>떼기</button></>
+                : <button className="btn primary" onClick={() => setBadge(p.id)}>프로필에 달기</button>)
+              : s.balance >= price
+                ? <button className="btn primary" onClick={buy} disabled={busy}>✦ {price}로 모으기</button>
+                : <span className="fine">✦ {price}. 별빛이 {price - s.balance} 더 필요해요.</span>}
+          </div>
+        )}
         {t && (
           <div className="buy-box">
             <span className="tier-badge">{t}티어</span>
@@ -137,7 +165,9 @@ function PersonSheet({ p, onClose }: { p: Person; onClose: () => void }) {
         <p className="fine">{p.en}{p.dom ? `, ${p.dom}` : ''}</p>
         {p.sym?.length > 0 && <p className="fine">상징: {p.sym.join(', ')}</p>}
         <p>{p.ep}</p>
-        {!more && <button className="btn small" onClick={() => setMore(true)}>긴 이야기 읽기</button>}
+        {has
+          ? !more && <button className="btn small" onClick={() => setMore(true)}>긴 이야기 읽기</button>
+          : <p className="story-lock"><IconLock size={14} aria-hidden /> {treasure ? '이 보물을' : '이 초상화를'} 모으면 긴 이야기를 읽을 수 있어요.</p>}
         {more && !story && <Spinner />}
         {story?.length === 0 && <p className="fine">긴 이야기가 아직 없어요.</p>}
         {story?.map(([tt, b], i) => <section key={i}><h3>{tt}</h3><p>{b}</p></section>)}
