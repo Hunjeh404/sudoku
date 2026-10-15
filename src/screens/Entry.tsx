@@ -76,7 +76,7 @@ export function CreateProfile({ child, onDone, onCancel }: { child?: boolean; on
           {GUIDES.slice(0, 2).map((g) => (
             <button key={g.id} className={`guide-card${g.id === guide ? ' on' : ''}`} onClick={() => setGuide(g.id)} aria-pressed={g.id === guide}>
               <Avatar id={g.id} size={64} />
-              <strong>{g.name}</strong><span>{g.role}</span>
+              <strong>{g.name}</strong><span className="role">{g.role}</span>
             </button>
           ))}
         </div>
