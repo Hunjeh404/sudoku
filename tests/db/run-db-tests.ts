@@ -429,6 +429,17 @@ async function solveAttempt(u: Awaited<ReturnType<typeof user>>, profile: string
     assert((await admin.query(`select count(*)::int n from public.activities where profile_id = $1`, [pe])).rows[0].n === before, 'quiet');
   });
 
+  console.log('시간 재기 버그(1초)');
+  await check('시간 재기 구간이 없던 판은 1초가 아니라 시작부터 끝까지, 기록·빠른 순위에서 빠짐', async () => {
+    const { a, sol } = await solveAttempt(E, pe, 9, 'hard');
+    await admin.query(`update public.puzzle_attempts set played_sec = 0, active_since = null, started_at = now() - interval '9 minutes' where id = $1`, [a.id]);
+    const r = await E.rpc('complete_attempt', { attempt: a.id, board: sol, op_id: randomUUID() });
+    assert(r.record === null && r.elapsed >= 539 && r.elapsed <= 545, JSON.stringify(r));
+    assert((await admin.query(`select time_ok from public.puzzle_attempts where id = $1`, [a.id])).rows[0].time_ok === false, 'time_ok');
+    const lb = await E.rpc('get_leaderboard', { p: pe, board: '9h', period: 'week', kind: 'speed' });
+    assert(lb.me === null, 'not in speed ranking ' + JSON.stringify(lb.me));
+  });
+
   console.log(`\n${pass} passed, ${fail} failed`);
   for (const u of [A, B, C, E]) await u.c.end();
   await admin.end();
