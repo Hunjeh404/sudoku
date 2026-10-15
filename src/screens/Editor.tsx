@@ -9,7 +9,7 @@ import { useGame, asset, Layout, HomeData } from '../lib/store';
 import { rpc, newOpId, ApiError } from '../lib/api';
 import { getLocal, setLocal, delLocal } from '../lib/local';
 import { SpaceView } from '../home/SpaceView';
-import { checkLayout, findFreeSpot, COLS, ROWS } from '../home/geometry';
+import { checkLayout, findFreeSpot, stackInfo, COLS, ROWS } from '../home/geometry';
 import { Sheet, Starlight, ErrorLine } from '../ui';
 import { sfx } from '../lib/sound';
 import { josa } from '../lib/josa';
@@ -18,6 +18,7 @@ type Draft = Pick<HomeData, 'room_layout' | 'garden_layout' | 'exhibits' | 'note
 const PROBLEM_KO: Record<string, string> = {
   overlap: '다른 물건과 겹쳐요', out_of_bounds: '바닥 밖으로 나갔어요', no_support: '받침 위에 놓아야 해요',
   slot_taken: '받침에 이미 다른 물건이 있어요', bad_place: '이 공간에는 놓을 수 없어요', not_owned: '가진 것보다 많아요',
+  too_high: '3층까지만 쌓을 수 있어요',
 };
 
 export function Editor({ initialSpace, onClose }: { initialSpace: Space; onClose: () => void }) {
@@ -55,6 +56,27 @@ export function Editor({ initialSpace, onClose }: { initialSpace: Space; onClose
   const problems = useMemo(() => checkLayout(space, layout), [space, layout]);
   const allProblems = useMemo(() => [...checkLayout('room', draft.room_layout), ...checkLayout('garden', draft.garden_layout)], [draft]);
 
+  /** 옮기기: 위에 쌓인 물건은 함께 옮기고, 옮긴 묶음은 배열 맨 뒤로(나중에 놓은 것이 위로 쌓임) */
+  const relocate = (uid: string, nx: number, ny: number | undefined) => {
+    const l = layout.find((q) => q.uid === uid);
+    if (!l || l.x === undefined) return null;
+    const it = ITEM_BY_ID[l.item];
+    if (it.surface === 'wallRight' || it.surface === 'rug') {
+      return layout.map((q) => (q.uid === uid ? { ...q, x: nx, ...(ny !== undefined && it.surface === 'rug' ? { y: ny } : {}) } : q));
+    }
+    const info = stackInfo(layout);
+    const carried = new Set<string>([uid]);
+    for (const q of layout) if ((info.get(q.uid)?.under ?? []).some((u) => carried.has(u))) carried.add(q.uid);
+    let dx = nx - l.x, dy = (ny ?? l.y ?? 0) - (l.y ?? 0);
+    for (const q of layout) {
+      if (!carried.has(q.uid)) continue;
+      const qi = ITEM_BY_ID[q.item];
+      dx = Math.max(-q.x!, Math.min(COLS - qi.fw - q.x!, dx));
+      dy = Math.max(-(q.y ?? 0), Math.min(ROWS - qi.fh - (q.y ?? 0), dy));
+    }
+    const moved = layout.filter((q) => carried.has(q.uid)).map((q) => ({ ...q, x: q.x! + dx, y: (q.y ?? 0) + dy }));
+    return [...layout.filter((q) => !carried.has(q.uid)), ...moved];
+  };
   const moveTo = (uid: string, u: number, v: number) => {
     const l = layout.find((x) => x.uid === uid);
     if (!l) return null;
@@ -62,7 +84,7 @@ export function Editor({ initialSpace, onClose }: { initialSpace: Space; onClose
     if (it.surface === 'supportSlot' || it.surface === 'artifact') return null;
     const x = Math.max(0, Math.min(COLS - it.fw, Math.round(u - it.fw / 2)));
     const y = it.surface === 'wallRight' ? undefined : Math.max(0, Math.min(ROWS - it.fh, Math.round(v - it.fh / 2)));
-    return layout.map((q) => (q.uid === uid ? { ...q, x, ...(y !== undefined ? { y } : {}) } : q));
+    return relocate(uid, x, y);
   };
   const [dragPreview, setDragPreview] = useState<Layout[] | null>(null);
   const shown = dragPreview ?? layout;
@@ -72,8 +94,9 @@ export function Editor({ initialSpace, onClose }: { initialSpace: Space; onClose
     if (!l || l.x === undefined) return;
     const it = ITEM_BY_ID[l.item];
     const x = Math.max(0, Math.min(COLS - it.fw, l.x + du));
-    const y = it.surface === 'wallRight' ? l.y : Math.max(0, Math.min(ROWS - it.fh, (l.y ?? 0) + dv));
-    setLayout(layout.map((q) => (q.uid === sel ? { ...q, x, y } : q)));
+    const y = it.surface === 'wallRight' ? undefined : Math.max(0, Math.min(ROWS - it.fh, (l.y ?? 0) + dv));
+    const n = relocate(sel!, x, y);
+    if (n) setLayout(n);
   };
   const store = (uid: string) => {
     const kids = layout.filter((q) => q.parent === uid).map((q) => q.uid);
@@ -167,7 +190,7 @@ export function Editor({ initialSpace, onClose }: { initialSpace: Space; onClose
       <div className="editor-tools">
         <button className="icon-btn" aria-label="되돌리기" disabled={hist.i === 0} onClick={() => setHist((h) => ({ ...h, i: h.i - 1 }))}><IconArrowBackUp /></button>
         <button className="icon-btn" aria-label="다시 하기" disabled={hist.i >= hist.list.length - 1} onClick={() => setHist((h) => ({ ...h, i: h.i + 1 }))}><IconArrowForwardUp /></button>
-        <span className="grow fine">물건을 눌러 고르고, 끌거나 바닥을 눌러 옮겨요.</span>
+        <span className="grow fine">물건을 눌러 고르고 끌어서 옮겨요. 다른 물건 위로 옮기면 쌓여요.</span>
         <Starlight value={state!.balance} />
       </div>
       <SpaceView space={space} layout={shown} mode="edit" selectedUid={sel} problems={problems} label={space === 'room' ? '실내 꾸미기' : '정원 꾸미기'}

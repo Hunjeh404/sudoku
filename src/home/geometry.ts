@@ -49,49 +49,94 @@ export function unproject(space: Space, p: Pt): { u: number; v: number } {
 
 export interface SpriteBox { left: number; top: number; width: number; z: number; hit: { x: number; y: number; w: number; h: number }; anchor: Pt; scale: number }
 
-interface ItemCal { scale?: number; dx?: number; dy?: number; slot?: { dx: number; dy: number } }
+interface ItemCal { scale?: number; dx?: number; dy?: number; slot?: { dx: number; dy: number }; ground?: Pt; topLift?: number }
 const cal = (id: string): ItemCal => (calibration as any).items[id] ?? {};
 
-/** 그림 정보: 쿼터뷰 가구는 매니페스트, 보물은 정면 그림(512 기준) */
+/** 그림 정보: 쿼터뷰 가구는 접지점(그림의 가장 낮은 점), 보물은 정면 그림(512 기준) */
 export function spriteMeta(item: Item) {
   if (item.kind === 'treasure') {
     return { canvas: 512, bounds: { x: 86, y: 86, w: 340, h: 340 }, anchor: { x: 256, y: 420 }, src: `assets/treasure/${item.id}.webp` };
   }
   const a = byId[item.id];
-  return { canvas: CANVAS, bounds: a.principalBoundsPx, anchor: a.placement.spriteAnchorPx, src: `assets/furniture/${item.id}.webp` };
+  return { canvas: CANVAS, bounds: a.principalBoundsPx, anchor: cal(item.id).ground ?? a.placement.spriteAnchorPx, src: `assets/furniture/${item.id}.webp` };
 }
 
 const floorWidth = (space: Space) => FLOORS[space].right.x - FLOORS[space].left.x;
 const suggested = (id: string): number => byId[id]?.placement?.suggestedVisibleWidthFractionOfFloor ?? 0.09;
+const spriteScale = (space: Space, item: Item) => (floorWidth(space) * suggested(item.id) * (cal(item.id).scale ?? 1)) / spriteMeta(item).bounds.w;
+
+/** 쌓기 대상: 바닥에 놓는 가구(러그·벽·받침 위 물건 제외) */
+export const stackable = (it: Item | undefined) => !!it && it.surface === 'floor';
+const overlaps = (a: Layout, ia: Item, b: Layout, ib: Item) =>
+  a.x! < b.x! + ib.fw && b.x! < a.x! + ia.fw && a.y! < b.y! + ib.fh && b.y! < a.y! + ia.fh;
+
+/** 배열 순서대로 쌓기 계산: 겹친 앞선 물건들 위에 올라간다(나중에 놓은 것이 위) */
+export function stackInfo(layout: Layout[]) {
+  const info = new Map<string, { level: number; under: string[] }>();
+  layout.forEach((l, i) => {
+    const it = ITEM_BY_ID[l.item];
+    if (!stackable(it)) return;
+    const under: string[] = [];
+    let level = 1;
+    for (let j = 0; j < i; j++) {
+      const o = layout[j], io = ITEM_BY_ID[o.item];
+      if (!stackable(io) || !overlaps(l, it, o, io)) continue;
+      under.push(o.uid);
+      level = Math.max(level, (info.get(o.uid)?.level ?? 1) + 1);
+    }
+    info.set(l.uid, { level, under });
+  });
+  return info;
+}
+
+const boxCache = new WeakMap<Layout[], Map<string, SpriteBox | null>>();
 
 /** 한 배치 항목의 화면 위치(배경 픽셀 단위) */
 export function placeSprite(space: Space, l: Layout, all: Layout[], depth = 0): SpriteBox | null {
+  let cache = boxCache.get(all);
+  if (!cache) { cache = new Map(); boxCache.set(all, cache); }
+  const key = space + ':' + l.uid;
+  if (cache.has(key)) return cache.get(key)!;
+  const res = placeSpriteRaw(space, l, all, depth);
+  cache.set(key, res);
+  return res;
+}
+
+function placeSpriteRaw(space: Space, l: Layout, all: Layout[], depth: number): SpriteBox | null {
   const item = ITEM_BY_ID[l.item];
   if (!item) return null;
   const meta = spriteMeta(item);
   const c = cal(item.id);
-  let target: Pt, z: number, scale: number;
+  const scale = spriteScale(space, item);
+  let target: Pt, z: number;
   if (item.surface === 'supportSlot' || item.surface === 'artifact') {
     const parent = all.find((p) => p.uid === l.parent);
-    if (!parent || depth > 1) return null;
+    if (!parent || depth > 6) return null;
     const pb = placeSprite(space, parent, all, depth + 1);
     if (!pb) return null;
     const slot = cal(parent.item).slot ?? { dx: 0, dy: -200 };
     target = { x: pb.anchor.x + slot.dx * pb.scale, y: pb.anchor.y + slot.dy * pb.scale };
-    scale = (floorWidth(space) * suggested(item.id) * (c.scale ?? 1)) / meta.bounds.w;
     z = pb.z + 0.5;
   } else if (item.surface === 'wallRight') {
-    const x = l.x ?? 0;
-    target = project(space, x + item.fw / 2, 0);
-    scale = (floorWidth(space) * suggested(item.id) * (c.scale ?? 1)) / meta.bounds.w;
+    // 벽 장식: 그림의 가장 낮은 점 = 벽 밑선 위 오른쪽 끝(발자국 앞 끝)
+    target = project(space, (l.x ?? 0) + item.fw, 0);
     z = -2000 + target.y;
   } else {
+    // 바닥 가구: 그림의 접지점 = 발자국 앞 꼭짓점
     const x = l.x ?? 0, y = l.y ?? 0;
-    const center = project(space, x + item.fw / 2, y + item.fh / 2);
-    const front = project(space, x + item.fw, y + item.fh);
-    target = { x: center.x, y: front.y };
-    scale = (floorWidth(space) * suggested(item.id) * (c.scale ?? 1)) / meta.bounds.w;
-    z = item.surface === 'rug' ? -1000 + front.y : front.y;
+    target = project(space, x + item.fw, y + item.fh);
+    z = item.surface === 'rug' ? -1000 + target.y : target.y;
+    const under = stackable(item) ? stackInfo(all).get(l.uid)?.under ?? [] : [];
+    let lift = 0;
+    for (const u of under) {
+      const o = all.find((q) => q.uid === u)!;
+      const ob = depth > 6 ? null : placeSprite(space, o, all, depth + 1);
+      if (!ob) continue;
+      const oLift = ob.anchor.y - project(space, (o.x ?? 0) + ITEM_BY_ID[o.item].fw, (o.y ?? 0) + ITEM_BY_ID[o.item].fh).y;
+      lift = Math.min(lift, oLift - (cal(o.item).topLift ?? 0) * ob.scale);
+      z = Math.max(z, ob.z + 1);
+    }
+    target = { x: target.x, y: target.y + lift };
   }
   target = { x: target.x + (c.dx ?? 0), y: target.y + (c.dy ?? 0) };
   const left = target.x - meta.anchor.x * scale;
@@ -102,8 +147,10 @@ export function placeSprite(space: Space, l: Layout, all: Layout[], depth = 0): 
   };
 }
 
+export const MAX_STACK = 3;
+
 // ---------- 배치 규칙(서버 validate_home과 같은 규칙) ----------
-export interface Problem { uid: string; code: 'overlap' | 'out_of_bounds' | 'no_support' | 'slot_taken' | 'bad_place' | 'not_owned' }
+export interface Problem { uid: string; code: 'overlap' | 'too_high' | 'out_of_bounds' | 'no_support' | 'slot_taken' | 'bad_place' | 'not_owned' }
 
 export function checkLayout(space: Space, layout: Layout[], inventoryLeft?: Record<string, number>): Problem[] {
   const out: Problem[] = [];
@@ -125,17 +172,14 @@ export function checkLayout(space: Space, layout: Layout[], inventoryLeft?: Reco
       kids.add(l.parent!);
     }
   }
+  // 바닥 가구는 겹치면 쌓인다(3층까지). 벽 장식끼리는 겹칠 수 없다.
+  for (const [uid, s] of stackInfo(layout)) if (s.level > MAX_STACK) out.push({ uid, code: 'too_high' });
   for (let i = 0; i < layout.length; i++)
     for (let j = i + 1; j < layout.length; j++) {
       const a = layout[i], b = layout[j];
       const ia = ITEM_BY_ID[a.item], ib = ITEM_BY_ID[b.item];
-      if (!ia || !ib) continue;
-      const floorPair = ia.surface === 'floor' && ib.surface === 'floor' && ia.blocking && ib.blocking;
-      const wallPair = ia.surface === 'wallRight' && ib.surface === 'wallRight';
-      if (!floorPair && !wallPair) continue;
-      const ox = a.x! < b.x! + ib.fw && b.x! < a.x! + ia.fw;
-      const oy = wallPair || (a.y! < b.y! + ib.fh && b.y! < a.y! + ia.fh);
-      if (ox && oy) out.push({ uid: b.uid, code: 'overlap' }, { uid: a.uid, code: 'overlap' });
+      if (!ia || !ib || ia.surface !== 'wallRight' || ib.surface !== 'wallRight') continue;
+      if (a.x! < b.x! + ib.fw && b.x! < a.x! + ia.fw) out.push({ uid: b.uid, code: 'overlap' }, { uid: a.uid, code: 'overlap' });
     }
   if (inventoryLeft) for (const [k, v] of Object.entries(inventoryLeft)) if (v < 0) layout.filter((l) => l.item === k).forEach((l) => out.push({ uid: l.uid, code: 'not_owned' }));
   return out;

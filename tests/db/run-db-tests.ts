@@ -149,17 +149,21 @@ async function solveAttempt(u: Awaited<ReturnType<typeof user>>, profile: string
     assert(s.inventory.round_stool === 2, 'stool ' + s.inventory.round_stool + ' ' + JSON.stringify(results.map((r) => r.status)));
     assert(s.balance === 0, 'balance ' + s.balance);
   });
-  await check('배치 검증: 미보유·초과·겹침·범위 밖·받침 없는 보물 거부', async () => {
+  await check('배치 검증: 미보유·4층 쌓기·벽 겹침·범위 밖·받침 없는 보물 거부, 3층 쌓기 허용', async () => {
     const s = await A.rpc('get_state', { p: pa });
     const base = { room_layout: s.home.room_layout, garden_layout: s.home.garden_layout };
     const rev = s.home.revision;
     const tryHome = (room: unknown[]) => A.rpc('save_home', { p: pa, expected_revision: rev, home: { ...base, room_layout: room }, op_id: randomUUID() });
     await expectError('not_owned', () => tryHome([...base.room_layout, { uid: 'x1', item: 'cloud_cushion', x: 0, y: 8 }]));
-    await expectError('overlap', () => tryHome([...base.room_layout, { uid: 'x2', item: 'round_stool', x: 5, y: 5 }]));
+    // 쌓기: 찻상 위 의자 위 등불은 3층이라 허용, 의자를 하나 더 올리면 4층이라 거부
+    const stacked = base.room_layout.map((l: any) => (l.uid === 'r3' ? { ...l, x: 5, y: 5 } : l));
+    await expectError('too_high', () => tryHome([...stacked, { uid: 'x2', item: 'round_stool', x: 5, y: 5 }, { uid: 'x8', item: 'star_lantern', x: 5, y: 5 }]));
+    await admin.query(`insert into public.inventory values ($1, 'linen_curtain', 1)`, [pa]);
+    await expectError('overlap', () => tryHome([...base.room_layout, { uid: 'x9', item: 'linen_curtain', x: 7 }]));
     await expectError('out_of_bounds', () => tryHome([...base.room_layout, { uid: 'x3', item: 'round_stool', x: 12, y: 0 }]));
     await expectError('bad_place', () => tryHome([...base.room_layout, { uid: 'x4', item: 'shell_fountain', x: 0, y: 7 }]));
     await expectError('not_owned', () => tryHome([...base.room_layout, { uid: 'x5', item: 'lyre', parent: 'r6' }]));
-    const ok = await tryHome([...base.room_layout, { uid: 'x6', item: 'round_stool', x: 0, y: 8 }, { uid: 'x7', item: 'star_lantern', x: 11, y: 9 }]);
+    const ok = await tryHome([...base.room_layout, { uid: 'x6', item: 'round_stool', x: 5, y: 5 }, { uid: 'x7', item: 'star_lantern', x: 5, y: 5 }]);
     assert(ok.revision === rev + 1, 'saved');
     await expectError('conflict', () => tryHome(base.room_layout));
   });

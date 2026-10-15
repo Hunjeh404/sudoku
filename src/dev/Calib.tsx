@@ -18,6 +18,14 @@ const SETS: Record<string, { space: Space; layout: Layout[] }> = {
     { uid: 'f', item: 'display_pedestal', x: 8, y: 2 }, { uid: 'g', item: 'ariadne_crown', parent: 'f' },
     { uid: 'h', item: 'cloud_bed', x: 10, y: 5 },
   ] },
+  stack: { space: 'room', layout: [
+    { uid: 'a', item: 'tea_table', x: 4, y: 4 }, { uid: 'b', item: 'round_stool', x: 5, y: 5 }, { uid: 'c', item: 'star_lantern', x: 5, y: 5 },
+    { uid: 'd', item: 'treasure_chest', x: 8, y: 2 }, { uid: 'e', item: 'olive_planter', x: 9, y: 2 },
+    { uid: 'f', item: 'display_pedestal', x: 1, y: 6 }, { uid: 'g', item: 'cloud_cushion', x: 1, y: 6 },
+    { uid: 'h', item: 'scroll_bookcase', x: 2, y: 0 }, { uid: 'i', item: 'owl_mailbox', x: 3, y: 0 },
+    { uid: 'j', item: 'cloud_bed', x: 6, y: 7 }, { uid: 'k', item: 'cloud_cushion', x: 7, y: 7 },
+    { uid: 'l', item: 'laurel_door', x: 9 }, { uid: 'm', item: 'linen_curtain', x: 5 },
+  ] },
   garden: { space: 'garden', layout: [
     { uid: 'a', item: 'shell_fountain', x: 4, y: 3 }, { uid: 'b', item: 'garden_trellis', x: 4, y: 0 }, { uid: 'c', item: 'stepping_stones', x: 4, y: 8 },
     { uid: 'd', item: 'laurel_bench', x: 9, y: 4 }, { uid: 'e', item: 'olive_planter', x: 0, y: 0 }, { uid: 'f', item: 'olive_planter', x: 11, y: 9 },

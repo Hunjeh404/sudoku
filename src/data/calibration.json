@@ -1,5 +1,5 @@
 {
- "note": "배치 보정값. floorCornersPx는 배경 그림 픽셀(1254 기준) back/right/front/left. items: scale(발자국 폭 대비 배율), dx/dy(배경 픽셀 이동), slot(받침 위 물건 위치, 가구 그림 픽셀 기준).",
+ "note": "배치 보정값. floorCornersPx는 배경 그림 픽셀(1254 기준) back/right/front/left. items: scale(발자국 폭 대비 배율), dx/dy(배경 픽셀 이동), slot(받침 위 물건 위치, 가구 그림 픽셀 기준). ground: 그림의 접지점(가장 낮은 점, 정사각 발자국은 가로 가운데). topLift: 쌓을 때 이 물건 윗면까지 높이(가구 그림 픽셀, 눈 보정).",
  "environments": {
   "room_base": {
    "floorCornersPx": [
@@ -49,26 +49,154 @@
    "slot": {
     "dx": 0,
     "dy": -470
-   }
+   },
+   "ground": {
+    "x": 630.5,
+    "y": 1094
+   },
+   "topLift": 470
   },
   "tea_table": {
    "scale": 0.9,
    "slot": {
     "dx": -190,
     "dy": -400
-   }
+   },
+   "ground": {
+    "x": 637.0,
+    "y": 1075
+   },
+   "topLift": 380
   },
   "picture_frame": {
-   "scale": 0.6
+   "scale": 0.6,
+   "ground": {
+    "x": 645.0,
+    "y": 1172
+   },
+   "topLift": 0
   },
   "cloud_bed": {
-   "scale": 0.85
+   "scale": 0.85,
+   "ground": {
+    "x": 697.9,
+    "y": 1113
+   },
+   "topLift": 330
   },
   "scroll_bookcase": {
-   "scale": 0.85
+   "scale": 0.85,
+   "ground": {
+    "x": 892.2,
+    "y": 1211
+   },
+   "topLift": 800
   },
   "treasure_chest": {
-   "scale": 0.9
+   "scale": 0.9,
+   "ground": {
+    "x": 855.2,
+    "y": 1106
+   },
+   "topLift": 420
+  },
+  "cloud_cushion": {
+   "ground": {
+    "x": 626.5,
+    "y": 1028
+   },
+   "topLift": 200
+  },
+  "garden_trellis": {
+   "ground": {
+    "x": 965.2,
+    "y": 1141
+   },
+   "topLift": 0
+  },
+  "laurel_bench": {
+   "ground": {
+    "x": 499.5,
+    "y": 1126
+   },
+   "topLift": 330
+  },
+  "laurel_door": {
+   "ground": {
+    "x": 888.9,
+    "y": 1189
+   },
+   "topLift": 0
+  },
+  "laurel_rug": {
+   "ground": {
+    "x": 628.8,
+    "y": 1058
+   },
+   "topLift": 0
+  },
+  "linen_curtain": {
+   "ground": {
+    "x": 970.5,
+    "y": 1173
+   },
+   "topLift": 0
+  },
+  "music_stand": {
+   "ground": {
+    "x": 643.5,
+    "y": 1157
+   },
+   "topLift": 520
+  },
+  "olive_planter": {
+   "ground": {
+    "x": 629.0,
+    "y": 1140
+   },
+   "topLift": 330
+  },
+  "owl_mailbox": {
+   "ground": {
+    "x": 635.5,
+    "y": 1169
+   },
+   "topLift": 560
+  },
+  "round_stool": {
+   "ground": {
+    "x": 631.0,
+    "y": 1065
+   },
+   "topLift": 300
+  },
+  "shell_fountain": {
+   "ground": {
+    "x": 627.0,
+    "y": 1082
+   },
+   "topLift": 260
+  },
+  "star_lantern": {
+   "ground": {
+    "x": 626.0,
+    "y": 1195
+   },
+   "topLift": 700
+  },
+  "star_mobile": {
+   "ground": {
+    "x": 701.0,
+    "y": 1178
+   },
+   "topLift": 0
+  },
+  "stepping_stones": {
+   "ground": {
+    "x": 932.8,
+    "y": 1032
+   },
+   "topLift": 40
   }
  }
 }

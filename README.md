@@ -11,7 +11,8 @@
 
 ### 1. Supabase에 데이터베이스 만들기
 1. Supabase 대시보드 → SQL Editor → New query
-2. `supabase/setup-all.sql` 전체를 붙여 넣고 Run. (마이그레이션 0001~0005를 순서대로 합친 파일)
+2. `supabase/setup-all.sql` 전체를 붙여 넣고 Run. (마이그레이션 0001~0006을 순서대로 합친 파일)
+   이미 0001~0005를 실행한 프로젝트는 `supabase/migrations/0006_stacking.sql`만 추가로 실행한다.
 3. 같은 SQL을 다시 실행하면 `already exists` 오류가 난다. 처음부터 다시 하려면 새 프로젝트를 쓰는 편이 안전하다.
 
 ### 2. 구글 로그인 연결
@@ -39,7 +40,7 @@
 | `src/panels/` | 가구를 누르면 열리는 창(받침대·악보대·방명록·액자·책장·보물 상자·리라·실타래·거울 방패) |
 | `src/data/catalog.ts` | 아이템 30종·여정 12단계·보상·안내 친구(서버 카탈로그 SQL의 원본) |
 | `src/data/calibration.json` | 바닥 꼭짓점·가구 크기·받침 위치 보정값 |
-| `supabase/migrations/` | 0001 스키마·RLS, 0002 서버 함수, 0003 카탈로그, 0005 문제 은행(252문제) |
+| `supabase/migrations/` | 0001 스키마·RLS, 0002 서버 함수, 0003 카탈로그, 0005 문제 은행(252문제), 0006 쌓기 규칙 |
 | `assets-src/quarterview-v1/` | 받은 쿼터뷰 팩 원본(PNG·매니페스트·명세) + `asset-manifest.calibrated.json` |
 | `public/assets/` | 게임용 WebP 파생본(배경 1024px, 가구 512px, 인물 224px, 장면 900px)과 96kbps 음악 |
 | `public/sw.js` | 그림·데이터를 기기에 저장하는 서비스워커(재방문 시 전송량 감소) |
