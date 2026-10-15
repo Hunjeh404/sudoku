@@ -1,7 +1,7 @@
 // 스도쿠 고르기·풀기·결과
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  IconPencil, IconEraser, IconArrowBackUp, IconArrowForwardUp, IconBulb, IconArrowLeft, IconCloudCheck, IconCloudUpload, IconCloudOff, IconAlertTriangle, IconChecks,
+  IconFeather, IconEraser, IconArrowBackUp, IconArrowForwardUp, IconBulb, IconArrowLeft, IconCloudCheck, IconCloudUpload, IconCloudOff, IconAlertTriangle, IconChecks,
 } from '@tabler/icons-react';
 import { useGame, asset } from '../lib/store';
 import { rpc, newOpId, ApiError } from '../lib/api';
@@ -9,7 +9,7 @@ import { getLocal, setLocal, delLocal } from '../lib/local';
 import { Board, Size, parseBoard, boardToString, conflicts, geometry, rowOf, colOf, countSolutions } from '../sudoku/engine';
 import { makeHint, Hint } from '../sudoku/hints';
 import { JOURNEY, ITEM_BY_ID, REWARD_RULES } from '../data/catalog';
-import { Sheet, Starlight, ErrorLine, Spinner } from '../ui';
+import { Sheet, Starlight, ErrorLine, Spinner, Avatar } from '../ui';
 import { sfx } from '../lib/sound';
 
 const DIFF_KO: Record<string, string> = { intro: '입문', easy: '쉬움', medium: '보통', hard: '어려움' };
@@ -40,6 +40,7 @@ export function SudokuSelect({ onStart }: { onStart: (a: AttemptData) => void })
   return (
     <div className="page">
       <h1 className="page-title">스도쿠</h1>
+      <div className="athena-line"><Avatar id="athena" size={48} /><p><strong>아테나</strong> 오늘은 어떤 판을 풀어 볼까? 천천히 생각하면 길이 보여.</p></div>
       {state!.active.length > 0 && (
         <section>
           <h2 className="sub">이어서 풀기</h2>
@@ -223,7 +224,7 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
 
   const askHint = () => {
     const h = makeHint(givens, cur.board, n, sym);
-    if (!hint) setHintsUsed((x) => x + 1);
+    if (!hint) { setHintsUsed((x) => x + 1); hintsRef.current += 1; dirty.current = true; }
     setHint({ h, level: 1 });
     if (h.focusCells[0] !== undefined) setSel(h.focusCells[0]);
   };
@@ -245,6 +246,8 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
   const complete = async () => {
     setCompleting('busy'); setCompleteErr(null);
     window.clearTimeout(timer.current);
+    // 힌트 사용 기록이 서버에 먼저 반영되도록 마지막 진행을 저장(무힌트 배지 판정)
+    if (dirty.current) await pushServer();
     try {
       const r = await rpc('complete_attempt', { attempt: attempt.id, board: boardToString(cur.board), op_id: opRef.current });
       delLocal(localKey);
@@ -291,6 +294,7 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
         <span className={`save-state ${status}`} role="status"><StatusIcon size={18} aria-hidden />{statusText}</span>
       </header>
 
+      <div className="tablet">
       <div className="board" role="grid" aria-label={`${n}×${n} 스도쿠 판`} style={{ ['--n' as any]: n, ['--br' as any]: g.boxR, ['--bc' as any]: g.boxC }}>
         {cur.board.map((v, i) => {
           const r = rowOf(n, i), c = colOf(n, i);
@@ -316,10 +320,11 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
           );
         })}
       </div>
+      </div>
 
       {hint && (
         <section className="hint" aria-live="polite">
-          <p className="hint-step">힌트 {hint.level}/4</p>
+          <div className="hint-who"><Avatar id="athena" size={40} /><p className="hint-step">아테나의 힌트 {hint.level}/4</p></div>
           <p>{hint.level >= 1 && (hint.h.kind === 'logic' ? '반짝이는 칸과 줄을 살펴보세요.' : hint.h.rule)}</p>
           {hint.level >= 2 && hint.h.kind === 'logic' && <p>{hint.h.rule}</p>}
           {hint.level >= 3 && <p>{hint.h.detail}</p>}
@@ -332,7 +337,7 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
       )}
 
       <div className="pad-tools">
-        <button className={`tool${memo ? ' on' : ''}`} aria-pressed={memo} onClick={() => setMemo(!memo)}><IconPencil aria-hidden />메모</button>
+        <button className={`tool${memo ? ' on' : ''}`} aria-pressed={memo} onClick={() => setMemo(!memo)}><IconFeather aria-hidden />메모</button>
         <button className="tool" onClick={erase}><IconEraser aria-hidden />지우기</button>
         <button className="tool" onClick={undo} disabled={hist.i === 0}><IconArrowBackUp aria-hidden />되돌림</button>
         <button className="tool" onClick={redo} disabled={hist.i >= hist.list.length - 1}><IconArrowForwardUp aria-hidden />다시</button>
@@ -343,7 +348,7 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
         {Array.from({ length: n }, (_, i) => i + 1).map((d) => {
           const left = n - cur.board.filter((v) => v === d).length;
           return <button key={d} className={`num${memo ? ' memo' : ''}`} onClick={() => input(d)} aria-label={`${sym(d)} 넣기${memo ? '(메모)' : ''}`}>
-            {symbol(d)}<small aria-hidden>{left > 0 ? left : ''}</small></button>;
+            <span className="coin-face">{symbol(d)}</span><small aria-hidden>{left > 0 ? left : ''}</small></button>;
         })}
       </div>
 
@@ -377,9 +382,11 @@ export function ResultScreen({ result, onHome, onAgain }: { result: any; onHome:
   const next = JOURNEY[result.completed_count];
   return (
     <div className="result">
-      <div className="burst" aria-hidden>✦</div>
       <h1>다 풀었어요!</h1>
-      <p className="reward">별빛 <strong>+{result.reward}</strong></p>
+      <div className="wreath" role="img" aria-label={`별빛 ${result.reward} 받음`}>
+        <img className="wreath-frame" src={asset('assets/ui/frame.webp')} alt="" />
+        <div className="wreath-coin"><span aria-hidden>✦</span><strong>+{result.reward}</strong><small>별빛</small></div>
+      </div>
       <p>지금 별빛 {result.balance}</p>
       {result.no_hint && <p className="badge-line">힌트 없이 끝냈어요</p>}
       {j && <div className="journey-card"><p>여정 {j.step}칸 도착</p><strong>{j.title}</strong><small>{JOURNEY[j.step - 1]?.desc}</small></div>}

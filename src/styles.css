@@ -216,44 +216,78 @@ textarea { resize: vertical; }
 .choice-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .buy img { width: 160px; height: 160px; object-fit: contain; margin: 0 auto; }
 
-/* ---------- 스도쿠 ---------- */
-.first-card { background: var(--mint); border-radius: var(--radius-m); padding: 14px; }
+/* ---------- 스도쿠: 대리석 판 + 금빛 메안드로스 띠 + 드라크마 동전 숫자 ---------- */
+:root {
+  --marble: #FFFCF4;
+  --marble-vein: #F2EBDA;
+  --bronze: #8C6A2A;
+  --gold-line: #C9A43A;
+  --parchment: #FBF3DC;
+  --entry: #6E4F8E;
+  --meander: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='12' viewBox='0 0 16 12'%3E%3Cpath d='M0 10.5H16M0 1.5H16M3 10.5V4.5H9V7.5H6M11 10.5V1.5' fill='none' stroke='%23B8913A' stroke-width='1.3'/%3E%3C/svg%3E");
+}
+.athena-line { display: flex; gap: 12px; align-items: center; margin: 4px 0 12px; }
+.athena-line p { margin: 0; background: var(--parchment); border: 1.5px solid var(--gold-line); border-radius: 14px 14px 14px 4px; padding: 8px 12px; font-size: 15px; }
+.first-card { background: var(--parchment); border: 1.5px solid var(--gold-line); border-radius: var(--radius-m); padding: 14px; }
 .first-card p { margin-top: 0; }
-.size-list, .resume-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-.size-card { width: 100%; display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 14px; border: 1.5px solid var(--ink); border-radius: var(--radius-m); background: var(--paper); cursor: pointer; font-size: 17px; }
-.size-card strong { flex: 1; text-align: left; font-weight: 400; }
-.size-mini { display: grid; grid-template-columns: repeat(3, 8px); gap: 2px; }
-.size-mini i { width: 8px; height: 8px; background: var(--lav); border-radius: 2px; }
+.size-list, .resume-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.size-card {
+  position: relative; width: 100%; display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 16px 14px 10px;
+  border: 1.5px solid var(--bronze); border-radius: 12px; cursor: pointer; font-size: 17px; color: var(--ink);
+  background: linear-gradient(160deg, var(--marble) 0%, var(--marble-vein) 100%);
+  box-shadow: 0 2px 0 rgba(140, 106, 42, .25); transition: transform .15s ease-out, box-shadow .15s ease-out;
+}
+.size-card::before { content: ''; position: absolute; left: 10px; right: 10px; top: 4px; height: 8px; background: var(--meander) repeat-x; background-size: auto 8px; opacity: .8; }
+.size-card:active { transform: translateY(1px); box-shadow: 0 1px 0 rgba(140, 106, 42, .25); }
+.size-card strong { flex: 1; text-align: left; font-weight: 400; font-family: var(--font-title); }
+.size-mini { display: grid; grid-template-columns: repeat(3, 8px); gap: 2px; padding: 3px; border: 1.5px solid var(--bronze); border-radius: 3px; background: var(--marble); }
+.size-mini i { width: 8px; height: 8px; background: var(--lav); border-radius: 1px; }
 .s4 .size-mini { grid-template-columns: repeat(2, 8px); } .s4 .size-mini i { background: var(--mint); }
 .s6 .size-mini i { background: var(--sky); }
-.resume { width: 100%; text-align: left; padding: 12px 14px; border: 1.5px dashed var(--ink); border-radius: var(--radius-m); background: var(--gold); cursor: pointer; font-size: 17px; }
+.resume { width: 100%; text-align: left; padding: 12px 14px; border: 1.5px dashed var(--bronze); border-radius: var(--radius-m); background: var(--gold); cursor: pointer; font-size: 17px; }
 .resume small { display: block; font-size: 13px; color: var(--ink-soft); }
 .rules { padding-left: 20px; }
 .rules li { margin-bottom: 8px; }
 
-.puzzle { max-width: 520px; margin: 0 auto; min-height: 100dvh; padding: 0 12px 24px; background: var(--cream); }
-.puzzle-head { display: flex; align-items: center; gap: 8px; padding: 8px 0; }
+.puzzle {
+  max-width: 520px; margin: 0 auto; min-height: 100dvh; padding: 0 12px 24px;
+  background: radial-gradient(120% 60% at 50% 0%, #F3EDF7 0%, var(--cream) 60%);
+}
+.puzzle-head { display: flex; align-items: center; gap: 8px; padding: 8px 0 4px; }
+.puzzle-head strong { font-family: var(--font-title); font-size: 19px; }
 .save-state { display: inline-flex; gap: 4px; align-items: center; font-size: 13px; color: var(--ink-soft); }
 .save-state.offline, .save-state.conflict { color: var(--warn); }
+
+/* 대리석 서판: 위아래 메안드로스 띠, 금빛 안쪽 테두리 */
+.tablet {
+  --size: min(calc(100vw - 48px), 456px);
+  position: relative; width: fit-content; margin: 6px auto 14px; padding: 18px 10px;
+  border-radius: 16px; background: linear-gradient(170deg, #FBF5E6, #EEE2C6);
+  border: 1.5px solid var(--bronze);
+  box-shadow: inset 0 0 0 4px #FBF5E6, inset 0 0 0 5.5px var(--gold-line), 0 8px 18px rgba(58, 55, 57, .16);
+}
+.tablet::before, .tablet::after { content: ''; position: absolute; left: 14px; right: 14px; height: 10px; background: var(--meander) repeat-x; background-size: auto 10px; }
+.tablet::before { top: 4px; } .tablet::after { bottom: 4px; }
 .board {
-  --size: min(calc(100vw - 24px), 480px);
-  width: var(--size); height: var(--size); margin: 4px auto 12px;
+  width: var(--size); height: var(--size);
   display: grid; grid-template-columns: repeat(var(--n), 1fr); grid-template-rows: repeat(var(--n), 1fr);
-  border: 2.5px solid var(--ink); border-radius: 6px; overflow: hidden; background: #fff;
+  border: 2.5px solid var(--bronze); border-radius: 4px; overflow: hidden;
+  background: linear-gradient(135deg, var(--marble) 0%, #FAF4E6 50%, var(--marble) 100%);
 }
 .cell {
-  position: relative; border: 0; border-right: 1px solid #C9C2CC; border-bottom: 1px solid #C9C2CC;
-  background: #fff; padding: 0; cursor: pointer; display: grid; place-items: center;
-  font-size: calc(var(--size) / var(--n) * .55); font-family: var(--font-ui); color: var(--plum); line-height: 1;
+  position: relative; border: 0; border-right: 1px solid #DCCFAE; border-bottom: 1px solid #DCCFAE;
+  background: transparent; padding: 0; cursor: pointer; display: grid; place-items: center;
+  font-size: calc(var(--size) / var(--n) * .55); font-family: var(--font-ui); color: var(--entry); line-height: 1;
+  transition: background-color .12s ease-out;
 }
 .n9 .cell { font-size: calc(var(--size) / 9 * .58); }
-.cell.bR { border-right: 2.5px solid var(--ink); }
-.cell.bB { border-bottom: 2.5px solid var(--ink); }
+.cell.bR { border-right: 2.5px solid var(--bronze); }
+.cell.bB { border-bottom: 2.5px solid var(--bronze); }
 .cell.given { color: var(--ink); font-weight: 700; }
-.cell.peer { background: #F3EFE4; }
-.cell.same { background: var(--gold); }
-.cell.sel { background: var(--lav); box-shadow: inset 0 0 0 3px var(--plum); }
-.cell.focus-unit { background: #E6F2EC; }
+.cell.peer { background: rgba(240, 222, 170, .22); }
+.cell.same { background: rgba(240, 222, 170, .75); }
+.cell.sel { background: rgba(220, 207, 229, .85); box-shadow: inset 0 0 0 3px var(--gold-line); }
+.cell.focus-unit { background: rgba(199, 225, 215, .55); }
 .cell.focus { box-shadow: inset 0 0 0 3px var(--sage); }
 .cell.bad { color: var(--warn); text-decoration: underline wavy var(--warn) 1.5px; }
 .cell.wrong::after { content: ''; position: absolute; inset: 3px; border: 2px dotted var(--warn); border-radius: 4px; }
@@ -262,29 +296,66 @@ textarea { resize: vertical; }
 .notes { position: absolute; inset: 2px; display: grid; grid-template-columns: repeat(var(--bc), 1fr); font-size: calc(var(--size) / var(--n) * .2); color: var(--ink-soft); }
 .n9 .notes { font-size: calc(var(--size) / 9 * .26); }
 .notes i { font-style: normal; display: grid; place-items: center; }
-.pad-tools { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-bottom: 8px; }
-.tool { display: grid; place-items: center; gap: 0; min-height: 52px; border: 0; background: transparent; font-size: 12px; cursor: pointer; border-radius: var(--radius-s); }
-.tool.on { background: var(--lav); }
+
+/* 도구: 대리석 선반 */
+.pad-tools {
+  display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin: 0 0 12px; padding: 4px;
+  background: var(--marble); border: 1px solid #DCCFAE; border-radius: 14px;
+}
+.tool { display: grid; place-items: center; gap: 0; min-height: 52px; border: 0; background: transparent; font-size: 12px; cursor: pointer; border-radius: 10px; color: var(--ink); transition: background-color .15s ease-out; }
+.tool svg { color: var(--bronze); }
+.tool.on { background: var(--gold); box-shadow: inset 0 0 0 1.5px var(--gold-line); }
+.tool:active { background: var(--marble-vein); }
 .tool:disabled { opacity: .35; }
-.pad { display: grid; gap: 6px; }
+
+/* 숫자: 드라크마 금화 */
+.pad { display: grid; gap: 10px 8px; justify-items: center; }
 .pad4 { grid-template-columns: repeat(4, 1fr); }
 .pad6 { grid-template-columns: repeat(6, 1fr); }
 .pad9 { grid-template-columns: repeat(5, 1fr); }
-.num { position: relative; min-height: 56px; border: 1.5px solid var(--ink); border-radius: var(--radius-s); background: var(--paper); font-size: 26px; cursor: pointer; display: grid; place-items: center; }
-.num.memo { background: var(--lav); font-size: 18px; }
-.num small { position: absolute; top: 2px; right: 6px; font-size: 11px; color: var(--ink-soft); }
-.num .pic { width: 36px; height: 36px; }
-.hint { background: var(--mint); border-radius: var(--radius-m); padding: 12px 14px; margin-bottom: 10px; }
+.num {
+  position: relative; width: 100%; max-width: 64px; aspect-ratio: 1; min-height: 48px; border-radius: 50%; cursor: pointer;
+  display: grid; place-items: center; padding: 0; color: var(--ink); font-size: 26px; font-weight: 700;
+  background: radial-gradient(circle at 35% 30%, #FFF8DE 0%, #F2DFA4 55%, #D8B866 100%);
+  border: 2px solid var(--gold-deep);
+  box-shadow: inset 0 0 0 3px rgba(255, 248, 222, .7), inset 0 0 0 4.5px rgba(184, 145, 58, .55), 0 3px 0 rgba(140, 106, 42, .45);
+  transition: transform .12s ease-out, box-shadow .12s ease-out;
+}
+.n6 .num { font-size: 24px; }
+.num:active { transform: translateY(2px); box-shadow: inset 0 0 0 3px rgba(255, 248, 222, .7), inset 0 0 0 4.5px rgba(184, 145, 58, .55), 0 1px 0 rgba(140, 106, 42, .45); }
+.num.memo { background: radial-gradient(circle at 35% 30%, #FFFFFF 0%, #E9E0F0 60%, #CDBBDD 100%); border-color: var(--plum); font-size: 20px; color: var(--plum); }
+.num small { position: absolute; bottom: -2px; right: -2px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: var(--marble); border: 1px solid var(--gold-line); font-size: 11px; line-height: 16px; color: var(--ink-soft); font-weight: 400; }
+.num small:empty { display: none; }
+.num .pic { width: 34px; height: 34px; }
+
+/* 힌트: 아테나의 두루마리 */
+.hint {
+  position: relative; background: var(--parchment); border: 1.5px solid var(--gold-line); border-radius: 6px;
+  padding: 12px 16px; margin: 0 6px 12px;
+  box-shadow: -6px 0 0 -2px #EADBB4, 6px 0 0 -2px #EADBB4, 0 4px 10px rgba(58, 55, 57, .1);
+}
+.hint-who { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
 .hint p { margin: 0 0 6px; }
-.hint-step { font-size: 13px; color: var(--ink-soft); }
+.hint-step { font-size: 13px; color: var(--ink-soft); font-family: var(--font-title); }
+.hint .hint-who p { margin: 0; }
 .complete-retry { background: var(--gold); padding: 12px; border-radius: var(--radius-m); margin-top: 12px; }
-.result { max-width: 520px; margin: 0 auto; min-height: 100dvh; padding: 48px 20px; text-align: center; background: linear-gradient(var(--lav), var(--cream) 60%); }
-.result h1 { font-size: 32px; }
-.burst { font-size: 64px; color: var(--gold-deep); animation: twinkle 900ms ease-out; }
-.reward { font-size: 22px; }
-.reward strong { font-size: 40px; color: var(--plum); }
+
+/* 결과: 월계관 속 금화 */
+.result { max-width: 520px; margin: 0 auto; min-height: 100dvh; padding: 40px 20px; text-align: center; background: radial-gradient(120% 70% at 50% 20%, #FFF7DE 0%, var(--lav) 55%, var(--cream) 100%); }
+.result h1 { font-size: 30px; }
+.wreath { position: relative; width: 220px; height: 220px; margin: 16px auto 8px; display: grid; place-items: center; }
+.wreath-frame { position: absolute; inset: 0; width: 100%; height: 100%; animation: wreath-in .7s ease-out both; }
+@keyframes wreath-in { from { transform: scale(.85) rotate(-8deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.wreath-coin {
+  width: 128px; height: 128px; border-radius: 50%; display: grid; place-items: center; align-content: center; gap: 0;
+  background: radial-gradient(circle at 35% 30%, #FFF8DE 0%, #F2DFA4 55%, #D8B866 100%);
+  border: 2.5px solid var(--gold-deep); box-shadow: inset 0 0 0 5px rgba(255, 248, 222, .7), 0 6px 14px rgba(140, 106, 42, .3);
+}
+.wreath-coin span { color: var(--gold-deep); font-size: 20px; line-height: 1; }
+.wreath-coin strong { font-size: 40px; color: var(--ink); line-height: 1.1; }
+.wreath-coin small { font-size: 14px; color: var(--ink-soft); }
 .badge-line { display: inline-block; background: var(--mint); padding: 4px 12px; border-radius: 999px; }
-.journey-card { background: var(--paper); border: 1.5px solid var(--ink); border-radius: var(--radius-m); padding: 12px; margin: 16px 0; display: grid; gap: 2px; }
+.journey-card { background: var(--parchment); border: 1.5px solid var(--gold-line); border-radius: var(--radius-m); padding: 12px; margin: 16px 0; display: grid; gap: 2px; }
 .journey-card p { margin: 0; font-size: 14px; color: var(--ink-soft); }
 .journey-card small { color: var(--ink-soft); }
 
