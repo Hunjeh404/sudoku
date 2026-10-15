@@ -1,0 +1,4611 @@
+{
+ "sourceRepo": "https://github.com/Hunjeh404/greek-myth-map",
+ "sourceCommit": "286dfbce4bef3a9d4ca09ae6b61956043d792451",
+ "files": [
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/environments/garden_base.png",
+   "output": "assets/env/garden_base.webp",
+   "size": [
+    1024,
+    1024
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/environments/room_base.png",
+   "output": "assets/env/room_base.webp",
+   "size": [
+    1024,
+    1024
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/furniture/cloud_bed.png",
+   "output": "assets/furniture/cloud_bed.webp",
+   "size": [
+    512,
+    512
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/furniture/cloud_cushion.png",
+   "output": "assets/furniture/cloud_cushion.webp",
+   "size": [
+    512,
+    512
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/furniture/display_pedestal.png",
+   "output": "assets/furniture/display_pedestal.webp",
+   "size": [
+    512,
+    512
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/furniture/garden_trellis.png",
+   "output": "assets/furniture/garden_trellis.webp",
+   "size": [
+    512,
+    512
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/furniture/laurel_bench.png",
+   "output": "assets/furniture/laurel_bench.webp",
+   "size": [
+    512,
+    512
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/furniture/laurel_door.png",
+   "output": "assets/furniture/laurel_door.webp",
+   "size": [
+    512,
+    512
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/furniture/laurel_rug.png",
+   "output": "assets/furniture/laurel_rug.webp",
+   "size": [
+    512,
+    512
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/furniture/linen_curtain.png",
+   "output": "assets/furniture/linen_curtain.webp",
+   "size": [
+    512,
+    512
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/furniture/music_stand.png",
+   "output": "assets/furniture/music_stand.webp",
+   "size": [
+    512,
+    512
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/furniture/olive_planter.png",
+   "output": "assets/furniture/olive_planter.webp",
+   "size": [
+    512,
+    512
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/furniture/owl_mailbox.png",
+   "output": "assets/furniture/owl_mailbox.webp",
+   "size": [
+    512,
+    512
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/furniture/picture_frame.png",
+   "output": "assets/furniture/picture_frame.webp",
+   "size": [
+    512,
+    512
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/furniture/round_stool.png",
+   "output": "assets/furniture/round_stool.webp",
+   "size": [
+    512,
+    512
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/furniture/scroll_bookcase.png",
+   "output": "assets/furniture/scroll_bookcase.webp",
+   "size": [
+    512,
+    512
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/furniture/shell_fountain.png",
+   "output": "assets/furniture/shell_fountain.webp",
+   "size": [
+    512,
+    512
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/furniture/star_lantern.png",
+   "output": "assets/furniture/star_lantern.webp",
+   "size": [
+    512,
+    512
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/furniture/star_mobile.png",
+   "output": "assets/furniture/star_mobile.webp",
+   "size": [
+    512,
+    512
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/furniture/stepping_stones.png",
+   "output": "assets/furniture/stepping_stones.webp",
+   "size": [
+    512,
+    512
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/furniture/tea_table.png",
+   "output": "assets/furniture/tea_table.webp",
+   "size": [
+    512,
+    512
+   ]
+  },
+  {
+   "kind": "quarterview",
+   "source": "sudoku-assets/quarterview-v1/images/furniture/treasure_chest.png",
+   "output": "assets/furniture/treasure_chest.webp",
+   "size": [
+    512,
+    512
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/chaos.png",
+   "output": "assets/portraits/chaos.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/gaia.png",
+   "output": "assets/portraits/gaia.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/tartarus.png",
+   "output": "assets/portraits/tartarus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/eros.png",
+   "output": "assets/portraits/eros.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/erebus.png",
+   "output": "assets/portraits/erebus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/nyx.png",
+   "output": "assets/portraits/nyx.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/aether.png",
+   "output": "assets/portraits/aether.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hemera.png",
+   "output": "assets/portraits/hemera.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/uranus.png",
+   "output": "assets/portraits/uranus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pontus.png",
+   "output": "assets/portraits/pontus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/ourea.png",
+   "output": "assets/portraits/ourea.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/chronos.png",
+   "output": "assets/portraits/chronos.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/ananke.png",
+   "output": "assets/portraits/ananke.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/phanes.png",
+   "output": "assets/portraits/phanes.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/oceanus.png",
+   "output": "assets/portraits/oceanus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/tethys.png",
+   "output": "assets/portraits/tethys.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hyperion.png",
+   "output": "assets/portraits/hyperion.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/theia.png",
+   "output": "assets/portraits/theia.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/coeus.png",
+   "output": "assets/portraits/coeus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/phoebe.png",
+   "output": "assets/portraits/phoebe.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/crius.png",
+   "output": "assets/portraits/crius.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/iapetus.png",
+   "output": "assets/portraits/iapetus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/mnemosyne.png",
+   "output": "assets/portraits/mnemosyne.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/themis.png",
+   "output": "assets/portraits/themis.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/cronus.png",
+   "output": "assets/portraits/cronus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/rhea.png",
+   "output": "assets/portraits/rhea.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/atlas.png",
+   "output": "assets/portraits/atlas.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/prometheus.png",
+   "output": "assets/portraits/prometheus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/epimetheus.png",
+   "output": "assets/portraits/epimetheus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/menoetius.png",
+   "output": "assets/portraits/menoetius.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/leto.png",
+   "output": "assets/portraits/leto.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/asteria.png",
+   "output": "assets/portraits/asteria.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/helios.png",
+   "output": "assets/portraits/helios.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/selene.png",
+   "output": "assets/portraits/selene.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/eos.png",
+   "output": "assets/portraits/eos.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/astraeus.png",
+   "output": "assets/portraits/astraeus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pallas_titan.png",
+   "output": "assets/portraits/pallas_titan.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/perses_titan.png",
+   "output": "assets/portraits/perses_titan.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/metis.png",
+   "output": "assets/portraits/metis.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/dione.png",
+   "output": "assets/portraits/dione.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/zeus.png",
+   "output": "assets/portraits/zeus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hera.png",
+   "output": "assets/portraits/hera.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/poseidon.png",
+   "output": "assets/portraits/poseidon.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/demeter.png",
+   "output": "assets/portraits/demeter.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hestia.png",
+   "output": "assets/portraits/hestia.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hades.png",
+   "output": "assets/portraits/hades.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/athena.png",
+   "output": "assets/portraits/athena.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/apollo.png",
+   "output": "assets/portraits/apollo.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/artemis.png",
+   "output": "assets/portraits/artemis.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/ares.png",
+   "output": "assets/portraits/ares.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/aphrodite.png",
+   "output": "assets/portraits/aphrodite.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hephaestus.png",
+   "output": "assets/portraits/hephaestus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hermes.png",
+   "output": "assets/portraits/hermes.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/dionysus.png",
+   "output": "assets/portraits/dionysus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/persephone.png",
+   "output": "assets/portraits/persephone.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hebe.png",
+   "output": "assets/portraits/hebe.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/eileithyia.png",
+   "output": "assets/portraits/eileithyia.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/harmonia.png",
+   "output": "assets/portraits/harmonia.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/phobos.png",
+   "output": "assets/portraits/phobos.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/deimos.png",
+   "output": "assets/portraits/deimos.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hecate.png",
+   "output": "assets/portraits/hecate.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/iris.png",
+   "output": "assets/portraits/iris.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/nike.png",
+   "output": "assets/portraits/nike.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/kratos.png",
+   "output": "assets/portraits/kratos.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/bia.png",
+   "output": "assets/portraits/bia.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/zelus.png",
+   "output": "assets/portraits/zelus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/styx.png",
+   "output": "assets/portraits/styx.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/thanatos.png",
+   "output": "assets/portraits/thanatos.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hypnos.png",
+   "output": "assets/portraits/hypnos.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/morpheus.png",
+   "output": "assets/portraits/morpheus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/nemesis.png",
+   "output": "assets/portraits/nemesis.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/eris.png",
+   "output": "assets/portraits/eris.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/moros.png",
+   "output": "assets/portraits/moros.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/momus.png",
+   "output": "assets/portraits/momus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/apate.png",
+   "output": "assets/portraits/apate.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/geras.png",
+   "output": "assets/portraits/geras.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/ate.png",
+   "output": "assets/portraits/ate.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/clotho.png",
+   "output": "assets/portraits/clotho.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/lachesis.png",
+   "output": "assets/portraits/lachesis.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/atropos.png",
+   "output": "assets/portraits/atropos.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/horai.png",
+   "output": "assets/portraits/horai.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/charites.png",
+   "output": "assets/portraits/charites.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/eurynome.png",
+   "output": "assets/portraits/eurynome.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/calliope.png",
+   "output": "assets/portraits/calliope.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/clio.png",
+   "output": "assets/portraits/clio.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/euterpe.png",
+   "output": "assets/portraits/euterpe.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/thalia_muse.png",
+   "output": "assets/portraits/thalia_muse.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/melpomene.png",
+   "output": "assets/portraits/melpomene.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/terpsichore.png",
+   "output": "assets/portraits/terpsichore.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/erato.png",
+   "output": "assets/portraits/erato.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/polyhymnia.png",
+   "output": "assets/portraits/polyhymnia.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/urania.png",
+   "output": "assets/portraits/urania.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pan.png",
+   "output": "assets/portraits/pan.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/asclepius.png",
+   "output": "assets/portraits/asclepius.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hygieia.png",
+   "output": "assets/portraits/hygieia.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/aristaeus.png",
+   "output": "assets/portraits/aristaeus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/silenus.png",
+   "output": "assets/portraits/silenus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/triton.png",
+   "output": "assets/portraits/triton.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/amphitrite.png",
+   "output": "assets/portraits/amphitrite.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/nereus.png",
+   "output": "assets/portraits/nereus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/proteus.png",
+   "output": "assets/portraits/proteus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/thaumas.png",
+   "output": "assets/portraits/thaumas.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/phorcys.png",
+   "output": "assets/portraits/phorcys.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/ceto.png",
+   "output": "assets/portraits/ceto.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/eurybia.png",
+   "output": "assets/portraits/eurybia.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/thetis.png",
+   "output": "assets/portraits/thetis.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/galatea.png",
+   "output": "assets/portraits/galatea.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/psamathe.png",
+   "output": "assets/portraits/psamathe.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/doris.png",
+   "output": "assets/portraits/doris.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/clymene.png",
+   "output": "assets/portraits/clymene.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/electra_oc.png",
+   "output": "assets/portraits/electra_oc.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/callirhoe.png",
+   "output": "assets/portraits/callirhoe.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pleione.png",
+   "output": "assets/portraits/pleione.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pleiades.png",
+   "output": "assets/portraits/pleiades.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/maia.png",
+   "output": "assets/portraits/maia.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/electra_pl.png",
+   "output": "assets/portraits/electra_pl.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hesperides.png",
+   "output": "assets/portraits/hesperides.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/calypso.png",
+   "output": "assets/portraits/calypso.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/circe.png",
+   "output": "assets/portraits/circe.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/echo.png",
+   "output": "assets/portraits/echo.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/daphne.png",
+   "output": "assets/portraits/daphne.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/syrinx.png",
+   "output": "assets/portraits/syrinx.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/oenone.png",
+   "output": "assets/portraits/oenone.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/cyrene.png",
+   "output": "assets/portraits/cyrene.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/nephele.png",
+   "output": "assets/portraits/nephele.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/achelous.png",
+   "output": "assets/portraits/achelous.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/scamander.png",
+   "output": "assets/portraits/scamander.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/inachus.png",
+   "output": "assets/portraits/inachus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/asopus.png",
+   "output": "assets/portraits/asopus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/alpheus.png",
+   "output": "assets/portraits/alpheus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/charon.png",
+   "output": "assets/portraits/charon.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/lethe.png",
+   "output": "assets/portraits/lethe.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/boreas.png",
+   "output": "assets/portraits/boreas.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/zephyrus.png",
+   "output": "assets/portraits/zephyrus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/notus.png",
+   "output": "assets/portraits/notus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/eurus.png",
+   "output": "assets/portraits/eurus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/graiai.png",
+   "output": "assets/portraits/graiai.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/typhon.png",
+   "output": "assets/portraits/typhon.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/echidna.png",
+   "output": "assets/portraits/echidna.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/cerberus.png",
+   "output": "assets/portraits/cerberus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/orthrus.png",
+   "output": "assets/portraits/orthrus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hydra.png",
+   "output": "assets/portraits/hydra.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/chimera.png",
+   "output": "assets/portraits/chimera.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/sphinx.png",
+   "output": "assets/portraits/sphinx.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/nemean_lion.png",
+   "output": "assets/portraits/nemean_lion.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/ladon.png",
+   "output": "assets/portraits/ladon.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/caucasian_eagle.png",
+   "output": "assets/portraits/caucasian_eagle.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/crommyon_sow.png",
+   "output": "assets/portraits/crommyon_sow.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/colchian_dragon.png",
+   "output": "assets/portraits/colchian_dragon.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/minotaur.png",
+   "output": "assets/portraits/minotaur.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/polyphemus.png",
+   "output": "assets/portraits/polyphemus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/scylla.png",
+   "output": "assets/portraits/scylla.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/charybdis.png",
+   "output": "assets/portraits/charybdis.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/medusa.png",
+   "output": "assets/portraits/medusa.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/stheno.png",
+   "output": "assets/portraits/stheno.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/euryale.png",
+   "output": "assets/portraits/euryale.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pegasus.png",
+   "output": "assets/portraits/pegasus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/chrysaor.png",
+   "output": "assets/portraits/chrysaor.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/geryon.png",
+   "output": "assets/portraits/geryon.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/cacus.png",
+   "output": "assets/portraits/cacus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/python.png",
+   "output": "assets/portraits/python.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/talos.png",
+   "output": "assets/portraits/talos.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/argus.png",
+   "output": "assets/portraits/argus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/stymphalian_birds.png",
+   "output": "assets/portraits/stymphalian_birds.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/cretan_bull.png",
+   "output": "assets/portraits/cretan_bull.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/erymanthian_boar.png",
+   "output": "assets/portraits/erymanthian_boar.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/ceryneian_hind.png",
+   "output": "assets/portraits/ceryneian_hind.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/mares_of_diomedes.png",
+   "output": "assets/portraits/mares_of_diomedes.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/calydonian_boar.png",
+   "output": "assets/portraits/calydonian_boar.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/teumessian_fox.png",
+   "output": "assets/portraits/teumessian_fox.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/laelaps.png",
+   "output": "assets/portraits/laelaps.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/cetus.png",
+   "output": "assets/portraits/cetus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/chiron.png",
+   "output": "assets/portraits/chiron.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pholus.png",
+   "output": "assets/portraits/pholus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/nessus.png",
+   "output": "assets/portraits/nessus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/centaurs.png",
+   "output": "assets/portraits/centaurs.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/harpies.png",
+   "output": "assets/portraits/harpies.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/seirenes.png",
+   "output": "assets/portraits/seirenes.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/gigantes.png",
+   "output": "assets/portraits/gigantes.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/alcyoneus.png",
+   "output": "assets/portraits/alcyoneus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/porphyrion.png",
+   "output": "assets/portraits/porphyrion.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/enceladus.png",
+   "output": "assets/portraits/enceladus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/mimas.png",
+   "output": "assets/portraits/mimas.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/polybotes.png",
+   "output": "assets/portraits/polybotes.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/antaeus.png",
+   "output": "assets/portraits/antaeus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/tityos.png",
+   "output": "assets/portraits/tityos.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/otus.png",
+   "output": "assets/portraits/otus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/ephialtes_aload.png",
+   "output": "assets/portraits/ephialtes_aload.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/brontes.png",
+   "output": "assets/portraits/brontes.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/steropes.png",
+   "output": "assets/portraits/steropes.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/arges.png",
+   "output": "assets/portraits/arges.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/cottus.png",
+   "output": "assets/portraits/cottus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/briareus.png",
+   "output": "assets/portraits/briareus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/gyges.png",
+   "output": "assets/portraits/gyges.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/alecto.png",
+   "output": "assets/portraits/alecto.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/tisiphone.png",
+   "output": "assets/portraits/tisiphone.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/megaera.png",
+   "output": "assets/portraits/megaera.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/lamia.png",
+   "output": "assets/portraits/lamia.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/marsyas.png",
+   "output": "assets/portraits/marsyas.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/procrustes.png",
+   "output": "assets/portraits/procrustes.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/sinis.png",
+   "output": "assets/portraits/sinis.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/sciron.png",
+   "output": "assets/portraits/sciron.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/argonauts.png",
+   "output": "assets/portraits/argonauts.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/seven.png",
+   "output": "assets/portraits/seven.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/danae.png",
+   "output": "assets/portraits/danae.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/acrisius.png",
+   "output": "assets/portraits/acrisius.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/perseus.png",
+   "output": "assets/portraits/perseus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/andromeda.png",
+   "output": "assets/portraits/andromeda.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/cepheus.png",
+   "output": "assets/portraits/cepheus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/cassiopeia.png",
+   "output": "assets/portraits/cassiopeia.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/polydectes.png",
+   "output": "assets/portraits/polydectes.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/electryon.png",
+   "output": "assets/portraits/electryon.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/alcaeus.png",
+   "output": "assets/portraits/alcaeus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/sthenelus.png",
+   "output": "assets/portraits/sthenelus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/amphitryon.png",
+   "output": "assets/portraits/amphitryon.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/alcmene.png",
+   "output": "assets/portraits/alcmene.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/heracles.png",
+   "output": "assets/portraits/heracles.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/iphicles.png",
+   "output": "assets/portraits/iphicles.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/iolaus.png",
+   "output": "assets/portraits/iolaus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/eurystheus.png",
+   "output": "assets/portraits/eurystheus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/megara.png",
+   "output": "assets/portraits/megara.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/deianira.png",
+   "output": "assets/portraits/deianira.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hyllus.png",
+   "output": "assets/portraits/hyllus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/omphale.png",
+   "output": "assets/portraits/omphale.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hippolyta.png",
+   "output": "assets/portraits/hippolyta.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/telephus.png",
+   "output": "assets/portraits/telephus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/iole.png",
+   "output": "assets/portraits/iole.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/augeas.png",
+   "output": "assets/portraits/augeas.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/deucalion.png",
+   "output": "assets/portraits/deucalion.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pyrrha.png",
+   "output": "assets/portraits/pyrrha.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pandora.png",
+   "output": "assets/portraits/pandora.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hellen.png",
+   "output": "assets/portraits/hellen.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/aeolus.png",
+   "output": "assets/portraits/aeolus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/sisyphus.png",
+   "output": "assets/portraits/sisyphus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/salmoneus.png",
+   "output": "assets/portraits/salmoneus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/tyro.png",
+   "output": "assets/portraits/tyro.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/athamas.png",
+   "output": "assets/portraits/athamas.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/ino.png",
+   "output": "assets/portraits/ino.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/phrixus.png",
+   "output": "assets/portraits/phrixus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/helle.png",
+   "output": "assets/portraits/helle.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/bellerophon.png",
+   "output": "assets/portraits/bellerophon.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/glaucus_cor.png",
+   "output": "assets/portraits/glaucus_cor.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/neleus.png",
+   "output": "assets/portraits/neleus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pelias.png",
+   "output": "assets/portraits/pelias.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/aeson.png",
+   "output": "assets/portraits/aeson.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/jason.png",
+   "output": "assets/portraits/jason.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/medea.png",
+   "output": "assets/portraits/medea.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/aeetes.png",
+   "output": "assets/portraits/aeetes.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/absyrtus.png",
+   "output": "assets/portraits/absyrtus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/nestor.png",
+   "output": "assets/portraits/nestor.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/admetus.png",
+   "output": "assets/portraits/admetus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/alcestis.png",
+   "output": "assets/portraits/alcestis.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/melampus.png",
+   "output": "assets/portraits/melampus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/amphiaraus.png",
+   "output": "assets/portraits/amphiaraus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/adrastus.png",
+   "output": "assets/portraits/adrastus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/eriphyle.png",
+   "output": "assets/portraits/eriphyle.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/alcmaeon.png",
+   "output": "assets/portraits/alcmaeon.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/orpheus.png",
+   "output": "assets/portraits/orpheus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/eurydice.png",
+   "output": "assets/portraits/eurydice.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/castor.png",
+   "output": "assets/portraits/castor.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pollux.png",
+   "output": "assets/portraits/pollux.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/idas.png",
+   "output": "assets/portraits/idas.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/lynceus.png",
+   "output": "assets/portraits/lynceus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/zetes.png",
+   "output": "assets/portraits/zetes.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/calais.png",
+   "output": "assets/portraits/calais.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/peleus.png",
+   "output": "assets/portraits/peleus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/telamon.png",
+   "output": "assets/portraits/telamon.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/meleager.png",
+   "output": "assets/portraits/meleager.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/althaea.png",
+   "output": "assets/portraits/althaea.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/oeneus.png",
+   "output": "assets/portraits/oeneus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/atalanta.png",
+   "output": "assets/portraits/atalanta.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hippomenes.png",
+   "output": "assets/portraits/hippomenes.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hylas.png",
+   "output": "assets/portraits/hylas.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/phineus.png",
+   "output": "assets/portraits/phineus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/amycus.png",
+   "output": "assets/portraits/amycus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/europa.png",
+   "output": "assets/portraits/europa.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/agenor.png",
+   "output": "assets/portraits/agenor.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/minos.png",
+   "output": "assets/portraits/minos.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/rhadamanthys.png",
+   "output": "assets/portraits/rhadamanthys.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/aeacus.png",
+   "output": "assets/portraits/aeacus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/aegina.png",
+   "output": "assets/portraits/aegina.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pasiphae.png",
+   "output": "assets/portraits/pasiphae.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/ariadne.png",
+   "output": "assets/portraits/ariadne.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/phaedra.png",
+   "output": "assets/portraits/phaedra.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/daedalus.png",
+   "output": "assets/portraits/daedalus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/icarus.png",
+   "output": "assets/portraits/icarus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/aegeus.png",
+   "output": "assets/portraits/aegeus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/aethra.png",
+   "output": "assets/portraits/aethra.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/theseus.png",
+   "output": "assets/portraits/theseus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hippolytus.png",
+   "output": "assets/portraits/hippolytus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pirithous.png",
+   "output": "assets/portraits/pirithous.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/cadmus.png",
+   "output": "assets/portraits/cadmus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/semele.png",
+   "output": "assets/portraits/semele.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/agave.png",
+   "output": "assets/portraits/agave.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/autonoe.png",
+   "output": "assets/portraits/autonoe.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/actaeon.png",
+   "output": "assets/portraits/actaeon.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pentheus.png",
+   "output": "assets/portraits/pentheus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/laius.png",
+   "output": "assets/portraits/laius.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/jocasta.png",
+   "output": "assets/portraits/jocasta.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/oedipus.png",
+   "output": "assets/portraits/oedipus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/eteocles.png",
+   "output": "assets/portraits/eteocles.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/polynices.png",
+   "output": "assets/portraits/polynices.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/antigone.png",
+   "output": "assets/portraits/antigone.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/ismene.png",
+   "output": "assets/portraits/ismene.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/creon.png",
+   "output": "assets/portraits/creon.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/tiresias.png",
+   "output": "assets/portraits/tiresias.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/tydeus.png",
+   "output": "assets/portraits/tydeus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/capaneus.png",
+   "output": "assets/portraits/capaneus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/parthenopaeus.png",
+   "output": "assets/portraits/parthenopaeus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/diomedes.png",
+   "output": "assets/portraits/diomedes.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/diomedes_thrace.png",
+   "output": "assets/portraits/diomedes_thrace.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/tantalus.png",
+   "output": "assets/portraits/tantalus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pelops.png",
+   "output": "assets/portraits/pelops.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/niobe.png",
+   "output": "assets/portraits/niobe.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/oenomaus.png",
+   "output": "assets/portraits/oenomaus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hippodamia.png",
+   "output": "assets/portraits/hippodamia.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/atreus.png",
+   "output": "assets/portraits/atreus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/thyestes.png",
+   "output": "assets/portraits/thyestes.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/agamemnon.png",
+   "output": "assets/portraits/agamemnon.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/menelaus.png",
+   "output": "assets/portraits/menelaus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/clytemnestra.png",
+   "output": "assets/portraits/clytemnestra.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/aegisthus.png",
+   "output": "assets/portraits/aegisthus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/iphigenia.png",
+   "output": "assets/portraits/iphigenia.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/electra.png",
+   "output": "assets/portraits/electra.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/orestes.png",
+   "output": "assets/portraits/orestes.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pylades.png",
+   "output": "assets/portraits/pylades.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hermione.png",
+   "output": "assets/portraits/hermione.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/tyndareus.png",
+   "output": "assets/portraits/tyndareus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/leda.png",
+   "output": "assets/portraits/leda.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/helen.png",
+   "output": "assets/portraits/helen.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/achilles.png",
+   "output": "assets/portraits/achilles.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/neoptolemus.png",
+   "output": "assets/portraits/neoptolemus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/ajax.png",
+   "output": "assets/portraits/ajax.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/ajax_lesser.png",
+   "output": "assets/portraits/ajax_lesser.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/teucer.png",
+   "output": "assets/portraits/teucer.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/patroclus.png",
+   "output": "assets/portraits/patroclus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/odysseus.png",
+   "output": "assets/portraits/odysseus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/penelope.png",
+   "output": "assets/portraits/penelope.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/telemachus.png",
+   "output": "assets/portraits/telemachus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/laertes.png",
+   "output": "assets/portraits/laertes.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/telegonus.png",
+   "output": "assets/portraits/telegonus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/palamedes.png",
+   "output": "assets/portraits/palamedes.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/philoctetes.png",
+   "output": "assets/portraits/philoctetes.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/calchas.png",
+   "output": "assets/portraits/calchas.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/protesilaus.png",
+   "output": "assets/portraits/protesilaus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/idomeneus.png",
+   "output": "assets/portraits/idomeneus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/machaon.png",
+   "output": "assets/portraits/machaon.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/thersites.png",
+   "output": "assets/portraits/thersites.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/antilochus.png",
+   "output": "assets/portraits/antilochus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/eurypylus.png",
+   "output": "assets/portraits/eurypylus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/dardanus.png",
+   "output": "assets/portraits/dardanus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/tros.png",
+   "output": "assets/portraits/tros.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/ilus.png",
+   "output": "assets/portraits/ilus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/ganymede.png",
+   "output": "assets/portraits/ganymede.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/laomedon.png",
+   "output": "assets/portraits/laomedon.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hesione.png",
+   "output": "assets/portraits/hesione.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/tithonus.png",
+   "output": "assets/portraits/tithonus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/priam.png",
+   "output": "assets/portraits/priam.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hecuba.png",
+   "output": "assets/portraits/hecuba.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hector.png",
+   "output": "assets/portraits/hector.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/andromache.png",
+   "output": "assets/portraits/andromache.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/astyanax.png",
+   "output": "assets/portraits/astyanax.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/paris.png",
+   "output": "assets/portraits/paris.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/cassandra.png",
+   "output": "assets/portraits/cassandra.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/helenus.png",
+   "output": "assets/portraits/helenus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/deiphobus.png",
+   "output": "assets/portraits/deiphobus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/troilus.png",
+   "output": "assets/portraits/troilus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/polyxena.png",
+   "output": "assets/portraits/polyxena.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/aeneas.png",
+   "output": "assets/portraits/aeneas.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/anchises.png",
+   "output": "assets/portraits/anchises.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/memnon.png",
+   "output": "assets/portraits/memnon.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/penthesilea.png",
+   "output": "assets/portraits/penthesilea.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/sarpedon.png",
+   "output": "assets/portraits/sarpedon.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/glaucus.png",
+   "output": "assets/portraits/glaucus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pandarus.png",
+   "output": "assets/portraits/pandarus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/euphorbus.png",
+   "output": "assets/portraits/euphorbus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/rhesus.png",
+   "output": "assets/portraits/rhesus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/narcissus.png",
+   "output": "assets/portraits/narcissus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/arachne.png",
+   "output": "assets/portraits/arachne.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/midas.png",
+   "output": "assets/portraits/midas.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/ixion.png",
+   "output": "assets/portraits/ixion.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/orion.png",
+   "output": "assets/portraits/orion.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/endymion.png",
+   "output": "assets/portraits/endymion.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/adonis.png",
+   "output": "assets/portraits/adonis.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/psyche.png",
+   "output": "assets/portraits/psyche.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hyacinthus.png",
+   "output": "assets/portraits/hyacinthus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/phaethon.png",
+   "output": "assets/portraits/phaethon.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/io.png",
+   "output": "assets/portraits/io.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/callisto.png",
+   "output": "assets/portraits/callisto.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/arcas.png",
+   "output": "assets/portraits/arcas.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pygmalion.png",
+   "output": "assets/portraits/pygmalion.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/coronis.png",
+   "output": "assets/portraits/coronis.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/thunderbolt.png",
+   "output": "assets/portraits/thunderbolt.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/aegis.png",
+   "output": "assets/portraits/aegis.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/trident.png",
+   "output": "assets/portraits/trident.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/helm_darkness.png",
+   "output": "assets/portraits/helm_darkness.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/caduceus.png",
+   "output": "assets/portraits/caduceus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/talaria.png",
+   "output": "assets/portraits/talaria.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/lyre.png",
+   "output": "assets/portraits/lyre.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/eros_arrows.png",
+   "output": "assets/portraits/eros_arrows.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/cestus.png",
+   "output": "assets/portraits/cestus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/thyrsus.png",
+   "output": "assets/portraits/thyrsus.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/harpe.png",
+   "output": "assets/portraits/harpe.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/fate_thread.png",
+   "output": "assets/portraits/fate_thread.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/asclepius_rod.png",
+   "output": "assets/portraits/asclepius_rod.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/twin_bows.png",
+   "output": "assets/portraits/twin_bows.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/golden_throne.png",
+   "output": "assets/portraits/golden_throne.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/sun_chariot.png",
+   "output": "assets/portraits/sun_chariot.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/cornucopia.png",
+   "output": "assets/portraits/cornucopia.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/ambrosia.png",
+   "output": "assets/portraits/ambrosia.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pomegranate.png",
+   "output": "assets/portraits/pomegranate.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/omphalos.png",
+   "output": "assets/portraits/omphalos.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pan_pipes.png",
+   "output": "assets/portraits/pan_pipes.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/athena_aulos.png",
+   "output": "assets/portraits/athena_aulos.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/olive_tree.png",
+   "output": "assets/portraits/olive_tree.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/ariadne_crown.png",
+   "output": "assets/portraits/ariadne_crown.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/fennel_fire.png",
+   "output": "assets/portraits/fennel_fire.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pandora_jar.png",
+   "output": "assets/portraits/pandora_jar.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/deucalion_ark.png",
+   "output": "assets/portraits/deucalion_ark.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/heracles_club.png",
+   "output": "assets/portraits/heracles_club.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/lion_pelt.png",
+   "output": "assets/portraits/lion_pelt.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/heracles_bow.png",
+   "output": "assets/portraits/heracles_bow.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hesperides_apples.png",
+   "output": "assets/portraits/hesperides_apples.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/race_apples.png",
+   "output": "assets/portraits/race_apples.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/discord_apple.png",
+   "output": "assets/portraits/discord_apple.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/kibisis.png",
+   "output": "assets/portraits/kibisis.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/mirror_shield.png",
+   "output": "assets/portraits/mirror_shield.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/graiai_eye.png",
+   "output": "assets/portraits/graiai_eye.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/golden_bridle.png",
+   "output": "assets/portraits/golden_bridle.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/ariadne_thread.png",
+   "output": "assets/portraits/ariadne_thread.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/daedalus_wings.png",
+   "output": "assets/portraits/daedalus_wings.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/black_sail.png",
+   "output": "assets/portraits/black_sail.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/aegeus_sword.png",
+   "output": "assets/portraits/aegeus_sword.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/golden_fleece.png",
+   "output": "assets/portraits/golden_fleece.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/argo.png",
+   "output": "assets/portraits/argo.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/jason_sandal.png",
+   "output": "assets/portraits/jason_sandal.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/dragon_teeth.png",
+   "output": "assets/portraits/dragon_teeth.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/harmonia_necklace.png",
+   "output": "assets/portraits/harmonia_necklace.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/achilles_armor.png",
+   "output": "assets/portraits/achilles_armor.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/pelian_spear.png",
+   "output": "assets/portraits/pelian_spear.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/trojan_horse.png",
+   "output": "assets/portraits/trojan_horse.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/palladium.png",
+   "output": "assets/portraits/palladium.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/odysseus_bow.png",
+   "output": "assets/portraits/odysseus_bow.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/wind_bag.png",
+   "output": "assets/portraits/wind_bag.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/moly.png",
+   "output": "assets/portraits/moly.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/penelope_shroud.png",
+   "output": "assets/portraits/penelope_shroud.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/charon_obol.png",
+   "output": "assets/portraits/charon_obol.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/boar_hide.png",
+   "output": "assets/portraits/boar_hide.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/bronze_rattle.png",
+   "output": "assets/portraits/bronze_rattle.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/hippolyta_belt.png",
+   "output": "assets/portraits/hippolyta_belt.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/golden_cup.png",
+   "output": "assets/portraits/golden_cup.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/sisyphus_stone.png",
+   "output": "assets/portraits/sisyphus_stone.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/psyche_lamp.png",
+   "output": "assets/portraits/psyche_lamp.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/beauty_box.png",
+   "output": "assets/portraits/beauty_box.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/ivory_statue.png",
+   "output": "assets/portraits/ivory_statue.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "portrait",
+   "source": "images/portraits/arachne_loom.png",
+   "output": "assets/portraits/arachne_loom.webp",
+   "size": [
+    224,
+    224
+   ]
+  },
+  {
+   "kind": "treasure",
+   "source": "images/portraits/lyre.png",
+   "output": "assets/treasure/lyre.webp",
+   "size": [
+    384,
+    384
+   ]
+  },
+  {
+   "kind": "treasure",
+   "source": "images/portraits/psyche_lamp.png",
+   "output": "assets/treasure/psyche_lamp.webp",
+   "size": [
+    384,
+    384
+   ]
+  },
+  {
+   "kind": "treasure",
+   "source": "images/portraits/ariadne_thread.png",
+   "output": "assets/treasure/ariadne_thread.webp",
+   "size": [
+    384,
+    384
+   ]
+  },
+  {
+   "kind": "treasure",
+   "source": "images/portraits/wind_bag.png",
+   "output": "assets/treasure/wind_bag.webp",
+   "size": [
+    384,
+    384
+   ]
+  },
+  {
+   "kind": "treasure",
+   "source": "images/portraits/cornucopia.png",
+   "output": "assets/treasure/cornucopia.webp",
+   "size": [
+    384,
+    384
+   ]
+  },
+  {
+   "kind": "treasure",
+   "source": "images/portraits/olive_tree.png",
+   "output": "assets/treasure/olive_tree.webp",
+   "size": [
+    384,
+    384
+   ]
+  },
+  {
+   "kind": "treasure",
+   "source": "images/portraits/golden_fleece.png",
+   "output": "assets/treasure/golden_fleece.webp",
+   "size": [
+    384,
+    384
+   ]
+  },
+  {
+   "kind": "treasure",
+   "source": "images/portraits/ariadne_crown.png",
+   "output": "assets/treasure/ariadne_crown.webp",
+   "size": [
+    384,
+    384
+   ]
+  },
+  {
+   "kind": "treasure",
+   "source": "images/portraits/mirror_shield.png",
+   "output": "assets/treasure/mirror_shield.webp",
+   "size": [
+    384,
+    384
+   ]
+  },
+  {
+   "kind": "treasure",
+   "source": "images/portraits/pandora_jar.png",
+   "output": "assets/treasure/pandora_jar.webp",
+   "size": [
+    384,
+    384
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c01-00.png",
+   "output": "assets/scenes/c01-00.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c01-01.png",
+   "output": "assets/scenes/c01-01.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c01-03.png",
+   "output": "assets/scenes/c01-03.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c01-02.png",
+   "output": "assets/scenes/c01-02.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c04-00.png",
+   "output": "assets/scenes/c04-00.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c04-01.png",
+   "output": "assets/scenes/c04-01.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c04-02.png",
+   "output": "assets/scenes/c04-02.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c04-03.png",
+   "output": "assets/scenes/c04-03.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c04-04.png",
+   "output": "assets/scenes/c04-04.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c04-05.png",
+   "output": "assets/scenes/c04-05.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c09-00.png",
+   "output": "assets/scenes/c09-00.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c09-01.png",
+   "output": "assets/scenes/c09-01.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c09-02.png",
+   "output": "assets/scenes/c09-02.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c09-03.png",
+   "output": "assets/scenes/c09-03.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c09-04.png",
+   "output": "assets/scenes/c09-04.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c09-05.png",
+   "output": "assets/scenes/c09-05.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "scene",
+   "source": "images/scenes/c09-06.png",
+   "output": "assets/scenes/c09-06.webp",
+   "size": [
+    900,
+    675
+   ]
+  },
+  {
+   "kind": "audio",
+   "source": "audio/Before_the_Stars.mp3",
+   "output": "assets/audio/Before_the_Stars.mp3",
+   "size": null
+  },
+  {
+   "kind": "audio",
+   "source": "audio/Laurel_Crown.mp3",
+   "output": "assets/audio/Laurel_Crown.mp3",
+   "size": null
+  },
+  {
+   "kind": "audio",
+   "source": "audio/Oracle_Quiz.mp3",
+   "output": "assets/audio/Oracle_Quiz.mp3",
+   "size": null
+  },
+  {
+   "kind": "audio",
+   "source": "audio/Orpheus_Lyre.mp3",
+   "output": "assets/audio/Orpheus_Lyre.mp3",
+   "size": null
+  },
+  {
+   "kind": "audio",
+   "source": "audio/Picnic_on_Olympus.mp3",
+   "output": "assets/audio/Picnic_on_Olympus.mp3",
+   "size": null
+  },
+  {
+   "kind": "audio",
+   "source": "audio/Road_of_Heroes.mp3",
+   "output": "assets/audio/Road_of_Heroes.mp3",
+   "size": null
+  },
+  {
+   "kind": "audio",
+   "source": "audio/The_Long_Way_Home.mp3",
+   "output": "assets/audio/The_Long_Way_Home.mp3",
+   "size": null
+  },
+  {
+   "kind": "audio",
+   "source": "audio/Threads_of_Olympus.mp3",
+   "output": "assets/audio/Threads_of_Olympus.mp3",
+   "size": null
+  },
+  {
+   "kind": "audio",
+   "source": "audio/Thunder_on_the_Mountain.mp3",
+   "output": "assets/audio/Thunder_on_the_Mountain.mp3",
+   "size": null
+  },
+  {
+   "kind": "ui",
+   "source": "images/ui/favicon.png",
+   "output": "assets/ui/favicon.webp",
+   "size": null
+  }
+ ]
+}

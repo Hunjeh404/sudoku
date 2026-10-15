@@ -1,0 +1,1116 @@
+{
+  "schemaVersion": "1.0.0",
+  "packId": "olympus-quarterview-v1",
+  "repositoryTarget": "Hunjeh404/greek-myth-map",
+  "repositoryPath": "sudoku-assets/quarterview-v1/",
+  "sourceCommit": "286dfbce4bef3a9d4ca09ae6b61956043d792451",
+  "styleReferences": [
+    "images/ui/welcome.png",
+    "images/portraits/golden_throne.png"
+  ],
+  "camera": {
+    "style": "illustrated quarter-view",
+    "logicalProjectionTarget": "2:1 dimetric",
+    "exactProjectionGuaranteed": false,
+    "noteKo": "개별 그림의 각도는 수학적으로 동일하지 않다. 배경별 바닥 좌표에 맞춰 투영·스케일을 보정한다."
+  },
+  "assetCount": 22,
+  "assets": [
+    {
+      "id": "garden_base",
+      "nameKo": "구름 위 정원",
+      "kind": "environment",
+      "file": "images/environments/garden_base.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "2e04b5c0e77c1b5567efd67b273e6cf3213c7fe6adfbd65bc91298a364971c15",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 11,
+        "y": 165,
+        "w": 1231,
+        "h": 915
+      },
+      "principalMarginsPx": {
+        "left": 11,
+        "top": 165,
+        "right": 12,
+        "bottom": 174
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "environment",
+        "calibrationStatus": "requires-in-engine-review",
+        "logicalGrid": {
+          "columns": 12,
+          "rows": 10
+        },
+        "safeFloorCornersPx": [
+          [
+            627,
+            275
+          ],
+          [
+            1090,
+            575
+          ],
+          [
+            627,
+            915
+          ],
+          [
+            165,
+            575
+          ]
+        ],
+        "cornerOrder": [
+          "back",
+          "right",
+          "front",
+          "left"
+        ],
+        "cornerMethod": "manual conservative visual estimate; not pixel-perfect",
+        "rendererOuterPaddingFraction": 0.08,
+        "overflow": "visible"
+      }
+    },
+    {
+      "id": "room_base",
+      "nameKo": "올림포스 작은 집",
+      "kind": "environment",
+      "file": "images/environments/room_base.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "bfb27d7b9fde4a3a0e7ae9412605878f0052c32c42e231bf697972190fcad1e5",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 16,
+        "y": 54,
+        "w": 1222,
+        "h": 1133
+      },
+      "principalMarginsPx": {
+        "left": 16,
+        "top": 54,
+        "right": 16,
+        "bottom": 67
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "environment",
+        "calibrationStatus": "requires-in-engine-review",
+        "logicalGrid": {
+          "columns": 12,
+          "rows": 10
+        },
+        "safeFloorCornersPx": [
+          [
+            627,
+            480
+          ],
+          [
+            1120,
+            780
+          ],
+          [
+            625,
+            1085
+          ],
+          [
+            130,
+            780
+          ]
+        ],
+        "cornerOrder": [
+          "back",
+          "right",
+          "front",
+          "left"
+        ],
+        "cornerMethod": "manual conservative visual estimate; not pixel-perfect",
+        "rendererOuterPaddingFraction": 0.08,
+        "overflow": "visible"
+      }
+    },
+    {
+      "id": "cloud_bed",
+      "nameKo": "구름 침대",
+      "kind": "furniture",
+      "file": "images/furniture/cloud_bed.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "99777e395b63103be52dce9a562f6b1ccc31379f708f29b4a0b379a0f0083f50",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 88,
+        "y": 126,
+        "w": 1101,
+        "h": 989
+      },
+      "principalMarginsPx": {
+        "left": 88,
+        "top": 126,
+        "right": 65,
+        "bottom": 139
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "floor",
+        "calibrationStatus": "requires-in-engine-review",
+        "footprintTiles": [
+          2,
+          3
+        ],
+        "suggestedVisibleWidthFractionOfFloor": 0.3,
+        "spriteAnchorPx": {
+          "x": 638.5,
+          "y": 1115
+        },
+        "anchorMethod": "principal alpha-bounds bottom center; initial estimate, not measured foot contact",
+        "supports": [],
+        "blocking": true
+      },
+      "interactionId": "bed_bounce"
+    },
+    {
+      "id": "cloud_cushion",
+      "nameKo": "구름 쿠션",
+      "kind": "furniture",
+      "file": "images/furniture/cloud_cushion.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "d186ce18988598b1752c260364a2358f49ef0d5c905578a7b308333aee566750",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 101,
+        "y": 305,
+        "w": 1052,
+        "h": 725
+      },
+      "principalMarginsPx": {
+        "left": 101,
+        "top": 305,
+        "right": 101,
+        "bottom": 224
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "floor",
+        "calibrationStatus": "requires-in-engine-review",
+        "footprintTiles": [
+          1,
+          1
+        ],
+        "suggestedVisibleWidthFractionOfFloor": 0.13,
+        "spriteAnchorPx": {
+          "x": 627.0,
+          "y": 1030
+        },
+        "anchorMethod": "principal alpha-bounds bottom center; initial estimate, not measured foot contact",
+        "supports": [],
+        "blocking": true
+      },
+      "interactionId": "cushion_squish"
+    },
+    {
+      "id": "display_pedestal",
+      "nameKo": "보물 받침대",
+      "kind": "furniture",
+      "file": "images/furniture/display_pedestal.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "48a45a8bee6fdd50562ba8ec177086ff2c51aa45de478b9c50f66cf1ef29aacc",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 94,
+        "y": 244,
+        "w": 1074,
+        "h": 852
+      },
+      "principalMarginsPx": {
+        "left": 94,
+        "top": 244,
+        "right": 86,
+        "bottom": 158
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "floor",
+        "calibrationStatus": "requires-in-engine-review",
+        "footprintTiles": [
+          1,
+          1
+        ],
+        "suggestedVisibleWidthFractionOfFloor": 0.15,
+        "spriteAnchorPx": {
+          "x": 631.0,
+          "y": 1096
+        },
+        "anchorMethod": "principal alpha-bounds bottom center; initial estimate, not measured foot contact",
+        "supports": [
+          "artifact"
+        ],
+        "blocking": true
+      },
+      "interactionId": "exhibit_panel"
+    },
+    {
+      "id": "garden_trellis",
+      "nameKo": "꽃 아치",
+      "kind": "furniture",
+      "file": "images/furniture/garden_trellis.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "75fc41e15e9b80e90441bb1ef5e1bc03263425f2d1fc515466ab4b827a8c0802",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 225,
+        "y": 108,
+        "w": 882,
+        "h": 1035
+      },
+      "principalMarginsPx": {
+        "left": 225,
+        "top": 108,
+        "right": 147,
+        "bottom": 111
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "floor",
+        "calibrationStatus": "requires-in-engine-review",
+        "footprintTiles": [
+          3,
+          1
+        ],
+        "suggestedVisibleWidthFractionOfFloor": 0.3,
+        "spriteAnchorPx": {
+          "x": 666.0,
+          "y": 1143
+        },
+        "anchorMethod": "principal alpha-bounds bottom center; initial estimate, not measured foot contact",
+        "supports": [],
+        "blocking": true
+      },
+      "interactionId": "flower_glimmer"
+    },
+    {
+      "id": "laurel_bench",
+      "nameKo": "월계수 벤치",
+      "kind": "furniture",
+      "file": "images/furniture/laurel_bench.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "df33dbfb917a0f3ef37ca43088c24de9b2adab3ce640fe670d09c33132fb8048",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 131,
+        "y": 138,
+        "w": 1037,
+        "h": 990
+      },
+      "principalMarginsPx": {
+        "left": 131,
+        "top": 138,
+        "right": 86,
+        "bottom": 126
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "floor",
+        "calibrationStatus": "requires-in-engine-review",
+        "footprintTiles": [
+          3,
+          1
+        ],
+        "suggestedVisibleWidthFractionOfFloor": 0.28,
+        "spriteAnchorPx": {
+          "x": 649.5,
+          "y": 1128
+        },
+        "anchorMethod": "principal alpha-bounds bottom center; initial estimate, not measured foot contact",
+        "supports": [],
+        "blocking": true
+      },
+      "interactionId": "bench_bounce"
+    },
+    {
+      "id": "laurel_door",
+      "nameKo": "월계수 문",
+      "kind": "furniture",
+      "file": "images/furniture/laurel_door.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "f28c15305951cffaaebd38a91603b393516e7537d58e805533b50a49142e68ff",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 270,
+        "y": 79,
+        "w": 724,
+        "h": 1112
+      },
+      "principalMarginsPx": {
+        "left": 270,
+        "top": 79,
+        "right": 260,
+        "bottom": 63
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "wallRight",
+        "calibrationStatus": "requires-in-engine-review",
+        "footprintTiles": [
+          2,
+          1
+        ],
+        "suggestedVisibleWidthFractionOfFloor": 0.19,
+        "spriteAnchorPx": {
+          "x": 632.0,
+          "y": 1191
+        },
+        "anchorMethod": "principal alpha-bounds bottom center; initial estimate, not measured foot contact",
+        "supports": [],
+        "blocking": false
+      },
+      "interactionId": "door_chime"
+    },
+    {
+      "id": "laurel_rug",
+      "nameKo": "월계수 러그",
+      "kind": "furniture",
+      "file": "images/furniture/laurel_rug.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "3a9cce0c80f9f9151fd9bd856bcd8ab13dd30abb12c36831dbbcb86a4f3dbae0",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 31,
+        "y": 274,
+        "w": 1193,
+        "h": 786
+      },
+      "principalMarginsPx": {
+        "left": 31,
+        "top": 274,
+        "right": 30,
+        "bottom": 194
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "rug",
+        "calibrationStatus": "requires-in-engine-review",
+        "footprintTiles": [
+          3,
+          2
+        ],
+        "suggestedVisibleWidthFractionOfFloor": 0.32,
+        "spriteAnchorPx": {
+          "x": 627.5,
+          "y": 1060
+        },
+        "anchorMethod": "principal alpha-bounds bottom center; initial estimate, not measured foot contact",
+        "supports": [],
+        "blocking": false
+      },
+      "interactionId": "soft_sparkle"
+    },
+    {
+      "id": "linen_curtain",
+      "nameKo": "리넨 커튼",
+      "kind": "furniture",
+      "file": "images/furniture/linen_curtain.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "13e1df3f44bfaa8e8548b383c6a4d6363a0bf01f796a6e7f172fc15bead5d577",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 139,
+        "y": 85,
+        "w": 1027,
+        "h": 1090
+      },
+      "principalMarginsPx": {
+        "left": 139,
+        "top": 85,
+        "right": 88,
+        "bottom": 79
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "wallRight",
+        "calibrationStatus": "requires-in-engine-review",
+        "footprintTiles": [
+          2,
+          1
+        ],
+        "suggestedVisibleWidthFractionOfFloor": 0.26,
+        "spriteAnchorPx": {
+          "x": 652.5,
+          "y": 1175
+        },
+        "anchorMethod": "principal alpha-bounds bottom center; initial estimate, not measured foot contact",
+        "supports": [],
+        "blocking": false
+      },
+      "interactionId": "curtain_glimmer"
+    },
+    {
+      "id": "music_stand",
+      "nameKo": "악보대",
+      "kind": "furniture",
+      "file": "images/furniture/music_stand.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "fda5c3f592effa79995a5e389e69a4849aa28061582c4b04168cea460a140f74",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 316,
+        "y": 107,
+        "w": 656,
+        "h": 1052
+      },
+      "principalMarginsPx": {
+        "left": 316,
+        "top": 107,
+        "right": 282,
+        "bottom": 95
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "floor",
+        "calibrationStatus": "requires-in-engine-review",
+        "footprintTiles": [
+          1,
+          1
+        ],
+        "suggestedVisibleWidthFractionOfFloor": 0.14,
+        "spriteAnchorPx": {
+          "x": 644.0,
+          "y": 1159
+        },
+        "anchorMethod": "principal alpha-bounds bottom center; initial estimate, not measured foot contact",
+        "supports": [],
+        "blocking": true
+      },
+      "interactionId": "music_select"
+    },
+    {
+      "id": "olive_planter",
+      "nameKo": "올리브 화분",
+      "kind": "furniture",
+      "file": "images/furniture/olive_planter.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "0c4ca2ab4bbeae2b4ec8d3af4b81b00409fa6da069a8b46e056597708f2de929",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 219,
+        "y": 112,
+        "w": 821,
+        "h": 1030
+      },
+      "principalMarginsPx": {
+        "left": 219,
+        "top": 112,
+        "right": 214,
+        "bottom": 112
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "floor",
+        "calibrationStatus": "requires-in-engine-review",
+        "footprintTiles": [
+          1,
+          1
+        ],
+        "suggestedVisibleWidthFractionOfFloor": 0.15,
+        "spriteAnchorPx": {
+          "x": 629.5,
+          "y": 1142
+        },
+        "anchorMethod": "principal alpha-bounds bottom center; initial estimate, not measured foot contact",
+        "supports": [],
+        "blocking": true
+      },
+      "interactionId": "leaf_rustle"
+    },
+    {
+      "id": "owl_mailbox",
+      "nameKo": "올빼미 우편함",
+      "kind": "furniture",
+      "file": "images/furniture/owl_mailbox.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "22eeedd7bfd0d492e199b10c7de5f750e5b063cfa1e9d34da990db0c0e33e4f6",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 283,
+        "y": 108,
+        "w": 706,
+        "h": 1063
+      },
+      "principalMarginsPx": {
+        "left": 283,
+        "top": 108,
+        "right": 265,
+        "bottom": 83
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "floor",
+        "calibrationStatus": "requires-in-engine-review",
+        "footprintTiles": [
+          1,
+          1
+        ],
+        "suggestedVisibleWidthFractionOfFloor": 0.13,
+        "spriteAnchorPx": {
+          "x": 636.0,
+          "y": 1171
+        },
+        "anchorMethod": "principal alpha-bounds bottom center; initial estimate, not measured foot contact",
+        "supports": [],
+        "blocking": true
+      },
+      "interactionId": "mail_panel"
+    },
+    {
+      "id": "picture_frame",
+      "nameKo": "신화 액자",
+      "kind": "furniture",
+      "file": "images/furniture/picture_frame.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "501b0141119aafeb874fdce7236937c4f20a787f21d39d09df2bb3f06fd6a2c1",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 194,
+        "y": 104,
+        "w": 903,
+        "h": 1070
+      },
+      "principalMarginsPx": {
+        "left": 194,
+        "top": 104,
+        "right": 157,
+        "bottom": 80
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "supportSlot",
+        "calibrationStatus": "requires-in-engine-review",
+        "footprintTiles": [
+          1,
+          1
+        ],
+        "suggestedVisibleWidthFractionOfFloor": 0.1,
+        "spriteAnchorPx": {
+          "x": 645.5,
+          "y": 1174
+        },
+        "anchorMethod": "principal alpha-bounds bottom center; initial estimate, not measured foot contact",
+        "supports": [],
+        "blocking": false
+      },
+      "interactionId": "gallery"
+    },
+    {
+      "id": "round_stool",
+      "nameKo": "둥근 의자",
+      "kind": "furniture",
+      "file": "images/furniture/round_stool.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "aa89e472cc11865fcc8d6be7a040504e87990bfe98bc4adfa662e5b3278228d5",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 201,
+        "y": 241,
+        "w": 860,
+        "h": 827
+      },
+      "principalMarginsPx": {
+        "left": 201,
+        "top": 241,
+        "right": 193,
+        "bottom": 186
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "floor",
+        "calibrationStatus": "requires-in-engine-review",
+        "footprintTiles": [
+          1,
+          1
+        ],
+        "suggestedVisibleWidthFractionOfFloor": 0.12,
+        "spriteAnchorPx": {
+          "x": 631.0,
+          "y": 1068
+        },
+        "anchorMethod": "principal alpha-bounds bottom center; initial estimate, not measured foot contact",
+        "supports": [],
+        "blocking": true
+      },
+      "interactionId": "stool_bounce"
+    },
+    {
+      "id": "scroll_bookcase",
+      "nameKo": "두루마리 책장",
+      "kind": "furniture",
+      "file": "images/furniture/scroll_bookcase.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "b0dd9bc8f650efbf9a771a5e45e42d77424492503bfc433af12882ecbde314aa",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 202,
+        "y": 41,
+        "w": 886,
+        "h": 1172
+      },
+      "principalMarginsPx": {
+        "left": 202,
+        "top": 41,
+        "right": 166,
+        "bottom": 41
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "floor",
+        "calibrationStatus": "requires-in-engine-review",
+        "footprintTiles": [
+          2,
+          1
+        ],
+        "suggestedVisibleWidthFractionOfFloor": 0.23,
+        "spriteAnchorPx": {
+          "x": 645.0,
+          "y": 1213
+        },
+        "anchorMethod": "principal alpha-bounds bottom center; initial estimate, not measured foot contact",
+        "supports": [],
+        "blocking": true
+      },
+      "interactionId": "open_story"
+    },
+    {
+      "id": "shell_fountain",
+      "nameKo": "조개 분수",
+      "kind": "furniture",
+      "file": "images/furniture/shell_fountain.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "40ea14cd3fda9d7452a9739676783dfa82e1406ac36b0b289468f8e5825a396b",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 98,
+        "y": 164,
+        "w": 1059,
+        "h": 920
+      },
+      "principalMarginsPx": {
+        "left": 98,
+        "top": 164,
+        "right": 97,
+        "bottom": 170
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "floor",
+        "calibrationStatus": "requires-in-engine-review",
+        "footprintTiles": [
+          3,
+          3
+        ],
+        "suggestedVisibleWidthFractionOfFloor": 0.3,
+        "spriteAnchorPx": {
+          "x": 627.5,
+          "y": 1084
+        },
+        "anchorMethod": "principal alpha-bounds bottom center; initial estimate, not measured foot contact",
+        "supports": [],
+        "blocking": true
+      },
+      "interactionId": "water_ripple"
+    },
+    {
+      "id": "star_lantern",
+      "nameKo": "별빛 등불",
+      "kind": "furniture",
+      "file": "images/furniture/star_lantern.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "2856256da02b1180c84db87df50979748d99e57b89990b3b80885370f88ed4b0",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 210,
+        "y": 51,
+        "w": 834,
+        "h": 1146
+      },
+      "principalMarginsPx": {
+        "left": 210,
+        "top": 51,
+        "right": 210,
+        "bottom": 57
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "floor",
+        "calibrationStatus": "requires-in-engine-review",
+        "footprintTiles": [
+          1,
+          1
+        ],
+        "suggestedVisibleWidthFractionOfFloor": 0.1,
+        "spriteAnchorPx": {
+          "x": 627.0,
+          "y": 1197
+        },
+        "anchorMethod": "principal alpha-bounds bottom center; initial estimate, not measured foot contact",
+        "supports": [],
+        "blocking": true
+      },
+      "interactionId": "light_toggle"
+    },
+    {
+      "id": "star_mobile",
+      "nameKo": "별 모빌",
+      "kind": "furniture",
+      "file": "images/furniture/star_mobile.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "68453e07bd2b292acb1924eb7d0dba27a111b65530605828f48bf8b43913228d",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 373,
+        "y": 54,
+        "w": 657,
+        "h": 1126
+      },
+      "principalMarginsPx": {
+        "left": 373,
+        "top": 54,
+        "right": 224,
+        "bottom": 74
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "floor",
+        "calibrationStatus": "requires-in-engine-review",
+        "footprintTiles": [
+          1,
+          1
+        ],
+        "suggestedVisibleWidthFractionOfFloor": 0.13,
+        "spriteAnchorPx": {
+          "x": 701.5,
+          "y": 1180
+        },
+        "anchorMethod": "principal alpha-bounds bottom center; initial estimate, not measured foot contact",
+        "supports": [],
+        "blocking": true
+      },
+      "interactionId": "mobile_chime"
+    },
+    {
+      "id": "stepping_stones",
+      "nameKo": "정원 디딤돌",
+      "kind": "furniture",
+      "file": "images/furniture/stepping_stones.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "3bd5074de205e065c12358401511a73c34dec67aba349d7769ceb4b71293e7b4",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 104,
+        "y": 330,
+        "w": 1046,
+        "h": 704
+      },
+      "principalMarginsPx": {
+        "left": 104,
+        "top": 330,
+        "right": 104,
+        "bottom": 220
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "floor",
+        "calibrationStatus": "requires-in-engine-review",
+        "footprintTiles": [
+          3,
+          1
+        ],
+        "suggestedVisibleWidthFractionOfFloor": 0.22,
+        "spriteAnchorPx": {
+          "x": 627.0,
+          "y": 1034
+        },
+        "anchorMethod": "principal alpha-bounds bottom center; initial estimate, not measured foot contact",
+        "supports": [],
+        "blocking": true
+      },
+      "interactionId": "path_steps"
+    },
+    {
+      "id": "tea_table",
+      "nameKo": "찻상",
+      "kind": "furniture",
+      "file": "images/furniture/tea_table.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "f51a0b785a78d3a81dcb6121e7e9d218f369bd1eeb298e37ddd0ed404b8f63f2",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 81,
+        "y": 223,
+        "w": 1114,
+        "h": 854
+      },
+      "principalMarginsPx": {
+        "left": 81,
+        "top": 223,
+        "right": 59,
+        "bottom": 177
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "floor",
+        "calibrationStatus": "requires-in-engine-review",
+        "footprintTiles": [
+          2,
+          2
+        ],
+        "suggestedVisibleWidthFractionOfFloor": 0.24,
+        "spriteAnchorPx": {
+          "x": 638.0,
+          "y": 1077
+        },
+        "anchorMethod": "principal alpha-bounds bottom center; initial estimate, not measured foot contact",
+        "supports": [
+          "picture_frame"
+        ],
+        "blocking": true
+      },
+      "interactionId": "steam"
+    },
+    {
+      "id": "treasure_chest",
+      "nameKo": "보물 상자",
+      "kind": "furniture",
+      "file": "images/furniture/treasure_chest.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "sha256": "3d77afc8de01ca43ad674f9194c1e958cb47370c09da2bae8ca030258f3dd3ac",
+      "alphaThresholdForMeasurements": 8,
+      "principalBoundsPx": {
+        "x": 178,
+        "y": 233,
+        "w": 951,
+        "h": 875
+      },
+      "principalMarginsPx": {
+        "left": 178,
+        "top": 233,
+        "right": 125,
+        "bottom": 146
+      },
+      "source": "AI-generated using existing project artwork as style reference",
+      "view": "quarter-view",
+      "orientationsAvailable": [
+        "as-drawn"
+      ],
+      "allowRotate": false,
+      "allowMirror": false,
+      "placement": {
+        "surface": "floor",
+        "calibrationStatus": "requires-in-engine-review",
+        "footprintTiles": [
+          2,
+          1
+        ],
+        "suggestedVisibleWidthFractionOfFloor": 0.18,
+        "spriteAnchorPx": {
+          "x": 653.5,
+          "y": 1108
+        },
+        "anchorMethod": "principal alpha-bounds bottom center; initial estimate, not measured foot contact",
+        "supports": [],
+        "blocking": true
+      },
+      "interactionId": "treasure_panel"
+    }
+  ]
+}

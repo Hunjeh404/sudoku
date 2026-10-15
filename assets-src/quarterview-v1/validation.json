@@ -1,0 +1,617 @@
+{
+  "imageCount": 22,
+  "decodedAllImages": true,
+  "dimensions": "1254x1254",
+  "audit": {
+    "alphaThreshold": 8,
+    "connectivity": 4,
+    "principalSafeMarginPx": 16
+  },
+  "status": "static artwork visually reviewed; placement and interactions still need runtime calibration",
+  "originalPixelsPreserved": true,
+  "alphaCleanupApplied": false,
+  "notesKo": [
+    "저알파 수채화 가장자리와 작은 연결요소는 원본 그대로 보존했다.",
+    "정원 좌우 여백은 기준보다 좁다. PNG를 자르지 말고 렌더링 컨테이너에 외부 여백을 확보한다.",
+    "자동 여백 확대 재생성도 시도했으나 원하는 폭을 확보하지 못해 첫 원본을 채택했다.",
+    "실제 게임에서 겹침·축소 가독성·모바일 성능·클릭 효과 검증은 아직 수행하지 않았다."
+  ],
+  "assets": [
+    {
+      "id": "garden_base",
+      "file": "images/environments/garden_base.png",
+      "sha256": "2e04b5c0e77c1b5567efd67b273e6cf3213c7fe6adfbd65bc91298a364971c15",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 11,
+        "y": 165,
+        "w": 1231,
+        "h": 915
+      },
+      "principalMarginsPx": {
+        "left": 11,
+        "top": 165,
+        "right": 12,
+        "bottom": 174
+      },
+      "passesPrincipal16pxMargin": false,
+      "componentsAtAlpha8": 41,
+      "largestSecondaryComponentPixels": 3,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": [
+        "좌우 여백 11/12px. 원본은 보존하며 렌더러에 8% 외부 여백을 둔다. 16px 검사 통과로 표시하지 않는다."
+      ]
+    },
+    {
+      "id": "room_base",
+      "file": "images/environments/room_base.png",
+      "sha256": "bfb27d7b9fde4a3a0e7ae9412605878f0052c32c42e231bf697972190fcad1e5",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 16,
+        "y": 54,
+        "w": 1222,
+        "h": 1133
+      },
+      "principalMarginsPx": {
+        "left": 16,
+        "top": 54,
+        "right": 16,
+        "bottom": 67
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 39,
+      "largestSecondaryComponentPixels": 10,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    },
+    {
+      "id": "cloud_bed",
+      "file": "images/furniture/cloud_bed.png",
+      "sha256": "99777e395b63103be52dce9a562f6b1ccc31379f708f29b4a0b379a0f0083f50",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 88,
+        "y": 126,
+        "w": 1101,
+        "h": 989
+      },
+      "principalMarginsPx": {
+        "left": 88,
+        "top": 126,
+        "right": 65,
+        "bottom": 139
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 45,
+      "largestSecondaryComponentPixels": 5,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    },
+    {
+      "id": "cloud_cushion",
+      "file": "images/furniture/cloud_cushion.png",
+      "sha256": "d186ce18988598b1752c260364a2358f49ef0d5c905578a7b308333aee566750",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 101,
+        "y": 305,
+        "w": 1052,
+        "h": 725
+      },
+      "principalMarginsPx": {
+        "left": 101,
+        "top": 305,
+        "right": 101,
+        "bottom": 224
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 22,
+      "largestSecondaryComponentPixels": 1,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    },
+    {
+      "id": "display_pedestal",
+      "file": "images/furniture/display_pedestal.png",
+      "sha256": "48a45a8bee6fdd50562ba8ec177086ff2c51aa45de478b9c50f66cf1ef29aacc",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 94,
+        "y": 244,
+        "w": 1074,
+        "h": 852
+      },
+      "principalMarginsPx": {
+        "left": 94,
+        "top": 244,
+        "right": 86,
+        "bottom": 158
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 18,
+      "largestSecondaryComponentPixels": 1,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    },
+    {
+      "id": "garden_trellis",
+      "file": "images/furniture/garden_trellis.png",
+      "sha256": "75fc41e15e9b80e90441bb1ef5e1bc03263425f2d1fc515466ab4b827a8c0802",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 225,
+        "y": 108,
+        "w": 882,
+        "h": 1035
+      },
+      "principalMarginsPx": {
+        "left": 225,
+        "top": 108,
+        "right": 147,
+        "bottom": 111
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 125,
+      "largestSecondaryComponentPixels": 10,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    },
+    {
+      "id": "laurel_bench",
+      "file": "images/furniture/laurel_bench.png",
+      "sha256": "df33dbfb917a0f3ef37ca43088c24de9b2adab3ce640fe670d09c33132fb8048",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 131,
+        "y": 138,
+        "w": 1037,
+        "h": 990
+      },
+      "principalMarginsPx": {
+        "left": 131,
+        "top": 138,
+        "right": 86,
+        "bottom": 126
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 25,
+      "largestSecondaryComponentPixels": 9,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    },
+    {
+      "id": "laurel_door",
+      "file": "images/furniture/laurel_door.png",
+      "sha256": "f28c15305951cffaaebd38a91603b393516e7537d58e805533b50a49142e68ff",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 270,
+        "y": 79,
+        "w": 724,
+        "h": 1112
+      },
+      "principalMarginsPx": {
+        "left": 270,
+        "top": 79,
+        "right": 260,
+        "bottom": 63
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 80,
+      "largestSecondaryComponentPixels": 9,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    },
+    {
+      "id": "laurel_rug",
+      "file": "images/furniture/laurel_rug.png",
+      "sha256": "3a9cce0c80f9f9151fd9bd856bcd8ab13dd30abb12c36831dbbcb86a4f3dbae0",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 31,
+        "y": 274,
+        "w": 1193,
+        "h": 786
+      },
+      "principalMarginsPx": {
+        "left": 31,
+        "top": 274,
+        "right": 30,
+        "bottom": 194
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 31,
+      "largestSecondaryComponentPixels": 1,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    },
+    {
+      "id": "linen_curtain",
+      "file": "images/furniture/linen_curtain.png",
+      "sha256": "13e1df3f44bfaa8e8548b383c6a4d6363a0bf01f796a6e7f172fc15bead5d577",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 139,
+        "y": 85,
+        "w": 1027,
+        "h": 1090
+      },
+      "principalMarginsPx": {
+        "left": 139,
+        "top": 85,
+        "right": 88,
+        "bottom": 79
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 70,
+      "largestSecondaryComponentPixels": 4,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    },
+    {
+      "id": "music_stand",
+      "file": "images/furniture/music_stand.png",
+      "sha256": "fda5c3f592effa79995a5e389e69a4849aa28061582c4b04168cea460a140f74",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 316,
+        "y": 107,
+        "w": 656,
+        "h": 1052
+      },
+      "principalMarginsPx": {
+        "left": 316,
+        "top": 107,
+        "right": 282,
+        "bottom": 95
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 62,
+      "largestSecondaryComponentPixels": 3,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    },
+    {
+      "id": "olive_planter",
+      "file": "images/furniture/olive_planter.png",
+      "sha256": "0c4ca2ab4bbeae2b4ec8d3af4b81b00409fa6da069a8b46e056597708f2de929",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 219,
+        "y": 112,
+        "w": 821,
+        "h": 1030
+      },
+      "principalMarginsPx": {
+        "left": 219,
+        "top": 112,
+        "right": 214,
+        "bottom": 112
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 102,
+      "largestSecondaryComponentPixels": 5,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    },
+    {
+      "id": "owl_mailbox",
+      "file": "images/furniture/owl_mailbox.png",
+      "sha256": "22eeedd7bfd0d492e199b10c7de5f750e5b063cfa1e9d34da990db0c0e33e4f6",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 283,
+        "y": 108,
+        "w": 706,
+        "h": 1063
+      },
+      "principalMarginsPx": {
+        "left": 283,
+        "top": 108,
+        "right": 265,
+        "bottom": 83
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 45,
+      "largestSecondaryComponentPixels": 4,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    },
+    {
+      "id": "picture_frame",
+      "file": "images/furniture/picture_frame.png",
+      "sha256": "501b0141119aafeb874fdce7236937c4f20a787f21d39d09df2bb3f06fd6a2c1",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 194,
+        "y": 104,
+        "w": 903,
+        "h": 1070
+      },
+      "principalMarginsPx": {
+        "left": 194,
+        "top": 104,
+        "right": 157,
+        "bottom": 80
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 34,
+      "largestSecondaryComponentPixels": 3,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    },
+    {
+      "id": "round_stool",
+      "file": "images/furniture/round_stool.png",
+      "sha256": "aa89e472cc11865fcc8d6be7a040504e87990bfe98bc4adfa662e5b3278228d5",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 201,
+        "y": 241,
+        "w": 860,
+        "h": 827
+      },
+      "principalMarginsPx": {
+        "left": 201,
+        "top": 241,
+        "right": 193,
+        "bottom": 186
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 65,
+      "largestSecondaryComponentPixels": 4,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    },
+    {
+      "id": "scroll_bookcase",
+      "file": "images/furniture/scroll_bookcase.png",
+      "sha256": "b0dd9bc8f650efbf9a771a5e45e42d77424492503bfc433af12882ecbde314aa",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 202,
+        "y": 41,
+        "w": 886,
+        "h": 1172
+      },
+      "principalMarginsPx": {
+        "left": 202,
+        "top": 41,
+        "right": 166,
+        "bottom": 41
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 18,
+      "largestSecondaryComponentPixels": 1,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    },
+    {
+      "id": "shell_fountain",
+      "file": "images/furniture/shell_fountain.png",
+      "sha256": "40ea14cd3fda9d7452a9739676783dfa82e1406ac36b0b289468f8e5825a396b",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 98,
+        "y": 164,
+        "w": 1059,
+        "h": 920
+      },
+      "principalMarginsPx": {
+        "left": 98,
+        "top": 164,
+        "right": 97,
+        "bottom": 170
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 28,
+      "largestSecondaryComponentPixels": 3,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    },
+    {
+      "id": "star_lantern",
+      "file": "images/furniture/star_lantern.png",
+      "sha256": "2856256da02b1180c84db87df50979748d99e57b89990b3b80885370f88ed4b0",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 210,
+        "y": 51,
+        "w": 834,
+        "h": 1146
+      },
+      "principalMarginsPx": {
+        "left": 210,
+        "top": 51,
+        "right": 210,
+        "bottom": 57
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 62,
+      "largestSecondaryComponentPixels": 4,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    },
+    {
+      "id": "star_mobile",
+      "file": "images/furniture/star_mobile.png",
+      "sha256": "68453e07bd2b292acb1924eb7d0dba27a111b65530605828f48bf8b43913228d",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 373,
+        "y": 54,
+        "w": 657,
+        "h": 1126
+      },
+      "principalMarginsPx": {
+        "left": 373,
+        "top": 54,
+        "right": 224,
+        "bottom": 74
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 55,
+      "largestSecondaryComponentPixels": 3,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    },
+    {
+      "id": "stepping_stones",
+      "file": "images/furniture/stepping_stones.png",
+      "sha256": "3bd5074de205e065c12358401511a73c34dec67aba349d7769ceb4b71293e7b4",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 104,
+        "y": 330,
+        "w": 1046,
+        "h": 704
+      },
+      "principalMarginsPx": {
+        "left": 104,
+        "top": 330,
+        "right": 104,
+        "bottom": 220
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 35,
+      "largestSecondaryComponentPixels": 2,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    },
+    {
+      "id": "tea_table",
+      "file": "images/furniture/tea_table.png",
+      "sha256": "f51a0b785a78d3a81dcb6121e7e9d218f369bd1eeb298e37ddd0ed404b8f63f2",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 81,
+        "y": 223,
+        "w": 1114,
+        "h": 854
+      },
+      "principalMarginsPx": {
+        "left": 81,
+        "top": 223,
+        "right": 59,
+        "bottom": 177
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 23,
+      "largestSecondaryComponentPixels": 2,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    },
+    {
+      "id": "treasure_chest",
+      "file": "images/furniture/treasure_chest.png",
+      "sha256": "3d77afc8de01ca43ad674f9194c1e958cb47370c09da2bae8ca030258f3dd3ac",
+      "pngDecoded": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "principalBoundsPx": {
+        "x": 178,
+        "y": 233,
+        "w": 951,
+        "h": 875
+      },
+      "principalMarginsPx": {
+        "left": 178,
+        "top": 233,
+        "right": 125,
+        "bottom": 146
+      },
+      "passesPrincipal16pxMargin": true,
+      "componentsAtAlpha8": 22,
+      "largestSecondaryComponentPixels": 2,
+      "visualReview": "reviewed on light and dark contact sheets; no large detached objects seen",
+      "notes": []
+    }
+  ]
+}

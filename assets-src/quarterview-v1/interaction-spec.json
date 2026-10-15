@@ -1,0 +1,312 @@
+{
+  "schemaVersion": "1.0.0",
+  "status": "implementation specification, not executable animations",
+  "rules": {
+    "maxSimultaneousEffects": 3,
+    "maxSimultaneousSounds": 2,
+    "soundDefault": "off until user enables",
+    "tapTargetMinCssPx": 44,
+    "trigger": "tap in play mode, never drag-end or placement selection",
+    "normalMotion": "one-shot, no compulsory continuous animation",
+    "ownership": "visitors cannot change owner layout, exhibition, inventory, wallet or persistent light state",
+    "guestbook": "authenticated authorized visitor; explicit submit; server permission and length checks"
+  },
+  "interactions": [
+    {
+      "id": "bed_bounce",
+      "assetId": "cloud_bed",
+      "descriptionKo": "침대가 살짝 눌렸다 돌아오고 포근한 반짝임",
+      "implementation": "wholeSpriteScaleY",
+      "durationMs": 420,
+      "cooldownMs": 500,
+      "options": {
+        "minScaleY": 0.97
+      },
+      "sourceSprite": "unchanged static PNG",
+      "runtimeVerified": false,
+      "visitorState": "local-only; guestbook submission is the explicitly permitted server write",
+      "reducedMotion": "static highlight or panel; no movement; sound follows user preference"
+    },
+    {
+      "id": "cushion_squish",
+      "assetId": "cloud_cushion",
+      "descriptionKo": "쿠션이 말랑하게 눌렸다 복원",
+      "implementation": "wholeSpriteScaleY",
+      "durationMs": 360,
+      "cooldownMs": 500,
+      "options": {
+        "minScaleY": 0.92
+      },
+      "sourceSprite": "unchanged static PNG",
+      "runtimeVerified": false,
+      "visitorState": "local-only; guestbook submission is the explicitly permitted server write",
+      "reducedMotion": "static highlight or panel; no movement; sound follows user preference"
+    },
+    {
+      "id": "exhibit_panel",
+      "assetId": "display_pedestal",
+      "descriptionKo": "전시한 보물 설명 보기·주인은 전시물 교체",
+      "implementation": "panel",
+      "durationMs": 0,
+      "cooldownMs": 500,
+      "options": {
+        "panel": "exhibit"
+      },
+      "sourceSprite": "unchanged static PNG",
+      "runtimeVerified": false,
+      "visitorState": "local-only; guestbook submission is the explicitly permitted server write",
+      "reducedMotion": "static highlight or panel; no movement; sound follows user preference"
+    },
+    {
+      "id": "flower_glimmer",
+      "assetId": "garden_trellis",
+      "descriptionKo": "꽃 주변 반짝임과 나비 모양 벡터 효과",
+      "implementation": "overlayOnly",
+      "durationMs": 1000,
+      "cooldownMs": 1000,
+      "options": {},
+      "sourceSprite": "unchanged static PNG",
+      "runtimeVerified": false,
+      "visitorState": "local-only; guestbook submission is the explicitly permitted server write",
+      "reducedMotion": "static highlight or panel; no movement; sound follows user preference"
+    },
+    {
+      "id": "bench_bounce",
+      "assetId": "laurel_bench",
+      "descriptionKo": "벤치 위 작은 별빛과 착석 소리",
+      "implementation": "overlayOnly",
+      "durationMs": 450,
+      "cooldownMs": 500,
+      "options": {},
+      "sourceSprite": "unchanged static PNG",
+      "runtimeVerified": false,
+      "visitorState": "local-only; guestbook submission is the explicitly permitted server write",
+      "reducedMotion": "static highlight or panel; no movement; sound follows user preference"
+    },
+    {
+      "id": "door_chime",
+      "assetId": "laurel_door",
+      "descriptionKo": "문종 소리 뒤 방문 목록 열기",
+      "implementation": "panel",
+      "durationMs": 350,
+      "cooldownMs": 500,
+      "options": {
+        "panel": "friends"
+      },
+      "sourceSprite": "unchanged static PNG",
+      "runtimeVerified": false,
+      "visitorState": "local-only; guestbook submission is the explicitly permitted server write",
+      "reducedMotion": "static highlight or panel; no movement; sound follows user preference"
+    },
+    {
+      "id": "soft_sparkle",
+      "assetId": "laurel_rug",
+      "descriptionKo": "러그 위 월계수 문양을 따라 빛이 한 바퀴",
+      "implementation": "overlayOnly",
+      "durationMs": 900,
+      "cooldownMs": 900,
+      "options": {},
+      "sourceSprite": "unchanged static PNG",
+      "runtimeVerified": false,
+      "visitorState": "local-only; guestbook submission is the explicitly permitted server write",
+      "reducedMotion": "static highlight or panel; no movement; sound follows user preference"
+    },
+    {
+      "id": "curtain_glimmer",
+      "assetId": "linen_curtain",
+      "descriptionKo": "커튼 사이 햇살 오버레이",
+      "implementation": "overlayOnly",
+      "durationMs": 900,
+      "cooldownMs": 900,
+      "options": {},
+      "sourceSprite": "unchanged static PNG",
+      "runtimeVerified": false,
+      "visitorState": "local-only; guestbook submission is the explicitly permitted server write",
+      "reducedMotion": "static highlight or panel; no movement; sound follows user preference"
+    },
+    {
+      "id": "music_select",
+      "assetId": "music_stand",
+      "descriptionKo": "배경 음악 선택창·명시적인 재생 버튼",
+      "implementation": "panel",
+      "durationMs": 0,
+      "cooldownMs": 500,
+      "options": {
+        "panel": "music"
+      },
+      "sourceSprite": "unchanged static PNG",
+      "runtimeVerified": false,
+      "visitorState": "local-only; guestbook submission is the explicitly permitted server write",
+      "reducedMotion": "static highlight or panel; no movement; sound follows user preference"
+    },
+    {
+      "id": "leaf_rustle",
+      "assetId": "olive_planter",
+      "descriptionKo": "화분 위 잎 모양 효과와 바스락 소리",
+      "implementation": "overlayOnly",
+      "durationMs": 700,
+      "cooldownMs": 700,
+      "options": {},
+      "sourceSprite": "unchanged static PNG",
+      "runtimeVerified": false,
+      "visitorState": "local-only; guestbook submission is the explicitly permitted server write",
+      "reducedMotion": "static highlight or panel; no movement; sound follows user preference"
+    },
+    {
+      "id": "mail_panel",
+      "assetId": "owl_mailbox",
+      "descriptionKo": "방명록 읽기·문구 또는 스티커 남기기",
+      "implementation": "panel",
+      "durationMs": 0,
+      "cooldownMs": 500,
+      "options": {
+        "panel": "guestbook"
+      },
+      "sourceSprite": "unchanged static PNG",
+      "runtimeVerified": false,
+      "visitorState": "local-only; guestbook submission is the explicitly permitted server write",
+      "reducedMotion": "static highlight or panel; no movement; sound follows user preference"
+    },
+    {
+      "id": "gallery",
+      "assetId": "picture_frame",
+      "descriptionKo": "해금한 신화 그림 크게 보기·주인은 전시 그림 선택",
+      "implementation": "panel",
+      "durationMs": 0,
+      "cooldownMs": 500,
+      "options": {
+        "panel": "gallery"
+      },
+      "sourceSprite": "unchanged static PNG",
+      "runtimeVerified": false,
+      "visitorState": "local-only; guestbook submission is the explicitly permitted server write",
+      "reducedMotion": "static highlight or panel; no movement; sound follows user preference"
+    },
+    {
+      "id": "stool_bounce",
+      "assetId": "round_stool",
+      "descriptionKo": "의자가 한 번 작게 통통",
+      "implementation": "wholeSpriteTranslateY",
+      "durationMs": 350,
+      "cooldownMs": 500,
+      "options": {
+        "amplitudeRelativeToSpriteHeight": 0.015
+      },
+      "sourceSprite": "unchanged static PNG",
+      "runtimeVerified": false,
+      "visitorState": "local-only; guestbook submission is the explicitly permitted server write",
+      "reducedMotion": "static highlight or panel; no movement; sound follows user preference"
+    },
+    {
+      "id": "open_story",
+      "assetId": "scroll_bookcase",
+      "descriptionKo": "해금한 신화 이야기 선택창 열기",
+      "implementation": "panel",
+      "durationMs": 0,
+      "cooldownMs": 500,
+      "options": {
+        "panel": "stories"
+      },
+      "sourceSprite": "unchanged static PNG",
+      "runtimeVerified": false,
+      "visitorState": "local-only; guestbook submission is the explicitly permitted server write",
+      "reducedMotion": "static highlight or panel; no movement; sound follows user preference"
+    },
+    {
+      "id": "water_ripple",
+      "assetId": "shell_fountain",
+      "descriptionKo": "수면에 타원 물결 두 번",
+      "implementation": "overlayOnly",
+      "durationMs": 1100,
+      "cooldownMs": 1100,
+      "options": {
+        "effectAnchor": [
+          0.5,
+          0.6
+        ]
+      },
+      "sourceSprite": "unchanged static PNG",
+      "runtimeVerified": false,
+      "visitorState": "local-only; guestbook submission is the explicitly permitted server write",
+      "reducedMotion": "static highlight or panel; no movement; sound follows user preference"
+    },
+    {
+      "id": "light_toggle",
+      "assetId": "star_lantern",
+      "descriptionKo": "등불 주변 따뜻한 빛 켜기·끄기",
+      "implementation": "localToggle",
+      "durationMs": 250,
+      "cooldownMs": 500,
+      "options": {
+        "state": "lit",
+        "effectAnchor": [
+          0.5,
+          0.55
+        ]
+      },
+      "sourceSprite": "unchanged static PNG",
+      "runtimeVerified": false,
+      "visitorState": "local-only; guestbook submission is the explicitly permitted server write",
+      "reducedMotion": "static highlight or panel; no movement; sound follows user preference"
+    },
+    {
+      "id": "mobile_chime",
+      "assetId": "star_mobile",
+      "descriptionKo": "별 주변 작은 빛과 순서대로 차임 세 음",
+      "implementation": "overlayOnly",
+      "durationMs": 800,
+      "cooldownMs": 800,
+      "options": {},
+      "sourceSprite": "unchanged static PNG",
+      "runtimeVerified": false,
+      "visitorState": "local-only; guestbook submission is the explicitly permitted server write",
+      "reducedMotion": "static highlight or panel; no movement; sound follows user preference"
+    },
+    {
+      "id": "path_steps",
+      "assetId": "stepping_stones",
+      "descriptionKo": "디딤돌 세 칸이 차례로 빛남",
+      "implementation": "overlayOnly",
+      "durationMs": 750,
+      "cooldownMs": 750,
+      "options": {},
+      "sourceSprite": "unchanged static PNG",
+      "runtimeVerified": false,
+      "visitorState": "local-only; guestbook submission is the explicitly permitted server write",
+      "reducedMotion": "static highlight or panel; no movement; sound follows user preference"
+    },
+    {
+      "id": "steam",
+      "assetId": "tea_table",
+      "descriptionKo": "주전자 위로 짧은 김 오버레이",
+      "implementation": "overlayOnly",
+      "durationMs": 1100,
+      "cooldownMs": 1100,
+      "options": {
+        "effectAnchor": [
+          0.33,
+          0.36
+        ]
+      },
+      "sourceSprite": "unchanged static PNG",
+      "runtimeVerified": false,
+      "visitorState": "local-only; guestbook submission is the explicitly permitted server write",
+      "reducedMotion": "static highlight or panel; no movement; sound follows user preference"
+    },
+    {
+      "id": "treasure_panel",
+      "assetId": "treasure_chest",
+      "descriptionKo": "수집한 보물 진열창 열기",
+      "implementation": "panel",
+      "durationMs": 0,
+      "cooldownMs": 500,
+      "options": {
+        "panel": "collection"
+      },
+      "sourceSprite": "unchanged static PNG",
+      "runtimeVerified": false,
+      "visitorState": "local-only; guestbook submission is the explicitly permitted server write",
+      "reducedMotion": "static highlight or panel; no movement; sound follows user preference"
+    }
+  ]
+}

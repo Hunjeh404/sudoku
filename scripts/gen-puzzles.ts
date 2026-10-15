@@ -1,5 +1,5 @@
 // 문제 은행 생성: npm run gen:puzzles
-// 결과: puzzles/bank.json(정답 포함, 저장소 보관용) + supabase/migrations/0003_puzzle_bank.sql
+// 결과: puzzles/bank.json(정답 포함, 저장소 보관용) + supabase/migrations/0005_puzzle_bank.sql
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { generateOne, mulberry32, relabelKey } from '../src/sudoku/generate';
 import { boardToString, Size } from '../src/sudoku/engine';
@@ -47,7 +47,7 @@ writeFileSync('puzzles/bank.json', JSON.stringify(bank.map(({ prefix, ...r }) =>
 const esc = (s: string) => s.replace(/'/g, "''");
 const rows = bank.map((p) => `('${p.id}',${p.size},'${p.difficulty}','${p.givens}','${esc(JSON.stringify(p.techniques))}'::jsonb,1)`);
 const sols = bank.map((p) => `('${p.id}','${p.solution}')`);
-writeFileSync('supabase/migrations/0003_puzzle_bank.sql',
+writeFileSync('supabase/migrations/0005_puzzle_bank.sql',
   `-- 자동 생성: npm run gen:puzzles (유일해·논리 풀이 검증 완료 ${bank.length}문제)\n` +
   `insert into public.puzzle_catalog (id,size,difficulty,givens,techniques,version) values\n${rows.join(',\n')}\non conflict (id) do nothing;\n\n` +
   `insert into private.puzzle_solutions (puzzle_id,solution) values\n${sols.join(',\n')}\non conflict (puzzle_id) do nothing;\n`);
