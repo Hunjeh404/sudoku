@@ -86,7 +86,7 @@ export function MailSheet({ onClose }: { onClose: () => void }) {
     if (m.kind === 'friend_request') return `${m.payload.nickname}님이 친구 요청을 보냈어요`;
     if (m.kind === 'friend_accepted') return `${m.payload.nickname}님이 친구 요청을 수락했어요. 이제 서로의 소식이 보여요`;
     if (m.kind === 'reaction') return `${m.payload.nickname}님이 내 소식「${activityText(m.payload.activity_kind, m.payload.activity)}」에 ${m.payload.emoji}를 달았어요`;
-    if (m.kind === 'invite_accepted') return `${m.payload.nickname}님이 가족 초대를 받았어요`;
+    if (m.kind === 'invite_accepted') return `${m.payload.nickname}님이 같이 쓰기 코드를 받아 아이 프로필을 함께 쓰게 되었어요`;
     return '새 소식이 있어요';
   };
   const respond = async (m: any, accept: boolean) => {

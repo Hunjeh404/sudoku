@@ -1,4 +1,4 @@
-// 친구: 소식(이모티콘) · 이메일 친구 요청 · 우리 가족 · 가족 초대 코드
+// 친구: 소식(이모티콘) · 이메일 친구 요청 · 우리 가족 · 아이 프로필 같이 쓰기 코드
 import { useEffect, useState } from 'react';
 import { IconCopy, IconMail, IconMoodSmile, IconSend, IconTicket, IconUserPlus, IconX } from '@tabler/icons-react';
 import { useGame } from '../lib/store';
@@ -177,16 +177,16 @@ function FriendList() {
       )}
       {adult && (
         <section className="invite-box">
-          <h2 className="sub">가족 초대</h2>
-          <p className="fine">배우자처럼 같은 집안 어른이 아이 프로필을 함께 쓰려면 가족 초대 코드를 쓰세요. 코드는 3일 동안 한 번만 쓸 수 있어요.</p>
+          <h2 className="sub">아이 프로필 같이 쓰기</h2>
+          <p className="fine">배우자처럼 다른 어른 계정에서도 우리 아이 프로필로 놀 수 있게 해요. 코드를 받은 사람은 우리 가족으로 묶여 친구도 함께 써요. 코드는 3일 동안 한 번만 쓸 수 있어요.</p>
           <div className="row wrap">
-            <button className="btn" onClick={makeInvite}><IconUserPlus size={18} aria-hidden />가족 초대 코드</button>
+            <button className="btn" onClick={makeInvite}><IconUserPlus size={18} aria-hidden />같이 쓰기 코드 만들기</button>
             <button className="btn" onClick={() => setAccepting(true)}><IconTicket size={18} aria-hidden />받은 코드 넣기</button>
           </div>
         </section>
       )}
       {invite && (
-        <Sheet title="가족 초대 코드" onClose={() => setInvite(null)}>
+        <Sheet title="아이 프로필 같이 쓰기 코드" onClose={() => setInvite(null)}>
           <p className="invite-code" aria-label="초대 코드">{invite.code}</p>
           <p className="fine">{new Date(invite.expires_at).toLocaleString('ko-KR')}까지 한 번 쓸 수 있어요. 받는 사람은 구글로 로그인한 뒤 친구 탭의「받은 코드 넣기」에 입력해요.</p>
           <div className="row-end"><button className="btn primary" onClick={() => { navigator.clipboard?.writeText(invite.code).then(() => toast('복사했어요'), () => {}); }}><IconCopy size={18} aria-hidden />복사</button></div>
@@ -207,12 +207,12 @@ function AcceptSheet({ onClose, onDone }: { onClose: () => void; onDone: () => v
     try {
       const r = await rpc('accept_invite', { p: profileId, code });
       if (!r.ok) setErr(r.message);
-      else { toast(`${r.with}의 가족이 되었어요`); onDone(); onClose(); }
+      else { toast(`${r.with}님과 아이 프로필을 같이 쓰게 되었어요`); onDone(); onClose(); }
     } catch (e) { setErr((e as ApiError).message); }
     setBusy(false);
   };
   return (
-    <Sheet title="받은 가족 초대 코드" onClose={onClose}>
+    <Sheet title="받은 같이 쓰기 코드" onClose={onClose}>
       <input className="code-input" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="ABCDE-FGHJK" aria-label="초대 코드" autoCapitalize="characters" />
       {err && <ErrorLine msg={err} />}
       <div className="row-end"><button className="btn primary" onClick={go} disabled={busy || code.replace(/[^A-Z0-9]/gi, '').length < 10}>연결하기</button></div>
