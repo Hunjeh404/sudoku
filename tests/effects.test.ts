@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { TREASURE_FX, BOARD_THEMES, boardThemeFor } from '../src/data/effects';
+import { TREASURE_FX, BOARD_THEMES, TIER_THEMES, COIN_ART, boardThemeFor } from '../src/data/effects';
 import tiers from '../src/data/tiers.json';
 
 describe('꾸밈효과·테마판', () => {
@@ -29,5 +29,9 @@ describe('꾸밈효과·테마판', () => {
     expect(boardThemeFor(pick(2))?.key).toBe('tier2');
     expect(boardThemeFor(pick(3))?.key).toBe('tier3');
     expect(boardThemeFor('nyx')?.key).toBe('nyx');
+  });
+  it('그림이 있다고 적은 숫자 버튼·티어 판은 파일이 있다', () => {
+    for (const id of COIN_ART) for (const f of [`${id}.webp`, `${id}_memo.webp`]) expect(() => readFileSync(`public/assets/coins/${f}`), f).not.toThrow();
+    for (const [k, t] of Object.entries(TIER_THEMES)) if (t.art) expect(() => readFileSync(`public/assets/themes/${k}_frame.webp`), k).not.toThrow();
   });
 });

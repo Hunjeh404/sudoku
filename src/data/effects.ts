@@ -93,7 +93,9 @@ export const TREASURE_FX: Record<string, TreasureFx> = {
 };
 
 // 버튼 그림을 받은 보물(그림 파일: public/assets/coins/<id>.webp, <id>_memo.webp)
-export const COIN_ART = new Set<string>([]);
+export const COIN_ART = new Set<string>([
+  'aegis', 'helm_darkness', 'eros_arrows', 'cestus', 'thyrsus', 'fate_thread', 'asclepius_rod', 'twin_bows', 'golden_throne', 'pan_pipes', 'athena_aulos', 'ariadne_crown', 'heracles_bow', 'kibisis', 'aegeus_sword', 'pelian_spear', 'palladium', 'wind_bag', 'charon_obol', 'bronze_rattle', 'hippolyta_belt', 'golden_cup', 'sisyphus_stone', 'beauty_box',
+]);
 
 export const MEMO_GUARD_TEXT = '보물을 달면 처음부터 있던 숫자와 겹치는 메모는 들어가지 않아요.';
 
@@ -138,11 +140,11 @@ export const BOARD_THEMES: Record<string, BoardTheme> = {
   dionysus: T('포도송이 판', '포도', { bg: '#F3EAF3', line: '#E3D2E3', box: '#8C5A8C', entry: '#7A3E86', given: '#34203A', accent: '#8C4E8C' }),
 };
 
-// 2·3티어 초상화를 쓰면 티어마다 같은 판(그림이 오면 art: true로 바꾸고 assets/themes/tier2_frame.webp 등을 넣는다)
+// 2·3티어 초상화를 쓰면 티어마다 같은 판(테두리 그림 assets/themes/tier2_frame.webp, tier3_frame.webp)
 export const TIER_THEMES: Record<string, BoardTheme> = {
-  tier2: { name: '월계수 판', text: '2티어 초상화를 쓰면 스도쿠 판이 초록 월계수 판으로 바뀌어요.', art: false,
+  tier2: { name: '월계수 판', text: '2티어 초상화를 쓰면 스도쿠 판이 초록 월계수 판으로 바뀌어요.', art: true,
     bg: '#F2F4EA', line: '#D9DFC8', box: '#6F8A4E', entry: '#4F7A2E', given: '#2E3A24', accent: '#8FAF6A' },
-  tier3: { name: '금빛 월계수 판', text: '3티어 초상화를 쓰면 스도쿠 판이 금빛 월계수 판으로 바뀌어요.', art: false,
+  tier3: { name: '금빛 월계수 판', text: '3티어 초상화를 쓰면 스도쿠 판이 금빛 월계수 판으로 바뀌어요.', art: true,
     bg: '#FFF8E6', line: '#EFE0B8', box: '#B8913A', entry: '#A0700E', given: '#3E2E10', accent: '#E2B84A' },
 };
 
