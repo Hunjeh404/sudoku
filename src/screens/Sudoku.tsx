@@ -12,7 +12,8 @@ import { REWARD_RULES, HINT_MAX, boardName, rewardText, STORY_EVERY } from '../d
 import { nextJourney } from './Journey';
 import { Sheet, Starlight, ErrorLine, Spinner, Avatar, mmss, secText } from '../ui';
 import { sfx } from '../lib/sound';
-import { TREASURE_FX, BOARD_THEMES, themeVars } from '../data/effects';
+import { TREASURE_FX, boardThemeFor, themeVars } from '../data/effects';
+import { coinVars } from '../fx';
 import { FxLayers } from '../fx';
 import { josa } from '../lib/josa';
 
@@ -119,8 +120,8 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
   const n = attempt.size;
   const badge = state?.profile.badge || '';
   const fx = TREASURE_FX[badge];
-  const theme = BOARD_THEMES[state?.profile.avatar_id ?? ''];
-  const bfx = fx?.board; // 그림이 없는 보물의 판 효과 종류
+  const themed = boardThemeFor(state?.profile.avatar_id ?? '');
+  const theme = themed?.theme;
   const g = geometry(n);
   const givens = useMemo(() => parseBoard(attempt.givens), [attempt.givens]);
   const solution = useMemo(() => countSolutions(givens, n, 2).solution!, [givens, n]);
@@ -138,9 +139,6 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
   const [hint, setHint] = useState<{ h: Hint; level: number } | null>(null);
   const [hintsUsed, setHintsUsed] = useState(initial.hints);
   const [checkMarks, setCheckMarks] = useState<Set<number>>(new Set());
-  // 보물 판 효과 중 한 번 나오는 것(숫자 넣기·지우기·되돌림·줄 다 채움): 어느 칸에, 몇 번째인지(같은 칸에서도 다시 나오게)
-  const [pulse, setPulse] = useState<{ cells: number[]; n: number } | null>(null);
-  const fire = (cells: number[]) => setPulse((p) => ({ cells, n: (p?.n ?? 0) + 1 }));
   const [status, setStatus] = useState<SaveStatus>('saved');
   const [completing, setCompleting] = useState<'idle' | 'busy' | 'failed'>('idle');
   const [completeErr, setCompleteErr] = useState<string | null>(null);
@@ -225,32 +223,18 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
       board[sel] = board[sel] === d ? 0 : d;
       delete notes[sel];
       if (settings.autoNotes && board[sel]) for (const p of g.peers[sel]) if (notes[p]) notes[p] = notes[p].filter((x) => x !== d);
-      if (board[sel] && bfx === 'enter') fire([sel]);
-      if (board[sel] && bfx === 'line') {
-        // 이 숫자로 가로줄·세로줄이 다 찼으면 그 줄을 빛나게
-        const r = rowOf(n, sel), c = colOf(n, sel);
-        const row = Array.from({ length: n }, (_, k) => r * n + k), col = Array.from({ length: n }, (_, k) => k * n + c);
-        const lit = [row, col].filter((u) => u.every((i) => board[i])).flat();
-        if (lit.length) fire(lit);
-      }
     }
-    if (bfx === 'sound') sfx.note(d); else sfx.tap();
+    sfx.tap();
     record({ board, notes });
   };
   const erase = () => {
     if (sel === null || givens[sel]) return;
     const notes = { ...cur.notes }; delete notes[sel];
     const board = cur.board.slice(); board[sel] = 0;
-    if (bfx === 'erase' && (cur.board[sel] || cur.notes[sel]?.length)) fire([sel]);
     record({ board, notes });
   };
   const jump = (i: number) => {
     const s = hist.list[i];
-    if (bfx === 'undo') {
-      const was = hist.list[hist.i];
-      const changed = s.board.map((v, k) => (v !== was.board[k] || (s.notes[k] ?? []).join() !== (was.notes[k] ?? []).join() ? k : -1)).filter((k) => k >= 0);
-      if (changed.length) fire(changed);
-    }
     setHist((h) => ({ ...h, i }));
     latest.current = s; dirty.current = true;
     setLocal(localKey, { ...s, revision: revision.current, hints: hintsRef.current, dirty: true });
@@ -335,20 +319,14 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
   const selVal = sel !== null ? cur.board[sel] : 0;
   const focus = new Set(hint && hint.level >= 1 ? hint.h.focusCells : []);
   const focusUnits = new Set(hint && hint.level >= 1 ? hint.h.focusUnits : []);
-  // 티르소스: 다 채운 구역의 오른쪽 위 칸에 포도잎
-  const leaves = useMemo(() => {
-    const out = new Set<number>();
-    if (bfx !== 'box') return out;
-    g.units.slice(2 * n).forEach((u) => { if (u.every((i) => cur.board[i])) out.add(Math.min(...u.filter((i) => colOf(n, i) === Math.max(...u.map((k) => colOf(n, k)))))); });
-    return out;
-  }, [bfx, cur.board, n, g]);
   const symbol = (d: number) => (picture ? <img className="pic" src={asset(`assets/treasure/${PICTURE[d - 1]}.webp`)} alt={PICTURE_KO[d - 1]} /> : d);
 
   const StatusIcon = { saved: IconCloudCheck, saving: IconCloudUpload, offline: IconCloudOff, conflict: IconAlertTriangle }[status];
   const statusText = { saved: '저장됨', saving: '저장 중', offline: '연결 끊김, 기기에 보관 중', conflict: '다른 기기와 충돌' }[status];
 
   return (
-    <div className={`puzzle n${n}${fx?.scene ? ' has-fx' : ''}${bfx ? ` tfx-${badge}` : ''}`} style={fx?.scene ? { ['--fx-bg' as any]: fx.bg } : undefined}>
+    <div className={`puzzle n${n}${fx?.scene ? ' has-fx' : ''}${fx?.coin ? ' coin-skin' : ''}`}
+      style={fx?.scene ? { ['--fx-bg' as any]: fx.bg } : fx?.coin ? coinVars(badge) : undefined}>
       <FxLayers id={badge} />
       <header className="puzzle-head">
         <button className="icon-btn" aria-label="나가기" onClick={async () => { await pushServer(); await rpc('pause_attempt', { attempt: attempt.id }).catch(() => {}); onExit(); }}><IconArrowLeft /></button>
@@ -357,7 +335,7 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
         <span className={`save-state ${status}`} role="status"><StatusIcon size={18} aria-hidden />{statusText}</span>
       </header>
 
-      <div className={`tablet${theme ? ' themed-frame' : ''}`} style={theme ? themeVars(state!.profile.avatar_id, theme, asset('')) : undefined}>
+      <div className={`tablet${theme?.art ? ' themed-frame' : ''}`} style={themed ? themeVars(themed.key, themed.theme, asset('')) : undefined}>
       <div className={`board${theme ? ' themed' : ''}${theme?.dark ? ' dark' : ''}`} role="grid" aria-label={`${n}×${n} 스도쿠 판`}
         style={{ ['--n' as any]: n, ['--br' as any]: g.boxR, ['--bc' as any]: g.boxC }}>
         {cur.board.map((v, i) => {
@@ -370,17 +348,13 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
           if (bad.has(i)) cls.push('bad');
           if (checkMarks.has(i)) cls.push('wrong');
           if (focus.has(i)) cls.push('focus');
-          if (v) cls.push(`d${v}`);
-          if (r === selR || c === selC) cls.push('line');
-          if (leaves.has(i)) cls.push('leaf');
           if (g.cellUnits[i].some((u) => focusUnits.has(u))) cls.push('focus-unit');
           if ((c + 1) % g.boxC === 0 && c < n - 1) cls.push('bR');
           if ((r + 1) % g.boxR === 0 && r < n - 1) cls.push('bB');
           return (
             <button key={i} role="gridcell" className={cls.join(' ')} onClick={() => setSel(i)}
               aria-label={`가로 ${r + 1} 세로 ${c + 1}, ${v ? sym(v) : '빈칸'}${givens[i] ? ', 처음 숫자' : ''}${bad.has(i) ? ', 같은 숫자 겹침' : ''}${checkMarks.has(i) ? ', 틀림' : ''}`}>
-              {pulse?.cells.includes(i) && <span key={`p${pulse.n}`} className="fx-pop" aria-hidden />}
-              {v ? <span key={pulse?.cells.includes(i) ? `v${pulse.n}` : 'v'} className={`v${pulse?.cells.includes(i) ? ' anim' : ''}`}>{symbol(v)}</span> : cur.notes[i]?.length ? (
+              {v ? symbol(v) : cur.notes[i]?.length ? (
                 <span className="notes" style={{ ['--bc' as any]: g.boxC }}>{Array.from({ length: n }, (_, d) => <i key={d}>{cur.notes[i].includes(d + 1) ? (picture ? '•' : d + 1) : ''}</i>)}</span>
               ) : null}
               {bad.has(i) && <span className="bad-mark" aria-hidden>!</span>}
@@ -416,7 +390,7 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
       <div className={`pad pad${n}`}>
         {Array.from({ length: n }, (_, i) => i + 1).map((d) => {
           const left = n - cur.board.filter((v) => v === d).length;
-          return <button key={d} className={`num${memo ? ' memo' : ''}${left <= 0 ? ' done' : ''}`} onClick={() => input(d)} aria-label={`${sym(d)} 넣기${memo ? '(메모)' : ''}`}>
+          return <button key={d} className={`num${memo ? ' memo' : ''}`} onClick={() => input(d)} aria-label={`${sym(d)} 넣기${memo ? '(메모)' : ''}`}>
             <span className="coin-face">{symbol(d)}</span><small aria-hidden>{left > 0 ? left : ''}</small></button>;
         })}
       </div>

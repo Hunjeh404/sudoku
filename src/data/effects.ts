@@ -1,22 +1,26 @@
 // 보물 꾸밈효과(스도쿠 화면 배경)와 4티어 초상화 테마판.
 // 보물: 이야기책에 그 보물 장면이 있으면 그 그림을 화면 위·아래에 나눠 깐다.
-//       그림이 없는 보물은 판 안에서 숫자 모양·입력할 때 짧은 효과·칸 표시·다 채웠을 때 표시를 바꾼다(styles.css의 .tfx-<id>).
+//       그림이 없는 보물은 아래 숫자 버튼(금화)을 그 보물 모양으로 바꾼다.
+//       버튼 그림(assets/coins/<id>.webp, <id>_memo.webp)이 오기 전까지는 색으로 만든 임시 동전을 쓴다(COIN_ART에 없는 것).
 // 4티어: 내 초상화로 쓰면 판의 색·선·구역마다 옅은 상징 무늬가 바뀐다.
 
-// 판 효과가 언제 나오는지: 늘 보임(look), 숫자를 넣을 때(enter), 지울 때(erase), 되돌림·다시(undo),
-// 줄을 다 채울 때(line), 구역을 다 채웠을 때(box), 숫자를 판에 다 놓았을 때 숫자 버튼(pad), 소리(sound)
-export type BoardFxKind = 'look' | 'enter' | 'erase' | 'undo' | 'line' | 'box' | 'pad' | 'sound';
+import { josa } from '../lib/josa';
+import TIER_MAP from './tiers.json';
+
+// 숫자 버튼 모양: 이름, 그림 지시 내용, 임시 동전 색(바탕·테두리·숫자)
+export interface Coin { name: string; draw: string; base: string; rim: string; text: string }
 
 export interface TreasureFx {
   text: string; // 도감에 보여 줄 한 줄
   scene?: string; // 이야기책 그림(assets/scenes/<scene>.webp)
   bg?: string; // 그림을 깔 때 화면 바탕색
-  board?: BoardFxKind; // 그림이 없는 보물의 판 효과
+  coin?: Coin; // 그림이 없는 보물의 숫자 버튼
 }
 
 const scene = (id: string, bg: string, what: string): TreasureFx => ({ scene: id, bg, text: `이야기책의 「${what}」 그림이 스도쿠 화면 위아래에 펼쳐져요.` });
 
-const fx = (board: BoardFxKind, text: string): TreasureFx => ({ board, text });
+const coin = (name: string, draw: string, base: string, rim: string, text: string): TreasureFx =>
+  ({ coin: { name, draw, base, rim, text }, text: `숫자 버튼이 ${josa(name, '으로/로')} 바뀌어요.` });
 
 export const TREASURE_FX: Record<string, TreasureFx> = {
   // 이야기책 그림이 있는 보물
@@ -61,43 +65,47 @@ export const TREASURE_FX: Record<string, TreasureFx> = {
   penelope_shroud: scene('c16-06', '#E4E5EE', '베를 짜고 몰래 푸는 페넬로페'),
   odysseus_bow: scene('c16-07', '#E8EAEE', '활시위를 당기는 오디세우스'),
 
-  // 그림이 없는 보물: 판 효과(움직임은 0.5초 안팎으로 한 번만)
-  cestus: fx('look', '내가 넣은 숫자가 장밋빛이 돼요.'),
-  twin_bows: fx('look', '내가 넣은 숫자 중 홀수는 금빛, 짝수는 은빛이 돼요.'),
-  golden_throne: fx('look', '처음부터 있던 숫자가 금빛 굵은 글씨가 돼요.'),
-  palladium: fx('look', '처음부터 있던 숫자 칸에 나뭇결이 옅게 깔려요.'),
-  kibisis: fx('look', '메모 숫자가 작은 동그라미 안에 담겨 또렷해져요.'),
-  beauty_box: fx('look', '메모 숫자가 연보라색 둥근 글씨가 돼요.'),
-  eros_arrows: fx('enter', '숫자를 넣으면 칸 위로 작은 하트가 떠올랐다 사라져요.'),
-  bronze_rattle: fx('enter', '숫자를 넣으면 칸에서 동그란 물결이 한 번 퍼져요.'),
-  wind_bag: fx('enter', '숫자를 넣으면 칸에서 바람 줄기가 옆으로 흩어져요.'),
-  helm_darkness: fx('enter', '넣은 숫자가 투명한 데서 천천히 나타나요.'),
-  aegeus_sword: fx('enter', '넣은 숫자가 아래에서 위로 살짝 올라오며 나타나요.'),
-  asclepius_rod: fx('erase', '지우기를 누르면 그 칸이 연두빛으로 한 번 반짝여요.'),
-  sisyphus_stone: fx('undo', '되돌림이나 다시를 누르면 바뀐 칸이 회색으로 한 번 깜빡여요.'),
-  pan_pipes: fx('sound', '숫자마다 소리 높이가 달라요(1은 도, 2는 레…). 소리를 켰을 때만 들려요.'),
-  aegis: fx('look', '고른 칸 테두리가 은빛 이중선이 돼요.'),
-  pelian_spear: fx('look', '고른 칸 네 모서리에 창끝 꺾쇠가 붙어요.'),
-  heracles_bow: fx('look', '고른 칸의 가로줄과 세로줄이 조준선처럼 진하게 보여요.'),
-  fate_thread: fx('look', '같은 숫자를 강조할 때 그 숫자들 아래에 금빛 밑줄이 그어져요.'),
-  golden_cup: fx('look', '같은 숫자 강조 색이 노을빛 주황이 돼요.'),
-  hippolyta_belt: fx('look', '굵은 구역 선이 가죽띠 색 이중선이 돼요.'),
-  athena_aulos: fx('line', '가로줄이나 세로줄 하나를 다 채우면 그 줄이 한 번 은은하게 빛나요.'),
-  thyrsus: fx('box', '구역 하나를 다 채우면 그 구역 모서리에 포도잎이 생겨요.'),
-  ariadne_crown: fx('pad', '숫자 하나를 판에 다 놓으면 그 숫자 버튼에 작은 별이 붙어요.'),
-  charon_obol: fx('pad', '숫자 하나를 판에 다 놓으면 그 숫자 버튼이 금화에서 은화로 바뀌어요.'),
+  // 그림이 없는 보물: 숫자 버튼
+  aegis: coin('은빛 방패 동전', '은빛 둥근 방패. 가장자리에 작은 비늘 무늬 띠, 가운데는 매끈하게 비워 숫자 자리', '#C9D0D8', '#8D9AA8', '#2E3640'),
+  helm_darkness: coin('어둠의 투구 동전', '짙은 흑철색 원반. 가장자리에 연기처럼 번지는 그림자 띠, 투구 볏 모양 작은 장식 하나', '#5E566E', '#3B3348', '#F1ECF8'),
+  eros_arrows: coin('사랑의 화살 동전', '분홍 원반. 가장자리에 금화살과 납화살이 X자로 겹친 장식, 테두리 작은 하트 점', '#F4C3CF', '#D98AA0', '#6A2E40'),
+  cestus: coin('장미 띠 동전', '장미 꽃잎 빛 원반. 리본 띠가 둥글게 감싼 테두리, 작은 장미 두 송이', '#F2C9C4', '#C98A8A', '#6B2E3A'),
+  thyrsus: coin('포도 덩굴 동전', '연보라 원반. 포도 덩굴과 잎이 둥글게 감은 테두리, 아래쪽에 작은 포도송이', '#D9C6E2', '#7C9A5A', '#3E2448'),
+  fate_thread: coin('운명의 실패 동전', '금실이 감긴 둥근 실패를 위에서 본 모양. 테두리에 실이 몇 바퀴 감긴 결', '#F0DFA8', '#C9A43A', '#4A3A1E'),
+  asclepius_rod: coin('치유의 지팡이 동전', '연초록 원반. 테두리에 뱀 한 마리가 둥글게 감긴 장식(무섭지 않게), 작은 약초 잎', '#CDE3C8', '#6E9A6E', '#24402A'),
+  twin_bows: coin('해와 달 동전', '왼쪽 반은 금빛 해, 오른쪽 반은 은빛 달로 나뉜 원반. 테두리에 작은 활 두 개', '#EED9A0', '#A9B6C6', '#3A3739'),
+  golden_throne: coin('공작 옥좌 동전', '청록 원반에 금 테두리. 테두리에 공작 깃털 눈 무늬가 둘러 박힘', '#A8D5CE', '#D9B44A', '#1F3534'),
+  pan_pipes: coin('갈대 피리 동전', '밝은 나무 원반. 테두리에 길이가 다른 갈대 피리가 부채꼴로 새겨짐', '#E2D3A8', '#8BA86A', '#3E3A1E'),
+  athena_aulos: coin('아테나의 피리 동전', '연보라 원반. 테두리에 쌍피리 두 개와 올빼미 깃털 장식', '#DCD3E8', '#7E8F6A', '#3A2E4A'),
+  ariadne_crown: coin('별 왕관 동전', '남색 밤하늘 원반. 위쪽 테두리에 일곱 별이 왕관처럼 반원으로 박힘', '#3E4580', '#E8D9A8', '#F6E7A8'),
+  heracles_bow: coin('영웅의 활 동전', '가죽과 청동이 섞인 원반. 테두리에 화살 깃 무늬가 줄지어 둘러짐', '#E3C9A6', '#A8714A', '#3E2416'),
+  kibisis: coin('가죽 자루 동전', '끈으로 입구를 묶은 둥근 가죽 단추 모양. 테두리에 바느질 땀', '#CFAE86', '#7A5A3A', '#2E1E10'),
+  aegeus_sword: coin('바위 칼 동전', '매끈한 회색 돌 원반. 테두리에 작은 칼자루와 샌들 문양', '#CFCAC0', '#8C867A', '#2E2C28'),
+  pelian_spear: coin('물푸레나무 동전', '연한 나무 원반. 테두리에 물푸레나무 잎이 둥글게 엮임', '#D8E2C8', '#7C8F5A', '#2C3320'),
+  palladium: coin('팔라디온 동전', '오래된 나뭇결 원반. 테두리에 작은 여신상 실루엣 문양 하나', '#E1C9A2', '#9C7A50', '#3A2816'),
+  wind_bag: coin('바람 자루 동전', '하늘빛 원반. 테두리에 소용돌이 바람 무늬, 아래에 묶인 작은 자루', '#D3E6F2', '#8FB3CC', '#23384A'),
+  charon_obol: coin('저승 은화', '빛바랜 저승 은화(오볼로스). 테두리에 잔잔한 강물 물결', '#C8D0D0', '#6E8486', '#1F2E30'),
+  bronze_rattle: coin('청동 딸랑이 동전', '청동 원반. 테두리에 동심원 고리가 겹쳐 울리는 느낌', '#D9B074', '#8C6A2A', '#3A2810'),
+  hippolyta_belt: coin('여왕의 버클 동전', '가죽 허리띠의 둥근 버클. 테두리에 금장식 징이 박힘', '#C79A6E', '#E2C25E', '#2E1A0E'),
+  golden_cup: coin('황금 잔 동전', '노을빛 황금 잔을 위에서 본 둥근 모양. 테두리에 해살 무늬', '#F6C98A', '#E8925A', '#4A2410'),
+  sisyphus_stone: coin('시시포스의 바위 동전', '둥글고 묵직한 회색 바위. 표면에 작은 금이 몇 줄', '#BDB6AA', '#8C867A', '#2E2C28'),
+  beauty_box: coin('아름다움의 상자 동전', '연보라 보석함 뚜껑을 위에서 본 원형. 테두리에 진주 알이 둘러짐', '#E3D6F0', '#B6A0D6', '#3E2E5A'),
 };
+
+// 버튼 그림을 받은 보물(그림 파일: public/assets/coins/<id>.webp, <id>_memo.webp)
+export const COIN_ART = new Set<string>([]);
 
 export const MEMO_GUARD_TEXT = '보물을 달면 처음부터 있던 숫자와 겹치는 메모는 들어가지 않아요.';
 
 // ---------- 4티어 테마판 ----------
 export interface BoardTheme {
   name: string; text: string; dark?: boolean;
+  art?: boolean; // 테두리·구역 상징 그림이 있는지(없으면 색만 바뀌고 기본 테두리)
   bg: string; line: string; box: string; entry: string; given: string; accent: string;
 }
 
 const T = (name: string, what: string, c: Omit<BoardTheme, 'name' | 'text'>): BoardTheme =>
-  ({ name, text: `판이 ${name}으로 바뀌어요. 테두리가 바뀌고, 굵은 선 안 구역마다 ${what} 무늬가 옅게 들어가요.`, ...c });
+  ({ name, text: `판이 ${name}으로 바뀌어요. 테두리가 바뀌고, 굵은 선 안 구역마다 ${what} 무늬가 옅게 들어가요.`, art: true, ...c });
 
 export const BOARD_THEMES: Record<string, BoardTheme> = {
   chaos: T('소용돌이 판', '소용돌이', { dark: true, bg: '#2E2A36', line: '#4C445C', box: '#8A7BB0', entry: '#C7B8F0', given: '#F1ECF8', accent: '#9C8CC8' }),
@@ -130,8 +138,25 @@ export const BOARD_THEMES: Record<string, BoardTheme> = {
   dionysus: T('포도송이 판', '포도', { bg: '#F3EAF3', line: '#E3D2E3', box: '#8C5A8C', entry: '#7A3E86', given: '#34203A', accent: '#8C4E8C' }),
 };
 
-// 판에 넣을 CSS 변수. 테두리·구역 상징 그림은 assets/themes/<id>_frame.webp, <id>_emblem.webp
-export function themeVars(id: string, t: BoardTheme, base: string): Record<string, string> {
-  return { '--t-bg': t.bg, '--t-line': t.line, '--t-box': t.box, '--t-entry': t.entry, '--t-given': t.given, '--t-accent': t.accent,
-    '--t-emblem': `url(${base}assets/themes/${id}_emblem.webp)`, '--t-frame': `url(${base}assets/themes/${id}_frame.webp)` };
+// 2·3티어 초상화를 쓰면 티어마다 같은 판(그림이 오면 art: true로 바꾸고 assets/themes/tier2_frame.webp 등을 넣는다)
+export const TIER_THEMES: Record<string, BoardTheme> = {
+  tier2: { name: '월계수 판', text: '2티어 초상화를 쓰면 스도쿠 판이 초록 월계수 판으로 바뀌어요.', art: false,
+    bg: '#F2F4EA', line: '#D9DFC8', box: '#6F8A4E', entry: '#4F7A2E', given: '#2E3A24', accent: '#8FAF6A' },
+  tier3: { name: '금빛 월계수 판', text: '3티어 초상화를 쓰면 스도쿠 판이 금빛 월계수 판으로 바뀌어요.', art: false,
+    bg: '#FFF8E6', line: '#EFE0B8', box: '#B8913A', entry: '#A0700E', given: '#3E2E10', accent: '#E2B84A' },
+};
+
+// 내 초상화에 맞는 판: 4티어는 인물별, 2·3티어는 티어별, 1티어·빈칸은 기본 판
+export function boardThemeFor(avatarId: string): { key: string; theme: BoardTheme } | null {
+  const tier = (TIER_MAP as Record<string, number>)[avatarId];
+  if (tier === 4 && BOARD_THEMES[avatarId]) return { key: avatarId, theme: BOARD_THEMES[avatarId] };
+  if (tier === 2 || tier === 3) return { key: `tier${tier}`, theme: TIER_THEMES[`tier${tier}`] };
+  return null;
+}
+
+// 판에 넣을 CSS 변수. 테두리·구역 상징 그림은 assets/themes/<key>_frame.webp, <key>_emblem.webp
+export function themeVars(key: string, t: BoardTheme, base: string): Record<string, string> {
+  const v: Record<string, string> = { '--t-bg': t.bg, '--t-line': t.line, '--t-box': t.box, '--t-entry': t.entry, '--t-given': t.given, '--t-accent': t.accent };
+  if (t.art) { v['--t-emblem'] = `url(${base}assets/themes/${key}_emblem.webp)`; v['--t-frame'] = `url(${base}assets/themes/${key}_frame.webp)`; }
+  return v;
 }
