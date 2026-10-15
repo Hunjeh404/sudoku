@@ -426,3 +426,4 @@ textarea { resize: vertical; }
 .dex-card:not(.owned) .pt-img, .person.locked .person-portrait .pt-img { filter: grayscale(1); opacity: .75; }
 .dex-card:not(.owned) .pt-frame, .person.locked .person-portrait .pt-frame { filter: grayscale(1); opacity: .6; }
 .story-lock { background: var(--parchment); border: 1.5px dashed var(--gold-line); border-radius: var(--radius-s); padding: 8px 12px; font-size: 14px; }
+.bubble-note { display: block; margin-top: 4px; font-size: 13px; color: var(--ink-soft); }

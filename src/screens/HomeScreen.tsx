@@ -19,9 +19,10 @@ export function HomeScreen({ goSudoku, goFriends, goDex }: { goSudoku: () => voi
   const hestia = GUIDES[0];
 
   let line: string;
+  let note: string | null = null;
   if (q.completed_count === 0) line = `${hestia.line} 첫 판을 끝내면 첫 초상화를 골라 가질 수 있어요.`;
   else if (s.gifts.length) line = '선물 상자가 도착했어요! 열어서 초상화를 골라 보세요.';
-  else if (next) line = `다음 여정「${next.title}」까지 ${next.need - q.completed_count}판 남았어요. 보상: ${rewardText(next.reward)}`;
+  else if (next) { line = `다음 여정「${next.title}」까지 ${next.need - q.completed_count}판 남았어요.`; note = `보상: ${rewardText(next.reward)}`; }
   else line = '여정을 모두 마쳤어요. 순위표에서 이번 주 1등에 도전해 보세요.';
 
   return (
@@ -50,7 +51,7 @@ export function HomeScreen({ goSudoku, goFriends, goDex }: { goSudoku: () => voi
 
       <div className="guide-bubble">
         <Avatar id={hestia.id} size={56} />
-        <div><p><strong>{hestia.name}</strong> {line}</p>
+        <div><p><strong>{hestia.name}</strong> {line}{note && <small className="bubble-note">{note}</small>}</p>
           <button className="btn small primary" onClick={goSudoku}>스도쿠 하러 가기</button></div>
       </div>
 
