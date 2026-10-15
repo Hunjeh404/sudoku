@@ -236,17 +236,39 @@ async function solveAttempt(u: Awaited<ReturnType<typeof user>>, profile: string
     assert(acts.rows.some((x: any) => x.kind === 'clears' && x.payload.count === 10), 'clears');
     assert(acts.rows.some((x: any) => x.kind === 'points' && x.payload.points === 100), 'points ' + JSON.stringify(acts.rows));
   });
-  await check('순위: 통합·난이도별·이번 주, 상위 목록과 내 순위', async () => {
-    const all = await B.rpc('get_leaderboard', { p: pb, board: 'all', period: 'all' });
+  await check('순위: 통합·난이도별·오늘/이번 주/이번 달, 상위 목록과 내 순위, 누적은 없음', async () => {
+    const all = await B.rpc('get_leaderboard', { p: pb, board: 'all', period: 'month' });
     assert(all.rows[0].id === pe && all.rows.some((r: any) => r.id === pa) && all.me?.points === 31, 'all ' + JSON.stringify(all.me));
     assert(!JSON.stringify(all).includes('@'), 'no email');
     assert(all.rows[0].badge === 'lyre', 'badge in leaderboard');
-    const nine = await A.rpc('get_leaderboard', { p: pa, board: '9e', period: 'all' });
+    const today = await B.rpc('get_leaderboard', { p: pb, board: 'all', period: 'day' });
+    assert(today.me?.points === 31, 'day');
+    const nine = await A.rpc('get_leaderboard', { p: pa, board: '9e', period: 'month' });
     assert(nine.rows.length === 1 && nine.rows[0].id === pb && nine.me === null, 'nine ' + JSON.stringify(nine));
     await admin.query(`update public.score_events set created_at = now() - interval '30 days' where profile_id = $1`, [pb]);
     const week = await B.rpc('get_leaderboard', { p: pb, board: 'all', period: 'week' });
     assert(week.me === null && week.rows.every((r: any) => r.id !== pb), 'week');
-    await expectError('bad_board', () => A.rpc('get_leaderboard', { p: pa, board: '8', period: 'all' }));
+    assert((await B.rpc('get_leaderboard', { p: pb, board: 'all', period: 'month' })).me === null, 'month');
+    await expectError('bad_board', () => A.rpc('get_leaderboard', { p: pa, board: '8', period: 'week' }));
+    await expectError('bad_period', () => A.rpc('get_leaderboard', { p: pa, board: 'all', period: 'all' }));
+  });
+  await check('빨리 푼 순위: 난이도별, 힌트 없이 끝낸 판의 가장 빠른 시간', async () => {
+    await finish(E, pe, { size: 6, elapsed: 400 });
+    await finish(E, pe, { size: 6, elapsed: 150 });
+    await finish(A, pa, { size: 6, elapsed: 200 });
+    await finish(C, pc, { size: 6, elapsed: 90, hints: 1 });
+    const r = await A.rpc('get_leaderboard', { p: pa, board: '6', period: 'week', kind: 'speed' });
+    assert(r.rows.length === 2 && r.rows[0].id === pe && r.rows[0].sec === 150 && r.rows[0].games === 2 && r.me.rank === 2 && r.me.sec === 200, JSON.stringify(r));
+    await expectError('bad_board', () => A.rpc('get_leaderboard', { p: pa, board: 'all', period: 'week', kind: 'speed' }));
+  });
+  await check('같은 난이도로 새로 시작하면 새 판, 이어서 풀던 판은 그만둔 판', async () => {
+    const a1 = await A.rpc('start_attempt', { p: pa, board_size: 9, difficulty: 'hard' });
+    const a2 = await A.rpc('start_attempt', { p: pa, board_size: 9, difficulty: 'hard' });
+    assert(a1.id !== a2.id, 'new attempt');
+    assert((await A.rpc('get_attempt', { attempt: a1.id })).status === 'abandoned', 'old abandoned');
+    const act = (await A.rpc('get_state', { p: pa })).active.filter((x: any) => x.size === 9 && x.difficulty === 'hard');
+    assert(act.length === 1 && act[0].id === a2.id, 'one active');
+    await A.rpc('abandon_attempt', { attempt: a2.id });
   });
 
   console.log('친구·소식·이모티콘');

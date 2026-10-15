@@ -281,11 +281,11 @@ textarea { resize: vertical; }
 .journey-card small { color: var(--ink-soft); }
 
 /* ---------- 시트(창) ---------- */
-.sheet-backdrop { position: fixed; inset: 0; z-index: 150; background: rgba(58, 55, 57, .35); display: flex; align-items: flex-end; justify-content: center; }
+.sheet-backdrop { position: fixed; inset: 0; z-index: 150; overscroll-behavior: contain; background: rgba(58, 55, 57, .35); display: flex; align-items: flex-end; justify-content: center; }
 .sheet { width: 100%; max-width: 520px; max-height: 88dvh; display: flex; flex-direction: column; background: var(--paper); border-radius: var(--radius-l) var(--radius-l) 0 0; border: 1.5px solid var(--ink); border-bottom: 0; outline: none; }
 .sheet-head { display: flex; justify-content: space-between; align-items: center; padding: 8px 8px 0 20px; }
 .sheet-head h2 { font-size: 20px; }
-.sheet-body { overflow-y: auto; padding: 8px 20px calc(20px + env(safe-area-inset-bottom)); }
+.sheet-body { overflow-y: auto; overscroll-behavior: contain; padding: 8px 20px calc(20px + env(safe-area-inset-bottom)); }
 @media (min-width: 700px) { .sheet-backdrop { align-items: center; } .sheet { border-radius: var(--radius-l); border-bottom: 1.5px solid var(--ink); } }
 
 .journey { list-style: none; padding: 0; margin: 12px 0; display: grid; gap: 4px; }
@@ -416,8 +416,6 @@ textarea { resize: vertical; }
 
 /* ---------- 티어 테두리·보물 동그라미 ---------- */
 /* 금빛·별빛 테두리 그림이 오기 전 임시 색입히기 */
-.pt-frame.tint-gold { filter: sepia(1) saturate(4) hue-rotate(-12deg) brightness(1.08) contrast(1.05); }
-.pt-frame.tint-star { filter: grayscale(.4) hue-rotate(185deg) saturate(1.6) brightness(1.25) drop-shadow(0 0 2px rgba(255, 246, 200, .95)) drop-shadow(0 0 5px rgba(196, 180, 255, .7)); }
 .pt-badge { position: absolute; right: 0; bottom: 0; border-radius: 50%; background: var(--paper); box-shadow: 0 0 0 2px var(--paper), 0 1px 3px rgba(58, 55, 57, .35); z-index: 2; }
 .pt-badge.framed { box-shadow: none; background: transparent; }
 .pt-badge .pt-img { border-radius: 50%; }
@@ -427,3 +425,37 @@ textarea { resize: vertical; }
 .dex-card:not(.owned) .pt-frame, .person.locked .person-portrait .pt-frame { filter: grayscale(1); opacity: .6; }
 .story-lock { background: var(--parchment); border: 1.5px dashed var(--gold-line); border-radius: var(--radius-s); padding: 8px 12px; font-size: 14px; }
 .bubble-note { display: block; margin-top: 4px; font-size: 13px; color: var(--ink-soft); }
+
+/* ---------- 보물 꾸밈효과: 화면 위·아래 띠(그림이나 무늬)가 가운데 바탕색으로 스며듦. 움직임 없음 ---------- */
+.puzzle.has-fx { position: relative; isolation: isolate; background: var(--fx-bg); display: flex; flex-direction: column; }
+/* 남는 높이를 판 위·아래로 나눠 위쪽 그림도 보이게 */
+.has-fx .tablet { margin-top: auto; }
+.has-fx > :last-child { margin-bottom: auto; }
+.fx { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.fx-top, .fx-bottom { position: absolute; left: 0; right: 0; aspect-ratio: 4 / 1.8; }
+.fx-top { top: 0; -webkit-mask-image: linear-gradient(#000 40%, transparent); mask-image: linear-gradient(#000 40%, transparent); }
+.fx-bottom { bottom: 0; -webkit-mask-image: linear-gradient(transparent, #000 60%); mask-image: linear-gradient(transparent, #000 60%); }
+.has-fx .puzzle-head { margin-top: 6px; padding: 2px 10px 2px 2px; border-radius: 999px; background: color-mix(in srgb, var(--paper) 86%, transparent); backdrop-filter: blur(4px); }
+.fx-preview { position: relative; isolation: isolate; background: var(--fx-bg); width: 120px; height: 200px; border-radius: 14px; overflow: hidden; border: 1.5px solid var(--ink); flex: none; display: grid; place-items: center; }
+.fx-preview-board { width: 84px; height: 84px; border-radius: 4px; background: linear-gradient(135deg, var(--marble), #FAF4E6); border: 4px solid var(--gold-line); box-shadow: 0 3px 6px rgba(58, 55, 57, .2); }
+.fx-box { display: flex; gap: 14px; align-items: center; margin: 12px 0; padding: 12px; background: var(--paper); border-radius: var(--radius-m); }
+.fx-box p { margin: 0 0 6px; }
+.fx-box strong { font-family: var(--font-title); }
+
+/* ---------- 4티어 테마판: 색·선·구역마다 옅은 상징 ---------- */
+.board.themed {
+  background: var(--t-motif) 0 0 / calc(100% * var(--bc) / var(--n)) calc(100% * var(--br) / var(--n)) repeat, var(--t-bg);
+  border-color: var(--t-box);
+}
+.themed .cell { color: var(--t-entry); border-right-color: var(--t-line); border-bottom-color: var(--t-line); }
+.themed .cell.bR { border-right-color: var(--t-box); }
+.themed .cell.bB { border-bottom-color: var(--t-box); }
+.themed .cell.given { color: var(--t-given); }
+.themed .cell.peer { background: color-mix(in srgb, var(--t-accent) 14%, transparent); }
+.themed .cell.same { background: color-mix(in srgb, var(--t-accent) 34%, transparent); }
+.themed .cell.sel { background: color-mix(in srgb, var(--t-accent) 48%, transparent); box-shadow: inset 0 0 0 3px var(--t-box); }
+.themed .notes { color: color-mix(in srgb, var(--t-given) 70%, transparent); }
+.themed.dark .cell.bad, .themed.dark .bad-mark { color: #FF9C8C; text-decoration-color: #FF9C8C; }
+.themed.dark .cell.wrong::after { border-color: #FF9C8C; }
+.theme-preview { --size: 132px; flex: none; }
+.theme-preview .cell { cursor: default; }

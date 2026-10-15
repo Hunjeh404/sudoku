@@ -54,10 +54,14 @@ function Game() {
   const openLayer = () => history.pushState({ layer: true }, '');
   const closeLayer = () => { if (history.state?.layer) history.back(); };
 
+  const toastEl = toastMsg && <div className="toast" role="status">{toastMsg}</div>;
   if (attempt) return (
-    <PuzzleScreen key={attempt.id} attempt={attempt}
-      onExit={() => { setAttempt(null); closeLayer(); refresh(); }}
-      onComplete={(r) => { setAttempt(null); setResult(r); }} />
+    <>
+      <PuzzleScreen key={attempt.id} attempt={attempt}
+        onExit={() => { setAttempt(null); closeLayer(); refresh(); }}
+        onComplete={(r) => { setAttempt(null); setResult(r); }} />
+      {toastEl}
+    </>
   );
   if (result) return (
     <ResultScreen result={result} onHome={() => { setResult(null); closeLayer(); setTab('home'); window.scrollTo(0, 0); }}
@@ -92,7 +96,7 @@ function Game() {
       </nav>
       {sheet === 'settings' && <SettingsSheet onClose={() => setSheet(null)} />}
       {sheet === 'mail' && <MailSheet onClose={() => setSheet(null)} />}
-      {toastMsg && <div className="toast" role="status">{toastMsg}</div>}
+      {toastEl}
     </div>
   );
 }

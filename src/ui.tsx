@@ -5,8 +5,23 @@ import { TITLE_NAME, boardName } from './data/catalog';
 import TIER_MAP from './data/tiers.json';
 import { josa } from './lib/josa';
 
+// 팝업이 떠 있는 동안 뒤 화면이 끌려 움직이지 않게 문서를 제자리에 고정(팝업이 여러 겹이어도 한 번만)
+let locks = 0;
+let savedY = 0;
+function lockScroll() {
+  if (locks++ > 0) return;
+  savedY = window.scrollY;
+  Object.assign(document.body.style, { position: 'fixed', top: `-${savedY}px`, left: '0', right: '0', overflow: 'hidden' });
+}
+function unlockScroll() {
+  if (--locks > 0) return;
+  Object.assign(document.body.style, { position: '', top: '', left: '', right: '', overflow: '' });
+  window.scrollTo(0, savedY);
+}
+
 export function Sheet({ title, onClose, children, wide }: { title: string; onClose: () => void; children: ReactNode; wide?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => { lockScroll(); return unlockScroll; }, []);
   useEffect(() => {
     const prev = document.activeElement as HTMLElement | null;
     ref.current?.focus();
@@ -29,11 +44,10 @@ export function Sheet({ title, onClose, children, wide }: { title: string; onClo
 }
 
 // 티어별 테두리: 1티어 없음, 2티어 월계수, 3티어 금빛 월계수, 4티어 별빛 월계수, 보물(0)·빈칸 없음.
-// 금빛·별빛 그림이 오기 전까지는 월계수 그림에 색을 입혀 대신 쓴다(tint-*).
 const FRAME: Record<number, { src: string; cls: string }> = {
   2: { src: 'assets/ui/frame.webp', cls: '' },
-  3: { src: 'assets/ui/frame.webp', cls: ' tint-gold' },
-  4: { src: 'assets/ui/frame.webp', cls: ' tint-star' },
+  3: { src: 'assets/ui/frame_gold.webp', cls: '' },
+  4: { src: 'assets/ui/frame_star.webp', cls: '' },
 };
 export const tierOf = (id: string): number | null => (id ? (TIER_MAP as Record<string, number>)[id] ?? null : null);
 

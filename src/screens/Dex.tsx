@@ -9,6 +9,8 @@ import { StoriesPanel } from './Stories';
 import { Sheet, Spinner, ErrorLine, Avatar, tierOf } from '../ui';
 import { sfx } from '../lib/sound';
 import { josa } from '../lib/josa';
+import { TREASURE_FX, BOARD_THEMES, MEMO_GUARD_TEXT } from '../data/effects';
+import { FxPreview, ThemePreview } from '../fx';
 
 type Filter = 1 | 2 | 3 | 4 | 'mine';
 
@@ -154,6 +156,18 @@ function PersonSheet({ p, onClose }: { p: Person; onClose: () => void }) {
                 ? <button className="btn primary" onClick={buy} disabled={busy}>✦ {price}로 모으기</button>
                 : <span className="fine">✦ {price}. 별빛이 {price - s.balance} 더 필요해요.</span>)
               : <span className="fine"><IconLock size={14} aria-hidden /> 여정 {JOURNEY.find((j) => j.reward.tier === t)?.need}판에서 열려요</span>}
+          </div>
+        )}
+        {treasure && TREASURE_FX[p.id] && (
+          <div className="fx-box">
+            <FxPreview id={p.id} />
+            <div><p><strong>꾸밈효과</strong></p><p>프로필에 달면 스도쿠 화면이 바뀌어요. {TREASURE_FX[p.id].text}</p><p className="fine">{MEMO_GUARD_TEXT}</p></div>
+          </div>
+        )}
+        {BOARD_THEMES[p.id] && (
+          <div className="fx-box">
+            <ThemePreview id={p.id} />
+            <div><p><strong>테마판</strong></p><p>내 초상화로 쓰면 스도쿠 판이 바뀌어요. {BOARD_THEMES[p.id].text}</p></div>
           </div>
         )}
         {err && <ErrorLine msg={err} />}

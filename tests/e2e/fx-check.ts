@@ -1,0 +1,87 @@
+// 도감 팝업(꾸밈효과·테마판 안내, 뒤 화면 고정), 이어하기 경고, 순위 화면 확인. fx-shots.ts 다음에 실행(같은 계정)
+import { chromium } from 'playwright';
+import pg from 'pg';
+const OUT = process.env.OUT ?? '/tmp';
+const BASE = 'http://localhost:4173/sudoku/';
+const db = new pg.Client({ host: 'localhost', user: 'postgres', password: 'postgres', database: process.env.DB ?? 'olympus_e2e' });
+const ok = (c: unknown, m: string) => { if (!c) throw new Error(m); console.log('✓', m); };
+(async () => {
+  await db.connect();
+  const b = await chromium.launch();
+  const p = await b.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
+  p.on('pageerror', (e) => console.log('pageerror', e.message));
+  await p.goto(BASE);
+  await p.getByRole('button', { name: /구글 계정으로 시작/ }).click();
+  await p.fill('#email', 'fx@test'); await p.click('#go');
+  await p.waitForSelector('.me-card');
+  const pid = (await db.query(`select id from public.profiles where nickname = '꾸밈'`)).rows[0].id;
+  await db.query(`update public.profiles set badge = 'deucalion_ark', avatar_id = 'zeus' where id = $1`, [pid]);
+  await p.goto(BASE); await p.waitForSelector('.me-card'); await p.waitForTimeout(600);
+  await p.screenshot({ path: `${OUT}/c-home.png` });
+  // 도감: 보물 팝업
+  await p.locator('.tabbar').getByRole('button', { name: '도감', exact: true }).click();
+  await p.getByRole('tab', { name: '보물' }).click();
+  await p.mouse.wheel(0, 600); await p.waitForTimeout(300);
+  const y0 = await p.evaluate(() => window.scrollY);
+  ok(y0 > 0, '도감을 조금 내린 상태 ' + y0);
+  const card = p.locator('.dex-card').filter({ hasText: '바람 자루' });
+  await card.scrollIntoViewIfNeeded();
+  const y1 = await p.evaluate(() => window.scrollY);
+  await card.click();
+  await p.waitForSelector('.fx-box'); await p.waitForTimeout(500);
+  const top0 = await p.locator('.page-title').evaluate((e) => e.getBoundingClientRect().top);
+  await p.mouse.move(195, 300); await p.mouse.wheel(0, 800); await p.waitForTimeout(300);
+  await p.mouse.move(195, 30); await p.mouse.wheel(0, 800); await p.waitForTimeout(300);
+  const top1 = await p.locator('.page-title').evaluate((e) => e.getBoundingClientRect().top);
+  ok(top0 === top1, `팝업 중 뒤 도감이 안 움직임 (${top0} → ${top1})`);
+  await p.locator('.sheet-body').evaluate((e) => (e.scrollTop = 0));
+  await p.screenshot({ path: `${OUT}/c-dex-treasure.png` });
+  await p.getByRole('button', { name: '닫기' }).click(); await p.waitForTimeout(300);
+  const y2 = await p.evaluate(() => window.scrollY);
+  ok(Math.abs(y2 - y1) < 2, `닫으면 원래 스크롤 위치로 (${y1} → ${y2})`);
+  await p.locator('.dex-card').filter({ hasText: '대홍수' }).first().click().catch(() => {});
+  await p.keyboard.press('Escape');
+  // 4티어 테마판 안내
+  await p.getByRole('tab', { name: '초상화' }).click();
+  await p.getByPlaceholder('이름으로 찾기').fill('닉스');
+  await p.locator('.dex-card').first().click();
+  await p.waitForSelector('.theme-preview'); await p.waitForTimeout(400);
+  await p.locator('.fx-box').scrollIntoViewIfNeeded();
+  await p.screenshot({ path: `${OUT}/c-dex-theme.png` });
+  await p.keyboard.press('Escape');
+  // 이어하기 경고
+  await db.query(`update public.puzzle_attempts set status = 'abandoned' where profile_id = $1 and status = 'active'`, [pid]);
+  await p.goto(BASE); await p.waitForSelector('.me-card');
+  await p.locator('.tabbar').getByRole('button', { name: '스도쿠', exact: true }).click();
+  await p.locator('.size-card.s6').click();
+  await p.waitForSelector('.board .cell');
+  const first = (await db.query(`select id from public.puzzle_attempts where profile_id = $1 and status = 'active'`, [pid])).rows[0].id;
+  await p.getByRole('button', { name: '나가기' }).click();
+  await p.waitForSelector('text=이어서 풀기');
+  await p.locator('.size-card.s6').click();
+  await p.waitForSelector('text=이어서 풀던 판이 있어요');
+  await p.screenshot({ path: `${OUT}/c-confirm.png` });
+  await p.getByRole('button', { name: '새 판으로 시작' }).click();
+  await p.waitForSelector('.board .cell'); await p.waitForTimeout(500);
+  const st = (await db.query(`select status from public.puzzle_attempts where id = $1`, [first])).rows[0].status;
+  ok(st === 'abandoned', '새 판으로 시작하면 이어서 풀던 판은 그만둔 판');
+  // 보물 메모 막기
+  const r = (await db.query(`select c.givens from public.puzzle_attempts a join public.puzzle_catalog c on c.id = a.puzzle_id where a.profile_id = $1 and a.status = 'active'`, [pid])).rows[0];
+  const g = r.givens as string;
+  const empty = [...g].findIndex((ch) => ch === '.');
+  const row = Math.floor(empty / 6);
+  const blocked = [...g.slice(row * 6, row * 6 + 6)].find((ch) => ch !== '.')!;
+  await p.locator('.board .cell').nth(empty).click();
+  await p.getByRole('button', { name: '메모', exact: true }).click();
+  await p.getByRole('button', { name: `${blocked} 넣기(메모)` }).click();
+  await p.waitForTimeout(400); await p.screenshot({ path: `${OUT}/c-memo-debug.png` });
+  await p.waitForSelector('text=메모하지 않았어요', { timeout: 3000 });
+  ok((await p.locator('.board .cell').nth(empty).locator('.notes').count()) === 0, `시작 숫자 ${blocked}는 메모 안 됨`);
+  await p.screenshot({ path: `${OUT}/c-memo.png` });
+  await p.getByRole('button', { name: '나가기' }).click();
+  // 순위
+  await p.locator('.tabbar').getByRole('button', { name: '순위', exact: true }).click();
+  await p.getByRole('tab', { name: '빨리 푼 순위' }).click(); await p.waitForTimeout(800);
+  await p.screenshot({ path: `${OUT}/c-rank.png` });
+  await b.close(); await db.end();
+})().catch((e) => { console.log('✗', e.message); process.exit(1); });

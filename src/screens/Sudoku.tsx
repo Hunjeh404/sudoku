@@ -12,6 +12,9 @@ import { REWARD_RULES, HINT_MAX, boardName, rewardText, STORY_EVERY } from '../d
 import { nextJourney } from './Journey';
 import { Sheet, Starlight, ErrorLine, Spinner, Avatar, mmss, secText } from '../ui';
 import { sfx } from '../lib/sound';
+import { TREASURE_FX, BOARD_THEMES, themeVars } from '../data/effects';
+import { FxLayers } from '../fx';
+import { josa } from '../lib/josa';
 
 const DIFF_KO: Record<string, string> = { intro: '입문', easy: '쉬움', medium: '보통', hard: '어려움' };
 const PICTURE = ['lyre', 'cornucopia', 'olive_tree', 'pandora_jar'];
@@ -24,7 +27,15 @@ export function SudokuSelect({ onStart }: { onStart: (a: AttemptData) => void })
   const [busy, setBusy] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [tutorial, setTutorial] = useState(false);
-  const start = async (size: number, difficulty: string) => {
+  const [confirm, setConfirm] = useState<{ size: number; difficulty: string; id: string } | null>(null);
+  // 같은 크기·난이도의 이어서 풀던 판이 있으면 새로 시작하기 전에 묻는다(새로 시작하면 그 판은 사라짐)
+  const start = (size: number, difficulty: string) => {
+    const old = state!.active.find((a) => a.size === size && a.difficulty === difficulty);
+    if (old) setConfirm({ size, difficulty, id: old.id });
+    else startNew(size, difficulty);
+  };
+  const startNew = async (size: number, difficulty: string) => {
+    setConfirm(null);
     setBusy(`${size}${difficulty}`); setErr(null);
     try { onStart(await rpc<AttemptData>('start_attempt', { p: profileId, board_size: size, difficulty })); }
     catch (e) { setErr((e as ApiError).message); }
@@ -75,6 +86,15 @@ export function SudokuSelect({ onStart }: { onStart: (a: AttemptData) => void })
       </ul>
       {err && <ErrorLine msg={err} />}
       <p className="fine">시간 제한과 실수 제한은 없어요. 힌트 없이 끝낸 판은 푼 시간이 내 기록이 돼요. 힌트는 한 판에 {HINT_MAX}번까지 쓸 수 있고, 한 번 쓸 때마다 받을 별빛이 10%씩 줄어요.</p>
+      {confirm && (
+        <Sheet title="이어서 풀던 판이 있어요" onClose={() => setConfirm(null)}>
+          <p>{confirm.size}×{confirm.size} {DIFF_KO[confirm.difficulty]} 판을 풀다가 멈췄어요. 새로 시작하면 이어서 풀던 판은 처음으로 돌아가지 않고 사라져요. 새 판으로 시작할까요?</p>
+          <div className="stack">
+            <button className="btn" onClick={() => { const id = confirm.id; setConfirm(null); resume(id); }}>이어서 풀기</button>
+            <button className="btn primary" onClick={() => startNew(confirm.size, confirm.difficulty)}>새 판으로 시작</button>
+          </div>
+        </Sheet>
+      )}
       {tutorial && (
         <Sheet title="4×4 스도쿠 규칙" onClose={() => setTutorial(false)}>
           <ol className="rules">
@@ -95,8 +115,11 @@ interface Snap { board: Board; notes: Notes }
 type SaveStatus = 'saved' | 'saving' | 'offline' | 'conflict';
 
 export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: AttemptData; onExit: () => void; onComplete: (r: any) => void }) {
-  const { session, profileId, settings, toast } = useGame();
+  const { session, profileId, settings, toast, state } = useGame();
   const n = attempt.size;
+  const badge = state?.profile.badge || '';
+  const fx = TREASURE_FX[badge];
+  const theme = BOARD_THEMES[state?.profile.avatar_id ?? ''];
   const g = geometry(n);
   const givens = useMemo(() => parseBoard(attempt.givens), [attempt.givens]);
   const solution = useMemo(() => countSolutions(givens, n, 2).solution!, [givens, n]);
@@ -186,6 +209,11 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
     const notes: Notes = { ...cur.notes };
     if (memo) {
       if (board[sel]) return;
+      // 보물을 달았으면: 같은 줄·칸·구역에 처음부터 있던 숫자는 메모에 넣지 않는다(지우기는 된다)
+      if (badge && !(notes[sel] ?? []).includes(d) && g.peers[sel].some((p) => givens[p] === d)) {
+        toast(`같은 줄이나 구역에 처음부터 ${josa(sym(d), '이/가')} 있어서 메모하지 않았어요`);
+        return;
+      }
       const s = new Set(notes[sel] ?? []);
       s.has(d) ? s.delete(d) : s.add(d);
       notes[sel] = [...s].sort();
@@ -295,7 +323,8 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
   const statusText = { saved: '저장됨', saving: '저장 중', offline: '연결 끊김, 기기에 보관 중', conflict: '다른 기기와 충돌' }[status];
 
   return (
-    <div className={`puzzle n${n}`}>
+    <div className={`puzzle n${n}${fx ? ' has-fx' : ''}`} style={fx ? { ['--fx-bg' as any]: fx.bg } : undefined}>
+      <FxLayers id={badge} />
       <header className="puzzle-head">
         <button className="icon-btn" aria-label="나가기" onClick={async () => { await pushServer(); await rpc('pause_attempt', { attempt: attempt.id }).catch(() => {}); onExit(); }}><IconArrowLeft /></button>
         <div className="grow"><strong>{n}×{n} {DIFF_KO[attempt.difficulty]}</strong>
@@ -304,7 +333,8 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
       </header>
 
       <div className="tablet">
-      <div className="board" role="grid" aria-label={`${n}×${n} 스도쿠 판`} style={{ ['--n' as any]: n, ['--br' as any]: g.boxR, ['--bc' as any]: g.boxC }}>
+      <div className={`board${theme ? ' themed' : ''}${theme?.dark ? ' dark' : ''}`} role="grid" aria-label={`${n}×${n} 스도쿠 판`}
+        style={{ ['--n' as any]: n, ['--br' as any]: g.boxR, ['--bc' as any]: g.boxC, ...(theme ? themeVars(theme) : {}) }}>
         {cur.board.map((v, i) => {
           const r = rowOf(n, i), c = colOf(n, i);
           const cls = ['cell'];

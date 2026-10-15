@@ -1,6 +1,6 @@
 // 서비스워커: 그림·음악·데이터·해시된 빌드 파일은 기기에 저장해 두고(캐시 우선),
 // 화면 틀(index.html)과 서버 요청(supabase)은 항상 네트워크로 받는다.
-const VERSION = 'v4'; // v4: 집 꾸미기 제거, 이야기책 16장
+const VERSION = 'v5'; // v5: 금빛·별빛 테두리 그림, 보물 꾸밈효과·테마판
 const ASSET_CACHE = `olympus-assets-${VERSION}`;
 
 self.addEventListener('install', (e) => self.skipWaiting());
