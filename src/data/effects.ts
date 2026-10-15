@@ -1,46 +1,25 @@
 // 보물 꾸밈효과(스도쿠 화면 배경)와 4티어 초상화 테마판.
-// 보물: 이야기책에 그 보물 장면이 있으면 그 그림을 화면 위·아래에 나눠 깔고, 없으면 코드로 그린 무늬를 깐다. 움직임은 없다.
+// 보물: 이야기책에 그 보물 장면이 있으면 그 그림을 화면 위·아래에 나눠 깐다.
+//       그림이 없는 보물은 판 안에서 숫자 모양·입력할 때 짧은 효과·칸 표시·다 채웠을 때 표시를 바꾼다(styles.css의 .tfx-<id>).
 // 4티어: 내 초상화로 쓰면 판의 색·선·구역마다 옅은 상징 무늬가 바뀐다.
 
 const svg = (w: number, h: number, body: string) =>
   `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}' viewBox='0 0 ${w} ${h}'>${body}</svg>`)}")`;
 
+// 판 효과가 언제 나오는지: 늘 보임(look), 숫자를 넣을 때(enter), 지울 때(erase), 되돌림·다시(undo),
+// 줄을 다 채울 때(line), 구역을 다 채웠을 때(box), 숫자를 판에 다 놓았을 때 숫자 버튼(pad), 소리(sound)
+export type BoardFxKind = 'look' | 'enter' | 'erase' | 'undo' | 'line' | 'box' | 'pad' | 'sound';
+
 export interface TreasureFx {
   text: string; // 도감에 보여 줄 한 줄
-  bg: string; // 화면 바탕색
   scene?: string; // 이야기책 그림(assets/scenes/<scene>.webp)
-  top?: string; // 코드 꾸밈: 위쪽 띠 background 값
-  bottom?: string; // 코드 꾸밈: 아래쪽 띠 background 값
+  bg?: string; // 그림을 깔 때 화면 바탕색
+  board?: BoardFxKind; // 그림이 없는 보물의 판 효과
 }
 
-const scene = (id: string, bg: string, what: string): TreasureFx => ({ scene: id, bg, text: `이야기책의 「${what}」 그림이 화면 위아래에 펼쳐져요.` });
+const scene = (id: string, bg: string, what: string): TreasureFx => ({ scene: id, bg, text: `이야기책의 「${what}」 그림이 스도쿠 화면 위아래에 펼쳐져요.` });
 
-// 같은 무늬를 위아래에 쓰는 경우
-const both = (text: string, bg: string, layer: string): TreasureFx => ({ text, bg, top: layer, bottom: layer });
-
-const SCALES = svg(24, 14, "<path d='M0 14a12 12 0 0 1 24 0M-12 7a12 12 0 0 1 24 0M12 7a12 12 0 0 1 24 0' fill='none' stroke='#8D9AA8' stroke-width='1.3'/>");
-const HEARTS = svg(64, 64, "<path d='M16 22c-4-6-12-2-8 5l8 7 8-7c4-7-4-11-8-5z' fill='#E7B44C' opacity='.75'/><path d='M48 50c-3-4.5-9-1.5-6 4l6 5 6-5c3-5.5-3-8.5-6-4z' fill='#8E8A92' opacity='.6'/>");
-const ROSE_BAND = svg(80, 40, "<path d='M0 20q20-14 40 0t40 0' fill='none' stroke='#C98A8A' stroke-width='3'/><circle cx='20' cy='13' r='5' fill='#E5A3A8'/><circle cx='60' cy='27' r='5' fill='#E5A3A8'/><circle cx='20' cy='13' r='2' fill='#B8606E'/><circle cx='60' cy='27' r='2' fill='#B8606E'/>");
-const GRAPES = svg(56, 52, "<path d='M0 8q14 8 28 0t28 0' fill='none' stroke='#7C9A5A' stroke-width='2'/><path d='M14 10l-6 8 8 2z' fill='#8FB070'/><g fill='#9C6BA8'><circle cx='38' cy='16' r='4'/><circle cx='46' cy='16' r='4'/><circle cx='42' cy='23' r='4'/><circle cx='34' cy='23' r='4'/><circle cx='50' cy='23' r='4'/><circle cx='38' cy='30' r='4'/><circle cx='46' cy='30' r='4'/><circle cx='42' cy='37' r='4'/></g>");
-const THREAD = svg(160, 36, "<path d='M0 18c40-16 40 16 80 0s40-16 80 0' fill='none' stroke='#C9A43A' stroke-width='2'/><path d='M0 26c40-12 40 12 80 0s40-12 80 0' fill='none' stroke='#E2C877' stroke-width='1.2'/>");
-const HERBS = svg(48, 48, "<path d='M12 40V20M12 28l-6-5M12 24l6-6' stroke='#6E9A6E' stroke-width='1.6' fill='none'/><ellipse cx='6' cy='22' rx='4' ry='2.2' fill='#93BE8E' transform='rotate(35 6 22)'/><ellipse cx='18' cy='17' rx='4' ry='2.2' fill='#93BE8E' transform='rotate(-40 18 17)'/><circle cx='36' cy='12' r='2' fill='#A9C9A0'/>");
-const PEACOCK = svg(40, 48, "<ellipse cx='20' cy='24' rx='12' ry='16' fill='#7FBFB5' opacity='.55'/><ellipse cx='20' cy='26' rx='7' ry='9' fill='#3F7FA0' opacity='.7'/><ellipse cx='20' cy='27' rx='3.5' ry='4.5' fill='#D9B44A'/>");
-const REEDS = svg(36, 120, "<g stroke='#8BA86A' stroke-width='3' stroke-linecap='round'><path d='M6 120V40'/><path d='M16 120V20'/><path d='M27 120V55'/></g><g fill='#A88A5A'><rect x='13.5' y='12' width='5' height='14' rx='2.5'/></g>");
-const WAVES_SOUND = svg(90, 60, "<g fill='none' stroke='#9C8CB8' stroke-width='1.6'><path d='M10 30a10 10 0 0 1 0 0'/><path d='M14 20a12 12 0 0 1 0 20'/><path d='M22 12a20 20 0 0 1 0 36'/><path d='M30 4a28 28 0 0 1 0 52'/></g><circle cx='8' cy='30' r='3' fill='#7E8F6A'/>");
-const STAR_DOTS = svg(70, 70, "<g fill='#F3E6B4'><circle cx='8' cy='12' r='1.4'/><circle cx='40' cy='6' r='1'/><circle cx='58' cy='30' r='1.6'/><circle cx='22' cy='44' r='1'/><circle cx='50' cy='58' r='1.2'/></g>");
-const CROWN = svg(220, 90, "<g fill='#F6E7A8'><circle cx='30' cy='60' r='3'/><circle cx='60' cy='38' r='3.4'/><circle cx='95' cy='26' r='3'/><circle cx='125' cy='24' r='4.6'/><circle cx='155' cy='30' r='3'/><circle cx='182' cy='46' r='3.4'/><circle cx='200' cy='68' r='3'/></g>");
-const FLETCH = svg(28, 28, "<path d='M4 18l10-8 10 8M4 26l10-8 10 8' fill='none' stroke='#A8714A' stroke-width='1.8'/>");
-const STITCH = svg(40, 20, "<path d='M0 10h40' stroke='#7A5A3A' stroke-width='2' stroke-dasharray='6 5'/>");
-const STONES = svg(80, 40, "<g fill='#B8B2A6'><rect x='2' y='8' width='34' height='14' rx='7'/><rect x='42' y='4' width='26' height='12' rx='6'/><rect x='18' y='26' width='30' height='12' rx='6'/><rect x='56' y='22' width='22' height='14' rx='7'/></g>");
-const ASH = svg(60, 40, "<path d='M4 30q26-14 52-16' stroke='#7C8F5A' stroke-width='1.6' fill='none'/><g fill='#A5B887'><ellipse cx='16' cy='22' rx='5' ry='2.4' transform='rotate(-50 16 22)'/><ellipse cx='20' cy='28' rx='5' ry='2.4' transform='rotate(40 20 28)'/><ellipse cx='32' cy='17' rx='5' ry='2.4' transform='rotate(-50 32 17)'/><ellipse cx='36' cy='24' rx='5' ry='2.4' transform='rotate(40 36 24)'/><ellipse cx='50' cy='13' rx='5' ry='2.4' transform='rotate(-20 50 13)'/></g>");
-const GRAIN = svg(120, 30, "<g fill='none' stroke='#C2A27E' stroke-width='1.2'><path d='M0 8c30-6 60 6 120 0'/><path d='M0 18c40 6 70-8 120 2'/><path d='M0 27c30-4 80 4 120-2'/></g>");
-const SWIRL = svg(90, 60, "<g fill='none' stroke='#8FB3CC' stroke-width='1.8' stroke-linecap='round'><path d='M6 30h34c10 0 12-12 4-14s-10 8-4 8'/><path d='M50 46h30c8 0 10-10 3-11'/></g>");
-const COINS = svg(60, 50, "<g fill='#C49A52' stroke='#8C6A2A' stroke-width='1'><circle cx='14' cy='14' r='5'/><circle cx='44' cy='34' r='4'/></g>");
-const RIVER = svg(80, 24, "<path d='M0 12q20-10 40 0t40 0' fill='none' stroke='#4E7C80' stroke-width='2.2'/>");
-const RINGS = svg(70, 70, "<g fill='none' stroke='#B08A4A' stroke-width='1.4'><circle cx='35' cy='35' r='6'/><circle cx='35' cy='35' r='14' opacity='.7'/><circle cx='35' cy='35' r='22' opacity='.45'/></g>");
-const BELT = svg(40, 40, "<rect y='12' width='40' height='16' fill='#B9845A'/><circle cx='20' cy='20' r='4' fill='#E2C25E'/><path d='M0 12h40M0 28h40' stroke='#8C5E3A' stroke-width='1.5'/>");
-const HILL = svg(400, 160, "<path d='M0 160L0 150Q200 120 400 30L400 160z' fill='#C9C2B2'/><circle cx='300' cy='62' r='18' fill='#9C9488'/>");
-const MIST = 'radial-gradient(60% 50% at 20% 60%, rgba(214,200,232,.9), transparent 70%), radial-gradient(50% 45% at 75% 40%, rgba(232,220,240,.95), transparent 70%), radial-gradient(40% 40% at 50% 80%, rgba(200,188,226,.8), transparent 70%)';
+const fx = (board: BoardFxKind, text: string): TreasureFx => ({ board, text });
 
 export const TREASURE_FX: Record<string, TreasureFx> = {
   // 이야기책 그림이 있는 보물
@@ -85,36 +64,31 @@ export const TREASURE_FX: Record<string, TreasureFx> = {
   penelope_shroud: scene('c16-06', '#E4E5EE', '베를 짜고 몰래 푸는 페넬로페'),
   odysseus_bow: scene('c16-07', '#E8EAEE', '활시위를 당기는 오디세우스'),
 
-  // 그림이 없는 보물: 코드 무늬(움직임 없음)
-  aegis: both('은빛 비늘 무늬가 화면 위아래를 지켜 줘요.', '#E6EAEE', `${SCALES} 0 0 / 24px 14px`),
-  helm_darkness: { text: '화면 위아래가 어스름한 그림자에 잠겨요.', bg: '#E4E0EA', top: 'linear-gradient(#3B3348, #6B5F7E 55%, #A99CBC)', bottom: 'linear-gradient(#A99CBC, #6B5F7E 45%, #3B3348)' },
-  eros_arrows: both('금빛 하트와 잿빛 하트가 흩어져 있어요.', '#F8E6EA', `${HEARTS} 0 0 / 64px 64px`),
-  cestus: both('장밋빛 띠가 화면 위아래를 감싸요.', '#F6E4E0', `${ROSE_BAND} 0 50% / 80px 40px repeat-x`),
-  thyrsus: { text: '포도 덩굴과 포도송이가 위아래에 매달려요.', bg: '#EEE6EE', top: `${GRAPES} 0 0 / 56px 52px repeat-x, linear-gradient(#E2D3E4, #EEE6EE)`, bottom: `${GRAPES} 0 100% / 56px 52px repeat-x, linear-gradient(#EEE6EE, #E2D3E4)` },
-  fate_thread: both('금빛 운명의 실이 화면을 가로질러 흘러가요.', '#F4EEDF', `${THREAD} 0 0 / 160px 36px`),
-  asclepius_rod: both('약초 잎이 싱그럽게 돋아나요.', '#E6F0E8', `${HERBS} 0 0 / 48px 48px`),
-  twin_bows: { text: '위에는 아폴론의 해, 아래에는 아르테미스의 달이 떠요.', bg: '#EEEDEA',
-    top: 'radial-gradient(circle at 22% 34%, #F6D46A 0 26px, rgba(246,212,106,.35) 27px 52px, transparent 53px), linear-gradient(#F7E4B0, #EEEDEA)',
-    bottom: 'radial-gradient(circle at 78% 62%, #EEF2F8 0 22px, transparent 23px), radial-gradient(circle at 74% 60%, #C9D4E4 0 26px, transparent 27px), linear-gradient(#EEEDEA, #C3CEDE)' },
-  golden_throne: both('헤라의 공작 깃털 무늬가 펼쳐져요.', '#E3EEEC', `${PEACOCK} 0 0 / 40px 48px`),
-  pan_pipes: { text: '아래에서 갈대숲이 자라나요.', bg: '#ECF0E2', top: 'linear-gradient(#D9E4C4, #ECF0E2)', bottom: `${REEDS} 0 100% / 36px 120px repeat-x, linear-gradient(#ECF0E2, #DCE6C8)` },
-  athena_aulos: both('피리 소리가 물결처럼 퍼져요.', '#ECE8F0', `${WAVES_SOUND} 0 0 / 90px 60px`),
-  ariadne_crown: { text: '밤하늘에 아리아드네의 별 왕관이 떠요.', bg: '#E6E8F0',
-    top: `${CROWN} 50% 30% / 220px 90px no-repeat, ${STAR_DOTS} 0 0 / 70px 70px, linear-gradient(#262B4E, #4A5080 60%, #9AA0C4)`,
-    bottom: `${STAR_DOTS} 0 0 / 70px 70px, linear-gradient(#9AA0C4, #4A5080 40%, #262B4E)` },
-  heracles_bow: both('화살 깃 무늬가 줄지어 있어요.', '#F0E9DE', `${FLETCH} 0 0 / 28px 28px`),
-  kibisis: { text: '가죽 자루처럼 바느질 땀이 둘러져요.', bg: '#EFE4D6',
-    top: `${STITCH} 0 85% / 40px 20px repeat-x, linear-gradient(#B98E64, #D2B48E)`, bottom: `${STITCH} 0 15% / 40px 20px repeat-x, linear-gradient(#D2B48E, #B98E64)` },
-  aegeus_sword: { text: '바닥에 단단한 바위 돌이 깔려요.', bg: '#ECEAE5', top: 'linear-gradient(#D8D3C8, #ECEAE5)', bottom: `${STONES} 0 0 / 80px 40px, linear-gradient(#ECEAE5, #D3CDC0)` },
-  pelian_spear: both('물푸레나무 잎이 위아래에 드리워요.', '#E9EEE3', `${ASH} 0 0 / 60px 40px`),
-  palladium: both('오래된 나뭇결 무늬가 은은하게 비쳐요.', '#F0E6D8', `${GRAIN} 0 0 / 120px 30px, linear-gradient(#E7D6BE, #E7D6BE)`),
-  wind_bag: both('바람 소용돌이 무늬가 불어와요.', '#E5EEF4', `${SWIRL} 0 0 / 90px 60px`),
-  charon_obol: { text: '저승 강물 위에 작은 동전이 떠 있어요.', bg: '#E3E8E8', top: `${COINS} 0 0 / 60px 50px`, bottom: `${RIVER} 0 0 / 80px 24px, linear-gradient(#C9D6D6, #7FA0A2)` },
-  bronze_rattle: both('청동 딸랑이 소리가 동그랗게 퍼져요.', '#F1E8DA', `${RINGS} 0 0 / 70px 70px`),
-  hippolyta_belt: { text: '아마존 여왕의 허리띠가 위아래를 둘러요.', bg: '#F2E6DC', top: `${BELT} 0 70% / 40px 40px repeat-x`, bottom: `${BELT} 0 30% / 40px 40px repeat-x` },
-  golden_cup: { text: '헬리오스의 노을빛이 위아래를 물들여요.', bg: '#F6EADA', top: 'linear-gradient(#F2A65E, #F6CF86 55%, #F6EADA)', bottom: 'linear-gradient(#F6EADA, #F4C27A 50%, #E8925A)' },
-  sisyphus_stone: { text: '언덕 위에 동그란 바위가 놓여 있어요.', bg: '#EEEBE4', top: 'linear-gradient(#DCE6EE, #EEEBE4)', bottom: `${HILL} 100% 100% / 100% 100% no-repeat` },
-  beauty_box: both('잠의 안개가 몽글몽글 피어올라요.', '#EEE8F2', MIST),
+  // 그림이 없는 보물: 판 효과(움직임은 0.5초 안팎으로 한 번만)
+  cestus: fx('look', '내가 넣은 숫자가 장밋빛이 돼요.'),
+  twin_bows: fx('look', '내가 넣은 숫자 중 홀수는 금빛, 짝수는 은빛이 돼요.'),
+  golden_throne: fx('look', '처음부터 있던 숫자가 금빛 굵은 글씨가 돼요.'),
+  palladium: fx('look', '처음부터 있던 숫자 칸에 나뭇결이 옅게 깔려요.'),
+  kibisis: fx('look', '메모 숫자가 작은 동그라미 안에 담겨 또렷해져요.'),
+  beauty_box: fx('look', '메모 숫자가 연보라색 둥근 글씨가 돼요.'),
+  eros_arrows: fx('enter', '숫자를 넣으면 칸 위로 작은 하트가 떠올랐다 사라져요.'),
+  bronze_rattle: fx('enter', '숫자를 넣으면 칸에서 동그란 물결이 한 번 퍼져요.'),
+  wind_bag: fx('enter', '숫자를 넣으면 칸에서 바람 줄기가 옆으로 흩어져요.'),
+  helm_darkness: fx('enter', '넣은 숫자가 투명한 데서 천천히 나타나요.'),
+  aegeus_sword: fx('enter', '넣은 숫자가 아래에서 위로 살짝 올라오며 나타나요.'),
+  asclepius_rod: fx('erase', '지우기를 누르면 그 칸이 연두빛으로 한 번 반짝여요.'),
+  sisyphus_stone: fx('undo', '되돌림이나 다시를 누르면 바뀐 칸이 회색으로 한 번 깜빡여요.'),
+  pan_pipes: fx('sound', '숫자마다 소리 높이가 달라요(1은 도, 2는 레…). 소리를 켰을 때만 들려요.'),
+  aegis: fx('look', '고른 칸 테두리가 은빛 이중선이 돼요.'),
+  pelian_spear: fx('look', '고른 칸 네 모서리에 창끝 꺾쇠가 붙어요.'),
+  heracles_bow: fx('look', '고른 칸의 가로줄과 세로줄이 조준선처럼 진하게 보여요.'),
+  fate_thread: fx('look', '같은 숫자를 강조할 때 그 숫자들 아래에 금빛 밑줄이 그어져요.'),
+  golden_cup: fx('look', '같은 숫자 강조 색이 노을빛 주황이 돼요.'),
+  hippolyta_belt: fx('look', '굵은 구역 선이 가죽띠 색 이중선이 돼요.'),
+  athena_aulos: fx('line', '가로줄이나 세로줄 하나를 다 채우면 그 줄이 한 번 은은하게 빛나요.'),
+  thyrsus: fx('box', '구역 하나를 다 채우면 그 구역 모서리에 포도잎이 생겨요.'),
+  ariadne_crown: fx('pad', '숫자 하나를 판에 다 놓으면 그 숫자 버튼에 작은 별이 붙어요.'),
+  charon_obol: fx('pad', '숫자 하나를 판에 다 놓으면 그 숫자 버튼이 금화에서 은화로 바뀌어요.'),
 };
 
 export const MEMO_GUARD_TEXT = '보물을 달면 처음부터 있던 숫자와 겹치는 메모는 들어가지 않아요.';
