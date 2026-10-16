@@ -1,6 +1,6 @@
 // 서비스워커: 그림·음악·데이터·해시된 빌드 파일은 기기에 저장해 두고(캐시 우선),
 // 화면 틀(index.html)과 서버 요청(supabase)은 항상 네트워크로 받는다.
-const VERSION = 'v13'; // v13: 걸린 시간은 시작~끝 전부
+const VERSION = 'v14'; // v14: 신화 카드 그림
 const ASSET_CACHE = `olympus-assets-${VERSION}`;
 
 self.addEventListener('install', (e) => self.skipWaiting());

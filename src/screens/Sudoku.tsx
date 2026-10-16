@@ -78,7 +78,7 @@ export function SudokuSelect({ onStart }: { onStart: (a: AttemptData) => void })
       <h2 className="sub">새 문제</h2>
       <ul className="size-list">
         {choices.map(([s, d, label]) => (
-          <li key={label}><button className={`size-card s${s}`} onClick={() => start(s, d)} disabled={!!busy}>
+          <li key={label}><button className={`size-card s${s}${d === 'diag' ? ' diag' : ''}`} onClick={() => start(s, d)} disabled={!!busy}>
             <span className="size-mini" aria-hidden>{Array.from({ length: s === 9 ? 9 : s }, (_, i) => <i key={i} />)}</span>
             <strong>{label}{state!.records[`${s}:${d}`] && <small className="best">내 기록 {mmss(state!.records[`${s}:${d}`])}</small>}</strong><Starlight value={amount(s, d)} />
             {busy === `${s}${d}` && <Spinner label="문제 받는 중" />}

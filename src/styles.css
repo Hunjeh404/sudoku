@@ -163,6 +163,13 @@ textarea { resize: vertical; }
 .size-mini i { width: 8px; height: 8px; background: var(--lav); border-radius: 1px; }
 .s4 .size-mini { grid-template-columns: repeat(2, 8px); } .s4 .size-mini i { background: var(--mint); }
 .s6 .size-mini i { background: var(--sky); }
+/* 신화(대각선) 카드: 은하수 돌판, 밝은 글씨 */
+.size-card.diag { border-image-source: url(/assets/ui/plaque_myth.webp); color: #F6F0DC; }
+.size-card.diag strong { text-shadow: 0 1px 2px rgba(20, 22, 50, .6); }
+.size-card.diag .best { color: #E8D9A8; }
+.size-card.diag .size-mini { background: #262B4E; border-color: #C9A43A; }
+.size-card.diag .size-mini i { background: #8E86D6; }
+.size-card.diag .size-mini i:nth-child(1), .size-card.diag .size-mini i:nth-child(5), .size-card.diag .size-mini i:nth-child(9) { background: #E8D9A8; }
 .resume {
   width: 100%; min-height: 72px; text-align: left; cursor: pointer; font-size: 17px; color: var(--ink); background: transparent; padding: 4px 8px;
   /* 밀랍 서판 그림(resume_card.webp 1079×283): 왼쪽 필기구·리본 130, 나머지 테두리 48은 늘리지 않음 */
