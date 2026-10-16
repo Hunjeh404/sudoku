@@ -148,8 +148,8 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
   const dirty = useRef(false);
   const timer = useRef<number | undefined>(undefined);
   const opRef = useRef(newOpId());
-  // 푼 시간은 서버가 잰다: 화면을 열면 open_attempt(서버가 시작 시각 저장), 나가거나 화면을 내리면 pause_attempt.
-  // 여기 seconds는 화면에 보여 주는 용도뿐(서버가 알려 준 쌓인 시간에서 이어 센다).
+  // 푼 시간은 서버가 잰다: 서버에 남은 시작 시각부터 끝낸 시각까지 전부(나갔다 들어온 시간 포함).
+  // 여기 seconds는 화면에 보여 주는 용도뿐(open_attempt가 알려 준 시작부터 지금까지에서 이어 센다).
   const [seconds, setSeconds] = useState(0);
   const picture = n === 4 && settings.pictureMode;
   const sym = (d: number) => (picture ? PICTURE_KO[d - 1] : String(d));

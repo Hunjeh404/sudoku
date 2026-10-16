@@ -53,7 +53,7 @@ async function solveAttempt(u: Awaited<ReturnType<typeof user>>, profile: string
     const { a, sol } = await solveAttempt(u, p, opts.size ?? 4, opts.diff ?? 'intro');
     if (opts.hints) await u.rpc('save_attempt', { attempt: a.id, expected_revision: a.revision, board: a.givens, notes: {}, hints_used: opts.hints, op_id: randomUUID() });
     // 서버가 잰 푼 시간을 흉내: 쌓인 구간 = elapsed, 열린 구간 없음
-    await admin.query(`update public.puzzle_attempts set played_sec = $2, active_since = null where id = $1`, [a.id, opts.elapsed ?? 300]);
+    await admin.query(`update public.puzzle_attempts set started_at = now() - make_interval(secs => $2) where id = $1`, [a.id, opts.elapsed ?? 300]);
     return u.rpc('complete_attempt', { attempt: a.id, board: sol, op_id: randomUUID() });
   };
 
@@ -213,20 +213,15 @@ async function solveAttempt(u: Awaited<ReturnType<typeof user>>, profile: string
     const acts = await admin.query(`select kind from public.activities where profile_id = $1`, [pe]);
     assert(acts.rows.filter((x: any) => x.kind === 'record').length === 1, 'one record news');
   });
-  await check('걸린 시간은 서버 시계: 연 구간만 더하고, 기기가 보낸 시간은 무시', async () => {
+  await check('걸린 시간은 서버의 시작~끝 시각 전부(나갔다 들어온 시간 포함), 기기가 보낸 시간은 무시', async () => {
     const { a, sol } = await solveAttempt(B, pb);
+    await admin.query(`update public.puzzle_attempts set started_at = now() - interval '2 hours' where id = $1`, [a.id]);
     await B.rpc('open_attempt', { attempt: a.id });
-    await admin.query(`update public.puzzle_attempts set active_since = now() - interval '90 seconds' where id = $1`, [a.id]);
-    const p1 = await B.rpc('pause_attempt', { attempt: a.id });
-    assert(p1.played_sec >= 89 && p1.played_sec <= 92, 'pause ' + p1.played_sec);
-    // 나가 있던 시간은 안 셈: 다시 열고 40초 풀었다가, 앱을 그냥 닫음(마지막 저장은 열고 30초 뒤)
-    await B.rpc('open_attempt', { attempt: a.id });
-    await admin.query(`update public.puzzle_attempts set active_since = now() - interval '2 hours', updated_at = now() - interval '2 hours' + interval '30 seconds' where id = $1`, [a.id]);
+    await B.rpc('pause_attempt', { attempt: a.id });
     const o = await B.rpc('open_attempt', { attempt: a.id });
-    assert(o.played_sec >= 119 && o.played_sec <= 122, 'stale segment counts to last save ' + o.played_sec);
-    await admin.query(`update public.puzzle_attempts set active_since = now() - interval '10 seconds' where id = $1`, [a.id]);
+    assert(o.played_sec >= 7199 && o.played_sec <= 7202, 'clock shows whole time ' + o.played_sec);
     const r = await B.rpc('complete_attempt', { attempt: a.id, board: sol, op_id: randomUUID(), elapsed_sec: 3 });
-    assert(r.elapsed >= 129 && r.elapsed <= 133, 'server time, not client ' + r.elapsed);
+    assert(r.elapsed >= 7199 && r.elapsed <= 7202, 'server wall time ' + r.elapsed);
   });
   await check('판 수 10판·누적 점수 100 소식', async () => {
     await setCount(pe, 9);
@@ -430,11 +425,11 @@ async function solveAttempt(u: Awaited<ReturnType<typeof user>>, profile: string
   });
 
   console.log('시간 재기 버그(1초)');
-  await check('시간 재기 구간이 없던 판은 1초가 아니라 시작부터 끝까지, 기록·빠른 순위에서 빠짐', async () => {
+  await check('빈칸 하나에 1초도 안 걸린 시간(불가능)은 기록·빠른 순위에서 빠짐', async () => {
     const { a, sol } = await solveAttempt(E, pe, 9, 'hard');
-    await admin.query(`update public.puzzle_attempts set played_sec = 0, active_since = null, started_at = now() - interval '9 minutes' where id = $1`, [a.id]);
+    await admin.query(`update public.puzzle_attempts set started_at = now() - interval '5 seconds' where id = $1`, [a.id]);
     const r = await E.rpc('complete_attempt', { attempt: a.id, board: sol, op_id: randomUUID() });
-    assert(r.record === null && r.elapsed >= 539 && r.elapsed <= 545, JSON.stringify(r));
+    assert(r.record === null && r.elapsed >= 5 && r.elapsed <= 7, JSON.stringify(r));
     assert((await admin.query(`select time_ok from public.puzzle_attempts where id = $1`, [a.id])).rows[0].time_ok === false, 'time_ok');
     const lb = await E.rpc('get_leaderboard', { p: pe, board: '9h', period: 'week', kind: 'speed' });
     assert(lb.me === null, 'not in speed ranking ' + JSON.stringify(lb.me));
