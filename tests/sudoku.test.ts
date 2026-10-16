@@ -80,3 +80,32 @@ describe('힌트', () => {
     expect(h.detail.length).toBeGreaterThan(10);
   });
 });
+
+import { geometry as geo2, conflicts as conf2, countSolutions as cs2 } from '../src/sudoku/engine';
+import { grade as grade2 } from '../src/sudoku/logic';
+import { readFileSync as rf2 } from 'node:fs';
+describe('대각선 스도쿠(신화)', () => {
+  it('가운데 칸 peers는 32개, 대각선 단위 2개', () => {
+    const g = geo2(9, true);
+    expect(g.units.length).toBe(29);
+    expect(g.peers[40].length).toBe(32);
+    expect(geo2(9).peers[40].length).toBe(20);
+  });
+  it('대각선 겹침도 찾는다', () => {
+    const b = new Array(81).fill(0); b[0] = 5; b[80] = 5;
+    expect(conf2(b, 9).size).toBe(0);
+    expect(conf2(b, 9, true).size).toBe(2);
+  });
+  it('문제 은행 60개: 대각선 규칙으로 유일해, 정답이 대각선 규칙을 지키고, 논리로 풀림', () => {
+    const bank = JSON.parse(rf2('puzzles/bank-diag.json', 'utf8'));
+    expect(bank.length).toBe(60);
+    for (const p of bank.slice(0, 15)) {
+      const giv = [...p.givens].map((c: string) => (c === '.' ? 0 : +c));
+      const r = cs2(giv, 9, 2, true);
+      expect(r.count).toBe(1);
+      expect(r.solution!.join('')).toBe(p.solution);
+      expect(conf2([...p.solution].map(Number), 9, true).size).toBe(0);
+      expect(grade2(giv, 9, true).solved).toBe(true);
+    }
+  });
+});

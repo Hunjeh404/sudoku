@@ -1,6 +1,6 @@
 // 서비스워커: 그림·음악·데이터·해시된 빌드 파일은 기기에 저장해 두고(캐시 우선),
 // 화면 틀(index.html)과 서버 요청(supabase)은 항상 네트워크로 받는다.
-const VERSION = 'v11'; // v11: 보물 숫자 버튼 그림 24종, 2·3티어 판 테두리
+const VERSION = 'v12'; // v12: 신화(대각선) 난이도
 const ASSET_CACHE = `olympus-assets-${VERSION}`;
 
 self.addEventListener('install', (e) => self.skipWaiting());

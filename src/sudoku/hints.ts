@@ -17,7 +17,8 @@ export interface Hint {
 export function unitLabel(n: Size, ui: number): string {
   if (ui < n) return `위에서 ${ui + 1}번째 가로줄`;
   if (ui < 2 * n) return `왼쪽에서 ${ui - n + 1}번째 세로줄`;
-  return `${ui - 2 * n + 1}번 상자`;
+  if (ui < 3 * n) return `${ui - 2 * n + 1}번 상자`;
+  return ui === 3 * n ? '왼쪽 위에서 오른쪽 아래로 가는 대각선' : '오른쪽 위에서 왼쪽 아래로 가는 대각선';
 }
 export function cellLabel(n: Size, cell: number): string {
   return `가로줄 ${rowOf(n, cell) + 1}, 세로줄 ${colOf(n, cell) + 1} 칸`;
@@ -67,18 +68,18 @@ const RULE_TEXT: Record<Technique, string> = {
  * givens: 초기 숫자, board: 현재 보드(사용자 입력 포함).
  * 해는 givens로 계산(서버 정답과 같음, 유일해 문제).
  */
-export function makeHint(givens: Board, board: Board, n: Size, sym: (d: number) => string = String): Hint {
-  const g = geometry(n);
-  const bad = conflicts(board, n);
+export function makeHint(givens: Board, board: Board, n: Size, sym: (d: number) => string = String, diag = false): Hint {
+  const g = geometry(n, diag);
+  const bad = conflicts(board, n, diag);
   if (bad.size) {
     const cells = [...bad].filter((c) => !givens[c]);
     return {
       kind: 'conflict', focusCells: [...bad], focusUnits: [],
-      rule: '같은 줄이나 상자에 같은 숫자가 두 번 들어가 있어요.',
+      rule: diag ? '같은 줄이나 상자, 대각선에 같은 숫자가 두 번 들어가 있어요.' : '같은 줄이나 상자에 같은 숫자가 두 번 들어가 있어요.',
       detail: `표시된 칸에 같은 숫자가 겹쳐 있어요. ${cells.length ? cells.map((c) => cellLabel(n, c)).join(', ') + ' 중에서 먼저 하나를 지워 보세요.' : ''}`,
     };
   }
-  const solution = countSolutions(givens, n, 2).solution!;
+  const solution = countSolutions(givens, n, 2, diag).solution!;
   const wrong = board.map((v, c) => (v && !givens[c] && v !== solution[c] ? c : -1)).filter((c) => c >= 0);
   if (wrong.length) {
     return {
@@ -90,7 +91,7 @@ export function makeHint(givens: Board, board: Board, n: Size, sym: (d: number) 
   if (board.every((v) => v)) return { kind: 'done', focusCells: [], focusUnits: [], rule: '모든 칸이 채워졌어요.', detail: '' };
 
   // 현재 보드에서 논리로 다음 숫자가 정해질 때까지 진행
-  const s = makeState(board, n);
+  const s = makeState(board, n, diag);
   const chain: Step[] = [];
   for (let i = 0; i < 40; i++) {
     const st = nextStep(s, 3);

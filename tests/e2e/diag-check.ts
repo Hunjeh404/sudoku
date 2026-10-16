@@ -1,0 +1,38 @@
+// 신화(대각선) 확인: 칭호 없으면 메뉴·순위에 안 보임, 달면 보이고 판 맨 위 규칙 한 줄·대각선 칸 표시. flow.ts 다음에 실행(dad@test)
+import { chromium } from 'playwright';
+import pg from 'pg';
+const OUT = process.env.OUT ?? '/tmp';
+const BASE = 'http://localhost:4173/sudoku/';
+const db = new pg.Client({ host: 'localhost', user: 'postgres', password: 'postgres', database: process.env.DB ?? 'olympus_e2e' });
+const ok = (c: unknown, m: string) => { if (!c) throw new Error(m); console.log('✓', m); };
+(async () => {
+  await db.connect();
+  const pid = (await db.query(`select id from public.profiles where nickname = '아빠'`)).rows[0].id;
+  await db.query(`update public.profiles set title = '' where id = $1`, [pid]);
+  const b = await chromium.launch();
+  const p = await b.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
+  p.on('pageerror', (e) => console.log('pageerror', e.message));
+  await p.goto(BASE);
+  await p.getByRole('button', { name: /구글 계정으로 시작/ }).click();
+  await p.fill('#email', 'dad@test'); await p.click('#go');
+  await p.waitForSelector('.me-card');
+  const tab = (n: string) => p.locator('.tabbar').getByRole('button', { name: n, exact: true }).click();
+  await tab('스도쿠');
+  ok(await p.getByText('9×9 신화').count() === 0, '칭호 없으면 메뉴에 신화 없음');
+  await tab('순위');
+  ok(await p.getByRole('button', { name: '9×9 신화' }).count() === 0, '칭호 없으면 순위표에도 신화 없음');
+  await db.query(`insert into public.unlocks (profile_id, key) values ($1, 'title:five') on conflict do nothing`, [pid]);
+  await db.query(`update public.profiles set title = 'five' where id = $1`, [pid]);
+  await p.goto(BASE); await p.waitForSelector('.me-card');
+  await tab('스도쿠');
+  await p.screenshot({ path: `${OUT}/d-menu.png`, fullPage: true });
+  await p.getByRole('button', { name: /9×9 신화/ }).click();
+  await p.waitForSelector('.board .cell'); await p.waitForTimeout(500);
+  ok(await p.getByText('두 대각선에도 1~9가 한 번씩').count() === 1, '판 맨 위에 규칙 한 줄');
+  ok(await p.locator('.cell.dg').count() === 17, '대각선 칸 17개 표시');
+  await p.screenshot({ path: `${OUT}/d-puzzle.png` });
+  await p.getByRole('button', { name: '나가기' }).click();
+  await tab('순위');
+  ok(await p.getByRole('button', { name: '9×9 신화' }).count() === 1, '칭호 달면 순위표에 신화');
+  await b.close(); await db.end();
+})().catch((e) => { console.log('✗', e.message); process.exit(1); });

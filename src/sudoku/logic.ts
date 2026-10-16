@@ -37,14 +37,14 @@ export interface Step {
   digits: number[];
 }
 
-export interface LogicState { n: Size; board: Board; cand: number[] }
+export interface LogicState { n: Size; board: Board; cand: number[]; diag: boolean }
 
-export function makeState(board: Board, n: Size): LogicState {
-  return { n, board: board.slice(), cand: computeCandidates(board, n) };
+export function makeState(board: Board, n: Size, diag = false): LogicState {
+  return { n, board: board.slice(), cand: computeCandidates(board, n, diag), diag };
 }
 
 export function applyStep(s: LogicState, step: Step) {
-  const g = geometry(s.n);
+  const g = geometry(s.n, s.diag);
   if (step.placement) {
     const { cell, digit } = step.placement;
     s.board[cell] = digit;
@@ -210,7 +210,7 @@ const FINDERS: ((s: LogicState, g: Geometry) => Step | null)[] = [
 
 /** 가장 쉬운 다음 단계 */
 export function nextStep(s: LogicState, maxLevel: 1 | 2 | 3 = 3): Step | null {
-  const g = geometry(s.n);
+  const g = geometry(s.n, s.diag);
   for (const f of FINDERS) {
     const st = f(s, g);
     if (st && TECH_LEVEL[st.technique] <= maxLevel) return st;
@@ -222,8 +222,8 @@ export function nextStep(s: LogicState, maxLevel: 1 | 2 | 3 = 3): Step | null {
 export interface GradeResult { solved: boolean; level: 0 | 1 | 2 | 3; techniques: Partial<Record<Technique, number>>; steps: number }
 
 /** 논리만으로 끝까지 풀어 본다. level은 쓰인 가장 어려운 기법 단계 */
-export function grade(board: Board, n: Size): GradeResult {
-  const s = makeState(board, n);
+export function grade(board: Board, n: Size, diag = false): GradeResult {
+  const s = makeState(board, n, diag);
   const techniques: Partial<Record<Technique, number>> = {};
   let level: 0 | 1 | 2 | 3 = 0;
   let steps = 0;

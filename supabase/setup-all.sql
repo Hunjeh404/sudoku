@@ -3860,3 +3860,368 @@ begin
   end loop;
 end $$;
 grant execute on function private.can_act(uuid) to authenticated;
+-- 신화 난이도(대각선 스도쿠)와 칭호「은하수의 방랑자」
+-- - 다섯 난이도(4×4·6×6·9×9 쉬움·보통·어려움)를 모두 한 판 이상 끝내면 받는 칭호(id five)의 이름을「은하수의 방랑자」로 바꾸고,
+--   스킬(판마다 별빛 +1)은 없애고 대신 신화 난이도를 연다. 칭호를 단 사람만 신화 판을 시작할 수 있다.
+-- - 신화: 9×9에 두 대각선도 1~9가 한 번씩. 보상 별빛 60. 문제는 0017_diag_puzzles.sql.
+-- - 순위표 '9d'(화면에서는 칭호를 단 사람에게만 보임). 친구 소식은 누구에게나 그대로 보인다.
+
+alter table public.puzzle_catalog drop constraint if exists puzzle_catalog_difficulty_check;
+alter table public.puzzle_catalog add constraint puzzle_catalog_difficulty_check check (difficulty in ('intro', 'easy', 'medium', 'hard', 'diag'));
+insert into public.reward_rules (size, difficulty, amount) values (9, 'diag', 60) on conflict (size, difficulty) do update set amount = excluded.amount;
+update public.title_catalog set name_ko = '은하수의 방랑자' where id = 'five';
+
+-- 다섯 난이도 수에는 신화를 넣지 않는다
+create or replace function private.title_stats(p uuid) returns jsonb
+language sql stable security definer set search_path = '' as $$
+  select jsonb_build_object(
+    'portraits', (select count(*) from public.owned_portraits o join public.portrait_catalog c on c.id = o.portrait_id where o.profile_id = p and c.tier >= 1),
+    'treasures', (select count(*) from public.owned_portraits o join public.portrait_catalog c on c.id = o.portrait_id where o.profile_id = p and c.tier = 0),
+    'best_9e', (select best_sec from public.personal_records where profile_id = p and size = 9 and difficulty = 'easy'),
+    'best_9m', (select best_sec from public.personal_records where profile_id = p and size = 9 and difficulty = 'medium'),
+    'best_9h', (select best_sec from public.personal_records where profile_id = p and size = 9 and difficulty = 'hard'),
+    'completed', (select completed_count from public.quest_progress where profile_id = p),
+    'no_hint', (select no_hint_count from public.quest_progress where profile_id = p),
+    'reads', (select count(*) from public.story_reads where profile_id = p),
+    'boards', (select count(*) from (select distinct size, difficulty from public.score_events where profile_id = p and difficulty <> 'diag') b),
+    'streak', (select coalesce(max(n), 0) from (
+        select count(*) as n from (
+          select day, day - (row_number() over (order by day))::int as grp
+          from (select distinct (completed_at at time zone 'Asia/Seoul')::date as day from public.puzzle_attempts
+                where profile_id = p and status = 'completed' and completed_at is not null) d) g
+        group by grp) s),
+    'reactions', (select count(*) from public.activity_reactions where reactor = p)
+  );
+$$;
+
+create or replace function public.start_attempt(p uuid, board_size int, difficulty text) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare a public.puzzle_attempts; pz public.puzzle_catalog;
+begin
+  perform private.require_act(p);
+  -- 신화(대각선)는 칭호「은하수의 방랑자」를 단 사람만
+  if start_attempt.difficulty = 'diag' and private.title_of(p) <> 'five' then
+    perform private.fail('locked', '「은하수의 방랑자」 칭호를 달면 열려요.');
+  end if;
+  update public.puzzle_attempts at set status = 'abandoned', active_since = null, updated_at = now()
+    from public.puzzle_catalog c
+    where c.id = at.puzzle_id and at.profile_id = p and at.status = 'active'
+      and c.size = board_size and c.difficulty = start_attempt.difficulty;
+  select c.* into pz from public.puzzle_catalog c
+    where c.size = board_size and c.difficulty = start_attempt.difficulty
+      and c.id not in (select puzzle_id from public.puzzle_attempts where profile_id = p order by started_at desc limit 30)
+    order by random() limit 1;
+  if not found then
+    select c.* into pz from public.puzzle_catalog c
+      where c.size = board_size and c.difficulty = start_attempt.difficulty order by random() limit 1;
+  end if;
+  if not found then perform private.fail('no_puzzle', '이 크기와 난이도의 문제가 없어요.'); end if;
+  insert into public.puzzle_attempts (profile_id, puzzle_id, board) values (p, pz.id, pz.givens) returning * into a;
+  return jsonb_build_object('id', a.id, 'puzzle_id', a.puzzle_id, 'size', pz.size, 'difficulty', pz.difficulty,
+    'givens', pz.givens, 'board', a.board, 'notes', a.notes, 'revision', a.revision, 'hints_used', a.hints_used);
+end $$;
+
+create or replace function public.complete_attempt(attempt uuid, board text, op_id uuid, elapsed_sec int default null) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare
+  a public.puzzle_attempts; pz public.puzzle_catalog; sol text; amount int; q public.quest_progress;
+  step public.journey_steps; res jsonb; jr jsonb := null; bal int; before_pts int; after_pts int; th int;
+  secs int; prev int; rec jsonb := null; gift_id uuid := null; bonus int := 0;
+  ttl text; paid_hints int; first_today boolean; skill int := 0; titles jsonb; ok boolean;
+begin
+  select * into a from public.puzzle_attempts where id = attempt for update;
+  if not found then perform private.fail('not_found', '퍼즐을 찾을 수 없어요.'); end if;
+  perform private.require_act(a.profile_id);
+  if a.status = 'completed' then return a.result || jsonb_build_object('repeat', true); end if;
+  if a.status <> 'active' then perform private.fail('not_active', '그만둔 퍼즐이에요.'); end if;
+  select * into pz from public.puzzle_catalog where id = a.puzzle_id;
+  perform private.check_board(board, pz.givens, pz.size);
+  select solution into sol from private.puzzle_solutions where puzzle_id = a.puzzle_id;
+  if board <> sol then perform private.fail('not_solved', '아직 맞지 않는 칸이 있어요.'); end if;
+  ttl := private.title_of(a.profile_id);
+
+  -- 시간: 서버 시계로 잰 푼 구간의 합
+  secs := greatest(1, a.played_sec + case when a.active_since is not null
+    then greatest(0, extract(epoch from now() - a.active_since))::int else 0 end);
+  -- 믿을 수 없는 시간(빈칸 하나에 1초도 안 걸린 셈)은 기록·빠른 순위에 넣지 않고, 보여 주는 시간은 시작부터 지금까지로
+  ok := secs >= private.blanks(pz.givens);
+  if not ok then secs := greatest(1, extract(epoch from now() - a.started_at)::int); end if;
+
+  -- 보상: 힌트 한 번마다 10%씩 줄어듦. 올림포스의 현자·지혜의 눈은 첫 힌트가 깎이지 않음
+  paid_hints := a.hints_used - case when ttl in ('sage', 'wise30') and a.hints_used > 0 then 1 else 0 end;
+  select r.amount into amount from public.reward_rules r where r.size = pz.size and r.difficulty = pz.difficulty;
+  amount := amount * (10 - least(paid_hints, 10)) / 10;
+  insert into public.reward_ledger (profile_id, event_key, amount, reason) values (a.profile_id, 'complete:' || a.id, amount, 'puzzle:' || pz.id);
+  update public.wallets set balance = balance + amount where profile_id = a.profile_id returning balance into bal;
+  first_today := not exists (select 1 from public.puzzle_attempts where profile_id = a.profile_id and status = 'completed'
+    and completed_at >= private.day_start());
+
+  before_pts := private.points_of(a.profile_id);
+  insert into public.score_events (profile_id, attempt_id, size, difficulty, points) values (a.profile_id, a.id, pz.size, pz.difficulty, amount);
+  after_pts := before_pts + amount;
+  foreach th in array array[100, 300, 500, 1000, 2000, 3000, 5000, 10000] loop
+    if before_pts < th and after_pts >= th then perform private.add_activity(a.profile_id, 'points', jsonb_build_object('points', th)); end if;
+  end loop;
+
+  update public.quest_progress set completed_count = completed_count + 1,
+    no_hint_count = no_hint_count + case when a.hints_used = 0 then 1 else 0 end
+    where profile_id = a.profile_id returning * into q;
+  if q.completed_count = any (array[10, 25, 50, 100, 150, 200, 300, 500, 1000]) then
+    perform private.add_activity(a.profile_id, 'clears', jsonb_build_object('count', q.completed_count));
+  end if;
+
+  -- 자기 기록: 힌트 없이 끝낸 판, 시간을 제대로 잰 판만
+  if a.hints_used = 0 and ok then
+    select best_sec into prev from public.personal_records where profile_id = a.profile_id and size = pz.size and difficulty = pz.difficulty;
+    if prev is null then
+      insert into public.personal_records (profile_id, size, difficulty, best_sec, attempt_id) values (a.profile_id, pz.size, pz.difficulty, secs, a.id);
+      rec := jsonb_build_object('sec', secs, 'prev', null, 'first', true);
+    elsif secs < prev then
+      update public.personal_records set best_sec = secs, attempt_id = a.id, set_at = now()
+        where profile_id = a.profile_id and size = pz.size and difficulty = pz.difficulty;
+      rec := jsonb_build_object('sec', secs, 'prev', prev, 'first', false);
+      perform private.add_activity(a.profile_id, 'record', jsonb_build_object('size', pz.size, 'difficulty', pz.difficulty, 'sec', secs, 'prev', prev));
+    end if;
+  end if;
+
+  -- 칭호 스킬 별빛(지갑에만, 점수에는 넣지 않음)
+  if first_today then
+    skill := skill + case ttl when 'apprentice' then 2 when 'play100' then 4 when 'play150' then 6 when 'play200' then 8
+      when 'play300' then 10 when 'play500' then 12 when 'streak7' then 5 else 0 end;
+  end if;
+  skill := skill + case ttl when 'tr64' then 2 else 0 end;
+  if rec is not null and not (rec->>'first')::boolean then
+    skill := skill + case ttl when 'fast9e' then 5 when 'fast9m' then 8 when 'fast9h' then 12 else 0 end;
+  end if;
+  if skill > 0 then
+    insert into public.reward_ledger (profile_id, event_key, amount, reason) values (a.profile_id, 'skill:' || a.id, skill, 'title:' || ttl);
+    update public.wallets set balance = balance + skill where profile_id = a.profile_id returning balance into bal;
+  end if;
+
+  -- 여정
+  select * into step from public.journey_steps where need = q.completed_count;
+  if found then
+    if step.reward ? 'bonus' then
+      bonus := (step.reward->>'bonus')::int;
+      insert into public.reward_ledger (profile_id, event_key, amount, reason) values (a.profile_id, 'journey:' || a.profile_id || ':' || step.step, bonus, 'journey');
+      update public.wallets set balance = balance + bonus where profile_id = a.profile_id returning balance into bal;
+    end if;
+    if step.reward ? 'tier' then
+      insert into public.unlocks (profile_id, key) values (a.profile_id, 'tier:' || (step.reward->>'tier')) on conflict do nothing;
+      if found then perform private.add_activity(a.profile_id, 'tier', jsonb_build_object('tier', (step.reward->>'tier')::int)); end if;
+    end if;
+    if step.reward ? 'title' then perform private.grant_title(a.profile_id, step.reward->>'title'); end if;
+    if step.reward ? 'gift' then gift_id := private.make_gift(a.profile_id, (step.reward->>'gift')::int); end if;
+    jr := jsonb_build_object('step', step.step, 'title', step.title, 'reward', step.reward, 'gift_id', gift_id);
+  end if;
+
+  update public.puzzle_attempts set status = 'completed', board = complete_attempt.board, completed_at = now(),
+    updated_at = now(), elapsed_sec = secs, played_sec = secs, active_since = null, time_ok = ok where id = attempt;
+  titles := private.check_titles(a.profile_id);
+
+  res := jsonb_build_object('reward', amount, 'balance', bal, 'completed_count', q.completed_count,
+    'no_hint', a.hints_used = 0, 'hints_used', a.hints_used, 'paid_hints', least(paid_hints, 10), 'journey', jr, 'puzzle_id', pz.id,
+    'size', pz.size, 'difficulty', pz.difficulty, 'elapsed', secs, 'record', rec, 'points', after_pts,
+    'skill_bonus', skill, 'skill_title', case when skill > 0 then ttl end, 'titles', titles);
+  update public.puzzle_attempts set result = res where id = attempt;
+  return res;
+end $$;
+
+create or replace function public.get_leaderboard(p uuid, board text, period text, kind text default 'points') returns jsonb
+language plpgsql stable security definer set search_path = '' as $$
+declare since timestamptz; sz int := null; df text := null; rows jsonb; me jsonb;
+begin
+  perform private.require_act(p);
+  case period
+    when 'day' then since := private.day_start();
+    when 'week' then since := private.week_start();
+    when 'month' then since := private.month_start();
+    else perform private.fail('bad_period', '기간이 맞지 않아요.');
+  end case;
+  case board
+    when 'all' then null;
+    when '4' then sz := 4; df := 'intro';
+    when '6' then sz := 6; df := 'intro';
+    when '9e' then sz := 9; df := 'easy';
+    when '9m' then sz := 9; df := 'medium';
+    when '9h' then sz := 9; df := 'hard';
+    when '9d' then sz := 9; df := 'diag';
+    else perform private.fail('bad_board', '순위표 종류가 맞지 않아요.');
+  end case;
+
+  if kind = 'points' then
+    with s as (
+      select e.profile_id, sum(e.points)::int as pts, count(*)::int as games, max(e.created_at) as last_at
+      from public.score_events e
+      where e.created_at >= since and (sz is null or (e.size = sz and e.difficulty = df))
+      group by e.profile_id having sum(e.points) > 0
+    ), ranked as (
+      select s.*, rank() over (order by s.pts desc) as rnk, row_number() over (order by s.pts desc, s.last_at) as rn from s
+    )
+    select
+      coalesce((select jsonb_agg(jsonb_build_object('rank', r.rnk, 'id', r.profile_id, 'nickname', pr.nickname, 'avatar_id', pr.avatar_id, 'badge', pr.badge,
+          'title', pr.title, 'points', r.pts, 'games', r.games, 'me', r.profile_id = p) order by r.rn)
+        from ranked r join public.profiles pr on pr.id = r.profile_id where r.rn <= 50), '[]'::jsonb),
+      (select jsonb_build_object('rank', r.rnk, 'points', r.pts, 'games', r.games) from ranked r where r.profile_id = p)
+    into rows, me;
+  elsif kind = 'speed' then
+    if sz is null then perform private.fail('bad_board', '빨리 푼 순위는 난이도를 골라야 해요.'); end if;
+    with s as (
+      select at.profile_id, min(at.elapsed_sec)::int as sec, count(*)::int as games,
+             min(at.completed_at) as first_at
+      from public.puzzle_attempts at join public.puzzle_catalog c on c.id = at.puzzle_id
+      where at.status = 'completed' and at.hints_used = 0 and at.elapsed_sec is not null and at.time_ok
+        and at.completed_at >= since and c.size = sz and c.difficulty = df
+      group by at.profile_id
+    ), ranked as (
+      select s.*, rank() over (order by s.sec) as rnk, row_number() over (order by s.sec, s.first_at) as rn from s
+    )
+    select
+      coalesce((select jsonb_agg(jsonb_build_object('rank', r.rnk, 'id', r.profile_id, 'nickname', pr.nickname, 'avatar_id', pr.avatar_id, 'badge', pr.badge,
+          'title', pr.title, 'sec', r.sec, 'games', r.games, 'me', r.profile_id = p) order by r.rn)
+        from ranked r join public.profiles pr on pr.id = r.profile_id where r.rn <= 50), '[]'::jsonb),
+      (select jsonb_build_object('rank', r.rnk, 'sec', r.sec, 'games', r.games) from ranked r where r.profile_id = p)
+    into rows, me;
+  else
+    perform private.fail('bad_kind', '순위 종류가 맞지 않아요.');
+  end if;
+  return jsonb_build_object('rows', rows, 'me', me);
+end $$;
+
+-- ---------- 실행 권한 ----------
+do $$
+declare f record;
+begin
+  for f in select p.oid::regprocedure as sig, n.nspname from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+           where n.nspname in ('public', 'private') and p.prokind = 'f' loop
+    execute format('revoke all on function %s from public, anon', f.sig);
+    if f.nspname = 'public' then execute format('grant execute on function %s to authenticated', f.sig); end if;
+  end loop;
+end $$;
+grant execute on function private.can_act(uuid) to authenticated;
+-- 자동 생성: npx tsx scripts/gen-diag-puzzles.ts (신화 난이도: 대각선 스도쿠, 유일해·논리 풀이 검증 60문제)
+insert into public.puzzle_catalog (id,size,difficulty,givens,techniques,version) values
+('p9d-001',9,'diag','.53..8........2.........5.3478.5...2.........6...2.3785.7.........7........1..42.','{"hiddenSingle":29,"pointing":1,"nakedSingle":30}'::jsonb,1),
+('p9d-002',9,'diag','........7..4......95...8.....31..872..6...4..748..53.....4...83......1..6........','{"nakedSingle":50,"hiddenSingle":9,"pointing":2,"claiming":1}'::jsonb,1),
+('p9d-003',9,'diag','.8.6...59....8.3....7.....8..456........1........945..3.....6....9.5....52...6.9.','{"nakedSingle":39,"hiddenSingle":19,"pointing":1,"xWing":1,"nakedPair":1}'::jsonb,1),
+('p9d-004',9,'diag','...59..8...9....3..8..6.....7....6...143.689...8....5.....3..6..9....3...2..54...','{"hiddenSingle":24,"nakedSingle":33,"claiming":1}'::jsonb,1),
+('p9d-005',9,'diag','..8..2..11.....6...76.........8.62..7..2.4..9..39.7.........16...5.....32..3..5..','{"nakedSingle":38,"hiddenSingle":19,"pointing":1}'::jsonb,1),
+('p9d-006',9,'diag','82.6.3....46.....15..4...........8....9...5....5...........4..81.....26....8.6.35','{"hiddenSingle":30,"pointing":2,"nakedSingle":29}'::jsonb,1),
+('p9d-007',9,'diag','.......3....6...92...3.8....27.6.18.....8.....63.7.24....7.6...65...2....4.......','{"nakedSingle":42,"hiddenSingle":16,"pointing":7,"nakedPair":2,"claiming":1,"nakedTriple":1}'::jsonb,1),
+('p9d-008',9,'diag','......7.3.367.......4..3.1....12....6.......9....35....5.8..6.......159.1.9......','{"nakedSingle":43,"hiddenSingle":16,"pointing":2,"nakedPair":2,"claiming":2}'::jsonb,1),
+('p9d-009',9,'diag','......6......4782....2....45.8...4....9.5.1....1...5.98....3....1576......7......','{"hiddenSingle":13,"pointing":1,"claiming":2,"nakedSingle":45}'::jsonb,1),
+('p9d-010',9,'diag','..8.....6..398.......41..3.....415..9.......7..425.....4..23.......972..5.....3..','{"nakedSingle":43,"hiddenSingle":14,"pointing":2,"claiming":2}'::jsonb,1),
+('p9d-011',9,'diag','...4......341...9....8.7.....7.8..19.5.....8.89..2.7.....5.3....6...857......1...','{"nakedSingle":40,"hiddenSingle":17,"pointing":3}'::jsonb,1),
+('p9d-012',9,'diag','....3.2..4..79..1..98.1..3...1....6...........4....5...2..6.17..8..79..2..5.4....','{"hiddenSingle":8,"claiming":1,"nakedSingle":49}'::jsonb,1),
+('p9d-013',9,'diag','.....51..........6...23..57.36.5..9..5.....2..9..4.76.36..24...1..........43.....','{"hiddenSingle":22,"pointing":3,"nakedSingle":35}'::jsonb,1),
+('p9d-014',9,'diag','......1391...79.6..69....7.........4.4.....2.2.........8....74..1.73...2375......','{"nakedSingle":42,"hiddenSingle":15,"pointing":7,"nakedPair":4}'::jsonb,1),
+('p9d-015',9,'diag','6.841.....7..2....9...6....2.9...3...6.8.5.1...5...6.9....8...2....4..3.....534.8','{"nakedSingle":40,"hiddenSingle":15,"pointing":4,"claiming":1,"nakedPair":1,"hiddenPair":2}'::jsonb,1),
+('p9d-016',9,'diag','...34...9.....2...4......1...38...527.4...3.185...46...4......8...6.....3...95...','{"nakedSingle":48,"hiddenSingle":9,"pointing":4,"claiming":3}'::jsonb,1),
+('p9d-017',9,'diag','.......4.34.....19.....45...7..469...6.....3...479..2...32.....69.....73.8.......','{"hiddenSingle":20,"nakedSingle":37,"pointing":1}'::jsonb,1),
+('p9d-018',9,'diag','.7.3......4....9..6894...1.2.8..6....1.....9....1..2.8.2...4639..4....8......5.7.','{"hiddenSingle":15,"pointing":2,"nakedSingle":40}'::jsonb,1),
+('p9d-019',9,'diag','.....8...7......2...4..2.8..2..7.6...3.1.5.4...9.2..1..9.2..1...6......2...9.....','{"hiddenSingle":18,"pointing":3,"nakedPair":1,"nakedSingle":41}'::jsonb,1),
+('p9d-020',9,'diag','...2....6...8.3.5.3...5..27....9.5......3......5.8....54..6...1.2.3.5...8....4...','{"hiddenSingle":19,"pointing":3,"nakedSingle":39}'::jsonb,1),
+('p9d-021',9,'diag','....82.....8.......5.639....2...765...5.4.7...342...8....751.9.......5.....89....','{"nakedSingle":45,"hiddenSingle":11,"pointing":2}'::jsonb,1),
+('p9d-022',9,'diag','....4..2....9....4....2.9......62.9.3.1...8.2.7.41......8.3....4....6....1..9....','{"pointing":4,"nakedPair":2,"nakedSingle":32,"hiddenSingle":27,"hiddenPair":1}'::jsonb,1),
+('p9d-023',9,'diag','...14..........6.4..4..7..1..26.9.8..3..5..6..1.2.34..2..8..9..3.8..........31...','{"hiddenSingle":14,"pointing":1,"nakedSingle":42}'::jsonb,1),
+('p9d-024',9,'diag','.....792....56..7..7..49.......9..1.1..8.5..4.2..1.......15..4..5..32....139.....','{"nakedSingle":30,"hiddenSingle":25,"pointing":1}'::jsonb,1),
+('p9d-025',9,'diag','.8.51......3.......5...4.89.9.7....16...5...31....9.4.83.9...1.......9......73.2.','{"hiddenSingle":28,"pointing":3,"claiming":1,"nakedSingle":28}'::jsonb,1),
+('p9d-026',9,'diag','......19.9.......6.4.19.7..2.7.8....5.......8....3.9.2..2.57.3.3.......7.76......','{"hiddenSingle":21,"nakedSingle":36,"pointing":6}'::jsonb,1),
+('p9d-027',9,'diag','..23..........8.......4.9.3.5...7..92.4.5.6.17..4...3.4.3.2.......5..........48..','{"hiddenSingle":17,"pointing":2,"nakedSingle":41,"xWing":1}'::jsonb,1),
+('p9d-028',9,'diag','...1....4...5......28.4.....953.76...6.....1...42.695.....7.19......1...1....4...','{"hiddenSingle":22,"nakedSingle":35,"pointing":6,"hiddenPair":1}'::jsonb,1),
+('p9d-029',9,'diag','...3....2..8.......2..1....2.47.3...76.891.45...6.27.9....3..2.......1..4....7...','{"nakedSingle":40,"hiddenSingle":16,"pointing":2,"xWing":1}'::jsonb,1),
+('p9d-030',9,'diag','.......7......9..3...8...2146.....3..1743865..2.....8475...4...3..7......9.......','{"nakedSingle":41,"hiddenSingle":15,"pointing":1,"hiddenPair":1}'::jsonb,1),
+('p9d-031',9,'diag','.....4..142.8......17.......3.5...82...1.8...18...3.9.......42......7.162..3.....','{"hiddenSingle":18,"nakedSingle":39,"pointing":2}'::jsonb,1),
+('p9d-032',9,'diag','7.4............3.55...1....85..93..7...725...2..18..63....7...41.8............7.8','{"nakedSingle":44,"hiddenSingle":12,"pointing":1,"nakedPair":1}'::jsonb,1),
+('p9d-033',9,'diag','.............3..8.9..126.....97.1..36...9...28..2.37.....684..1.4..7.............','{"hiddenSingle":21,"pointing":7,"nakedSingle":37}'::jsonb,1),
+('p9d-034',9,'diag','.....7..........2.47..3..58.1.....83..36.87..72.....4.35..1..94.8..........9.....','{"nakedSingle":42,"hiddenSingle":15,"pointing":1,"hiddenPair":1}'::jsonb,1),
+('p9d-035',9,'diag','....9....96........7.14....3..91.4..2...5...1..1.68..3....81.5........14....2....','{"nakedSingle":47,"hiddenSingle":11,"pointing":6,"nakedPair":1}'::jsonb,1),
+('p9d-036',9,'diag','....7.5..7..1....343........2..3..5...82.57...4..1..9........468....7..5..9.2....','{"hiddenSingle":11,"pointing":6,"hiddenPair":1,"nakedSingle":46}'::jsonb,1),
+('p9d-037',9,'diag','.9.5.3.68.6.4........98...4..1.........3.8.........6..5...29........4.1.62.8.1.4.','{"hiddenSingle":23,"nakedSingle":34,"pointing":3}'::jsonb,1),
+('p9d-038',9,'diag','.1485.9...........6.5.94.3.......65...........58.......2.67.8.4...........9.3876.','{"nakedSingle":33,"hiddenSingle":24,"pointing":3,"claiming":1,"nakedPair":5}'::jsonb,1),
+('p9d-039',9,'diag','..5...4..4.8..3.5.3..7......82......7.31.26.5......82......1..6.1.6..5.2..6...1..','{"hiddenSingle":5,"pointing":2,"nakedPair":1,"hiddenPair":3,"nakedSingle":50}'::jsonb,1),
+('p9d-040',9,'diag','8....1...3....7..5...8.5..172..1...6.........5...8..299..1.2...2..6....3...9....4','{"hiddenSingle":14,"nakedSingle":43,"pointing":2}'::jsonb,1),
+('p9d-041',9,'diag','.........9..4.8.16..1....7.....26..4..81946..2..38.....3....8..85.2.3..9.........','{"nakedSingle":49,"hiddenSingle":7,"pointing":4,"nakedPair":4}'::jsonb,1),
+('p9d-042',9,'diag','.6...4....5..6..3......8..6..9.2.31....4.3....74.9.8..7..8......9..7..4....9...8.','{"nakedSingle":39,"hiddenSingle":18,"pointing":3,"nakedPair":3,"hiddenPair":1,"claiming":2}'::jsonb,1),
+('p9d-043',9,'diag','..58.6.....4...5.6...45...9......8..61.....37..7......9...24...8.1...2.....1.36..','{"nakedSingle":30,"hiddenSingle":27,"pointing":1,"claiming":1}'::jsonb,1),
+('p9d-044',9,'diag','...7396......8......96..8....6..7..8..42.85..2..9..7....5..24......9......2476...','{"nakedSingle":35,"hiddenSingle":20,"pointing":1,"claiming":2}'::jsonb,1),
+('p9d-045',9,'diag','36..9....2.4...........81..6...7....8271.9635....8...1..29...........5.3....1..26','{"nakedSingle":40,"hiddenSingle":15,"claiming":3,"nakedPair":3,"pointing":3}'::jsonb,1),
+('p9d-046',9,'diag','...9.....6......1....1...92..9...68.16.789.54.28...9..51...4....4......5.....5...','{"nakedSingle":31,"hiddenSingle":25,"pointing":2}'::jsonb,1),
+('p9d-047',9,'diag','..5........8..9.....3...76....67.51...4.9.2...62.35....96...1.....9..6........4..','{"nakedSingle":45,"hiddenSingle":13,"pointing":1}'::jsonb,1),
+('p9d-048',9,'diag','1....3...6...2...79.....2..8..3.......42716.......4..1..8.....54...5...3...6....2','{"nakedSingle":39,"hiddenSingle":19,"pointing":3,"claiming":1}'::jsonb,1),
+('p9d-049',9,'diag','5...7....6.35....77.2....5.....2.1....8...2....1.4.....2....7.13....65.2....5...3','{"hiddenSingle":21,"pointing":2,"nakedSingle":36}'::jsonb,1),
+('p9d-050',9,'diag','8..6...9.93....7.......928114.......................672697.......5....28.8...6..5','{"nakedSingle":44,"hiddenSingle":13,"pointing":6,"claiming":1,"nakedPair":1}'::jsonb,1),
+('p9d-051',9,'diag','49.5..8..3....8......3...2....7....41.9...6.76....5....3...4......1....5..5..2.46','{"nakedSingle":43,"hiddenSingle":14,"pointing":1}'::jsonb,1),
+('p9d-052',9,'diag','.7........986...5......7.6..3..625....2...3....638..7..2.4......6...814........3.','{"hiddenSingle":21,"nakedSingle":36,"pointing":4}'::jsonb,1),
+('p9d-053',9,'diag','.5.9.3....7........3......171.8.....9..2.7..6.....6.143......7........9....7.9.6.','{"hiddenSingle":21,"pointing":3,"nakedSingle":38,"nakedPair":1}'::jsonb,1),
+('p9d-054',9,'diag','1..26..5.6...7.3.....945......5....3...7.9...7....2......658.....6.9...1.4..27..6','{"nakedSingle":37,"hiddenSingle":18,"pointing":1}'::jsonb,1),
+('p9d-055',9,'diag','86.43.....4.2....9...5.6....3.9.....4.......7.....3.5....3.9...6....5.7.....14.86','{"nakedSingle":45,"hiddenSingle":12,"pointing":2,"hiddenPair":1}'::jsonb,1),
+('p9d-056',9,'diag','.....7..5.3.5.......98.4.2...54...13.9.....5.26...58...5.6.32.......8.7.4..7.....','{"hiddenSingle":13,"pointing":2,"nakedPair":1,"nakedSingle":42}'::jsonb,1),
+('p9d-057',9,'diag','..8..1.....1.8...7..2.6.......7...19..96.48..23...8.......4.1..4...1.9.....8..7..','{"hiddenSingle":23,"pointing":4,"nakedSingle":34}'::jsonb,1),
+('p9d-058',9,'diag','..5..4..33......5..7.8......9....5..1.24.67.9..7....4......9.1..1......77..3..4..','{"nakedSingle":41,"hiddenSingle":16,"claiming":2}'::jsonb,1),
+('p9d-059',9,'diag','..49...76.5.........62...9.1...2..5...5...7...2..6...3.8...59.........3.36...45..','{"hiddenSingle":22,"pointing":5,"claiming":2,"nakedSingle":35}'::jsonb,1),
+('p9d-060',9,'diag','..17..6.3.256.....7...9..1.........5.5..8..6.6.........4..6...1.....945.2.8..43..','{"nakedSingle":45,"hiddenSingle":11,"pointing":4,"claiming":2,"nakedPair":2}'::jsonb,1)
+on conflict (id) do nothing;
+
+insert into private.puzzle_solutions (puzzle_id,solution) values
+('p9d-001','953678214164532789782491563478356192239817645615924378547269831821743956396185427'),
+('p9d-002','861249537324756918957318246593164872216837459748925361175492683482673195639581724'),
+('p9d-003','283671459195482367467935218934567821756218934812394576378129645649753182521846793'),
+('p9d-004','347592186269481537185763429972845613514376892638219754451937268796128345823654971'),
+('p9d-005','358672941192483675476591382549836217761254839823917456934725168685149723217368594'),
+('p9d-006','821693457946257381573481629214765893769318542385942716652134978138579264497826135'),
+('p9d-007','284917536371654892596328471927463185415289367863175249132746958659832714748591623'),
+('p9d-008','291584763836712954574693812983126475615478329427935186752849631348261597169357248'),
+('p9d-009','482935617193647825756281394568319472279456138341872569824193756915764283637528941'),
+('p9d-010','498372156153986742762415938236741589915638427874259613647123895381597264529864371'),
+('p9d-011','589436127734152896612897453427685319356719284891324765178563942963248571245971638'),
+('p9d-012','617834295432795816598216437271453968856921743943687521329568174184379652765142389'),
+('p9d-013','273695184915487236648231957436752891751869423892143765367924518189576342524318679'),
+('p9d-014','427658139138479265569312478851267394746983521293541687682195743914736852375824916'),
+('p9d-015','658417923471329856932568741249176385763895214815234679394781562586942137127653498'),
+('p9d-016','175348269938162745462579813693817452724956381851234697546721938219683574387495126'),
+('p9d-017','526179348348652719719834562275346981961528437834791625153267894692485173487913256'),
+('p9d-018','172369854543781926689452317238596741416278593957143268725814639394627185861935472'),
+('p9d-019','256738491783419526914652783128374659637195248549826317895267134461583972372941865'),
+('p9d-020','154279386672843159398651427281497563467532918935186742549768231726315894813924675'),
+('p9d-021','671582349398174265452639178829317654165948732734265981243751896987426513516893427'),
+('p9d-022','985643721123987654746125938854362197361579842279418563598231476437856219612794385'),
+('p9d-023','789146523123985674564327891452619387937458162816273459271864935348592716695731248'),
+('p9d-024','564387921892561473371249865648793512137825694925614738289156347756432189413978256'),
+('p9d-025','289516374413897265756234189392748651648152793175369842837925416524681937961473528'),
+('p9d-026','785246193921573846643198725267489351539712468418635972192857634354961287876324519'),
+('p9d-027','942365718637198524518742963356217489284953671791486235473829156869571342125634897'),
+('p9d-028','539168724741523869628749531295317648867495213314286957453872196982631475176954382'),
+('p9d-029','147385962938276514526914873294753681763891245851642739685139427379428156412567398'),
+('p9d-030','832641975145279863679853421468527139917438652523916784751364298384792516296185347'),
+('p9d-031','893754261426831975517692348634579182972168534185423697768915423359247816241386759'),
+('p9d-032','764538129912467385583912476851693247436725891297184563325876914178349652649251738'),
+('p9d-033','134857296762439185958126347429761853673598412815243769297684531341975628586312974'),
+('p9d-034','261857439835469127479132658614725983593648712728391546357216894982574361146983275'),
+('p9d-035','413296578965837142872145639387912465296354781541768923729481356638579214154623897'),
+('p9d-036','986473512752198463431652879127839654698245731543716298275981346814367925369524187'),
+('p9d-037','492573168865412379173986254381265497746398521259147683514729836938654712627831945'),
+('p9d-038','314857926892361475675294138431782659967543281258916347123675894786429513549138762'),
+('p9d-039','275968413468213759391754268182596347743182695659437821527341986814679532936825174'),
+('p9d-040','895361472316427985472895631723519846689234517541786329934152768257648193168973254'),
+('p9d-041','645731928927458316381962475193526784578194632264387591432619857856273149719845263'),
+('p9d-042','268734591157269438943158276589627314621483759374591862716845923892376145435912687'),
+('p9d-043','195876342724931586386452179259347861618295437437618925963524718841769253572183694'),
+('p9d-044','841739652627185349539624817156347928974268531283951764765812493418593276392476185'),
+('p9d-045','361792458284561397759438162615273849827149635493685271132956784976824513548317926'),
+('p9d-046','271958463694327518385146792759432681163789254428561937516874329842693175937215846'),
+('p9d-047','275386941648719352913254768389672514754198236162435879596847123437921685821563497'),
+('p9d-048','142763859683925147975148236821396574534271698796584321268437915419852763357619482'),
+('p9d-049','549672318613584927782391456476923185938165274251748639825439761397816542164257893'),
+('p9d-050','812657394934812756657439281146978532728563419593124867269785143475391628381246975'),
+('p9d-051','492571863316248759578396421823769514159423687647815392231654978964187235785932146'),
+('p9d-052','671593428298641753543827961834762519752914386916385274127436895369258147485179632'),
+('p9d-053','451923687679148325832675941716854239943217856285396714398461572167532498524789163'),
+('p9d-054','174263958695871324328945167482516793561739842739482615217658439856394271943127586'),
+('p9d-055','869437512543281769271596438735948621418652397926173854187369245694825173352714986'),
+('p9d-056','648237195732591468519864327875429613194386752263175849957613284321948576486752931'),
+('p9d-057','348271596691385247752469381865732419179654823234198675527946138483517962916823754'),
+('p9d-058','625194873348267951971835624493712586152486739867953142534679218216548397789321465'),
+('p9d-059','214958376953176248876243195138427659645389712729561483482735961597612834361894527'),
+('p9d-060','481725693925631847763498512879146235154382769632957184547863921316279458298514376')
+on conflict (puzzle_id) do nothing;

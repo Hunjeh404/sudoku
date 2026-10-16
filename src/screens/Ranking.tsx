@@ -33,7 +33,7 @@ export function RankingScreen() {
           <button key={k} className={`chip${period === k ? ' on' : ''}`} aria-pressed={period === k} onClick={() => setPeriod(k)}>{l}</button>)}
       </div>
       <div className="chips" role="group" aria-label="순위표">
-        {BOARDS.filter((b) => kind === 'points' || b.id !== 'all').map((b) =>
+        {BOARDS.filter((b) => (kind === 'points' || b.id !== 'all') && (b.id !== '9d' || state!.profile.title === 'five')).map((b) =>
           <button key={b.id} className={`chip${shownBoard === b.id ? ' on' : ''}`} aria-pressed={shownBoard === b.id} onClick={() => setBoard(b.id)}>{b.label}</button>)}
       </div>
       <p className="fine">{kind === 'points'

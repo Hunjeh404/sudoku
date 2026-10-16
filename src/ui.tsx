@@ -100,7 +100,7 @@ export function activityPhrase(kind: string, p: any) {
   if (kind === 'clears') return `스도쿠 ${p.count}판을 끝냈어요`;
   if (kind === 'points') return `누적 점수 ${p.points.toLocaleString()}점을 넘었어요`;
   if (kind === 'record') return `${boardName(p.size, p.difficulty)} 자기 기록을 ${josa(secText(p.sec), '으로/로')} 앞당겼어요 (전 기록 ${secText(p.prev)})`;
-  if (kind === 'title') { const n = p.name ?? TITLE_NAME[p.title] ?? ''; return `칭호「${n}」${josa(n, '을/를').slice(n.length)} 받았어요`; }
+  if (kind === 'title') { const n = TITLE_NAME[p.title] ?? p.name ?? ''; /* 칭호 이름이 바뀌어도 지금 이름으로 */ return `칭호「${n}」${josa(n, '을/를').slice(n.length)} 받았어요`; }
   if (kind === 'tier') return `${p.tier}티어 초상화 상점이 열렸어요`;
   return '새 소식이 있어요';
 }

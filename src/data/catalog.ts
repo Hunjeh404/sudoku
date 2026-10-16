@@ -44,7 +44,7 @@ export const TITLES: Title[] = [
   { id: 'read8', name: '음유시인', group: '이야기책', stat: 'reads', need: 8, cond: '이야기책 8장 읽기', skill: '선물 상자에서 넷 중에 고름' },
   { id: 'read16', name: '무사이의 친구', group: '이야기책', stat: 'reads', need: 16, cond: '이야기책 16장 모두 읽기', skill: '선물 상자를 하루 한 번 다시 뽑기' },
   { id: 'wise30', name: '지혜의 눈', group: '그 밖', stat: 'no_hint', need: 30, cond: '힌트 없이 30판 끝내기', skill: '그 판의 첫 힌트는 별빛이 깎이지 않음(기록에는 안 들어감)' },
-  { id: 'five', name: '다섯 신전 순례자', group: '그 밖', stat: 'boards', need: 5, cond: '다섯 난이도를 모두 한 판 이상', skill: '판을 끝낼 때마다 별빛 +1' },
+  { id: 'five', name: '은하수의 방랑자', group: '그 밖', stat: 'boards', need: 5, cond: '다섯 난이도를 모두 한 판 이상', skill: '최상위 난이도「신화」(대각선 스도쿠)가 열림' },
   { id: 'streak7', name: '성실한 순례자', group: '그 밖', stat: 'streak', need: 7, cond: '7일 내리 하루 한 판 이상', skill: '하루 첫 판 별빛 +5' },
   { id: 'kind30', name: '다정한 이웃', group: '그 밖', stat: 'reactions', need: 30, cond: '친구 소식에 이모티콘 30번', skill: '이모티콘 4종 더(🍀🦉⚡🏛️)' },
 ];
@@ -82,6 +82,7 @@ export const REWARD_RULES: { size: number; difficulty: string; amount: number }[
   { size: 9, difficulty: 'easy', amount: 30 },
   { size: 9, difficulty: 'medium', amount: 40 },
   { size: 9, difficulty: 'hard', amount: 50 },
+  { size: 9, difficulty: 'diag', amount: 60 }, // 신화: 칭호「은하수의 방랑자」를 단 사람만
 ];
 
 // 힌트: 한 판에 10번까지(칭호「미궁 탐험가」는 11번), 한 번마다 완료 보상 10%씩 줄어듦(서버와 같아야 함)
@@ -103,8 +104,10 @@ export const BOARDS = [
   { id: '9e', label: '9×9 쉬움' },
   { id: '9m', label: '9×9 보통' },
   { id: '9h', label: '9×9 어려움' },
+  { id: '9d', label: '9×9 신화' }, // 칭호「은하수의 방랑자」를 단 사람에게만 보임
 ] as const;
-export const DIFF_KO: Record<string, string> = { intro: '입문', easy: '쉬움', medium: '보통', hard: '어려움' };
+export const DIAG_RULE = '두 대각선에도 1~9가 한 번씩 들어가요.';
+export const DIFF_KO: Record<string, string> = { intro: '입문', easy: '쉬움', medium: '보통', hard: '어려움', diag: '신화' };
 export const boardName = (size: number, difficulty: string) => `${size}×${size}${difficulty === 'intro' ? '' : ` ${DIFF_KO[difficulty]}`}`;
 
 // 친구 소식 이모티콘(서버 set_reaction의 목록과 같아야 함)

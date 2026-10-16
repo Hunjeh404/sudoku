@@ -6,6 +6,8 @@ describe('칭호 목록', () => {
   it('화면의 칭호 조건이 서버(0014)와 같다', () => {
     const sql = readFileSync('supabase/migrations/0014_titles_skills.sql', 'utf8');
     const rows = [...sql.matchAll(/\('(\w+)', '([^']+)', '(\w+)', (\d+)\)/g)].map((m) => ({ id: m[1], name: m[2], stat: m[3], need: +m[4] }));
+    // 뒤 마이그레이션에서 바꾼 이름(0016: five → 은하수의 방랑자)
+    for (const m of readFileSync('supabase/migrations/0016_diag_mode.sql', 'utf8').matchAll(/set name_ko = '([^']+)' where id = '(\w+)'/g)) rows.find((r) => r.id === m[2])!.name = m[1];
     expect(rows.length).toBe(25);
     for (const r of rows) {
       const t = TITLES.find((x) => x.id === r.id);

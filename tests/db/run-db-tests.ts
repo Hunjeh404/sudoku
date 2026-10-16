@@ -8,7 +8,7 @@ const DB = process.env.DB ?? 'olympus_test';
 const conn = { host: 'localhost', user: 'postgres', password: 'postgres', database: DB };
 const admin = new pg.Client(conn);
 let pass = 0, fail = 0;
-const bank: { id: string; solution: string; givens: string }[] = JSON.parse(readFileSync('puzzles/bank.json', 'utf8'));
+const bank: { id: string; solution: string; givens: string }[] = [...JSON.parse(readFileSync('puzzles/bank.json', 'utf8')), ...JSON.parse(readFileSync('puzzles/bank-diag.json', 'utf8'))];
 
 async function user(email: string) {
   const id = randomUUID();
@@ -438,6 +438,21 @@ async function solveAttempt(u: Awaited<ReturnType<typeof user>>, profile: string
     assert((await admin.query(`select time_ok from public.puzzle_attempts where id = $1`, [a.id])).rows[0].time_ok === false, 'time_ok');
     const lb = await E.rpc('get_leaderboard', { p: pe, board: '9h', period: 'week', kind: 'speed' });
     assert(lb.me === null, 'not in speed ranking ' + JSON.stringify(lb.me));
+  });
+
+  console.log('신화 난이도');
+  await check('신화(대각선)는 「은하수의 방랑자」를 단 사람만 시작, 보상 60, 칭호 스킬 별빛은 없음, 다섯 난이도 수에 안 들어감', async () => {
+    await admin.query(`update public.profiles set title = '' where id = $1`, [pc]);
+    await expectError('locked', () => C.rpc('start_attempt', { p: pc, board_size: 9, difficulty: 'diag' }));
+    await unlockTitle(pc, 'five');
+    const r = await finish(C, pc, { size: 9, diff: 'diag', elapsed: 900 });
+    assert(r.reward === 60 && r.skill_bonus === 0 && r.difficulty === 'diag', JSON.stringify(r));
+    const st = (await C.rpc('get_state', { p: pc })).stats;
+    const real = (await admin.query(`select count(*)::int n from (select distinct size, difficulty from public.score_events where profile_id = $1 and difficulty <> 'diag') b`, [pc])).rows[0].n;
+    assert(st.boards === real, 'boards ' + st.boards + ' vs ' + real);
+    const lb = await C.rpc('get_leaderboard', { p: pc, board: '9d', period: 'week', kind: 'speed' });
+    assert(lb.me?.sec === 900, JSON.stringify(lb.me));
+    assert((await admin.query(`select name_ko from public.title_catalog where id = 'five'`)).rows[0].name_ko === '은하수의 방랑자', 'name');
   });
 
   console.log(`\n${pass} passed, ${fail} failed`);

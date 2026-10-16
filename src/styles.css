@@ -485,3 +485,8 @@ textarea { resize: vertical; }
 .title-card span { font-size: 13px; }
 .title-card.on { background: var(--gold); }
 .title-card.locked { border-style: dashed; border-color: var(--ink-soft); opacity: .6; cursor: default; }
+
+/* ---------- 신화(대각선 스도쿠): 맨 위 규칙 한 줄, 대각선 칸 옅은 표시 ---------- */
+.rule-line { margin: 4px 0 0; padding: 6px 12px; font-size: 14px; text-align: center; border-radius: 999px; background: color-mix(in srgb, var(--paper) 86%, transparent); }
+.cell.dg:not(.sel):not(.same):not(.peer):not(.focus-unit) { background-image: linear-gradient(rgba(142, 111, 168, .17), rgba(142, 111, 168, .17)); }
+.cell.dg.peer:not(.sel) { background-image: linear-gradient(rgba(142, 111, 168, .1), rgba(142, 111, 168, .1)); }

@@ -21,8 +21,8 @@ function shuffle<T>(a: T[], rnd: Rand): T[] {
   return a;
 }
 
-export function randomSolution(n: Size, rnd: Rand): Board {
-  const g = geometry(n);
+export function randomSolution(n: Size, rnd: Rand, diag = false): Board {
+  const g = geometry(n, diag);
   const b: Board = new Array(n * n).fill(0);
   const all = (1 << n) - 1;
   const rec = (cell: number): boolean => {
@@ -41,7 +41,7 @@ export function randomSolution(n: Size, rnd: Rand): Board {
 }
 
 /** 해를 유지하며 칸을 지운다. minGivens 아래로는 지우지 않는다. */
-export function dig(solution: Board, n: Size, rnd: Rand, minGivens: number, symmetric = true): Board {
+export function dig(solution: Board, n: Size, rnd: Rand, minGivens: number, symmetric = true, diag = false): Board {
   const b = solution.slice();
   const N = n * n;
   const order = shuffle([...Array(N).keys()], rnd);
@@ -54,7 +54,7 @@ export function dig(solution: Board, n: Size, rnd: Rand, minGivens: number, symm
     if (givens - pair.length < minGivens) continue;
     const saved = pair.map((c) => b[c]);
     pair.forEach((c) => (b[c] = 0));
-    if (countSolutions(b, n, 2).count !== 1) pair.forEach((c, i) => (b[c] = saved[i]));
+    if (countSolutions(b, n, 2, diag).count !== 1) pair.forEach((c, i) => (b[c] = saved[i]));
     else givens -= pair.length;
   }
   return b;
@@ -62,10 +62,10 @@ export function dig(solution: Board, n: Size, rnd: Rand, minGivens: number, symm
 
 export interface Generated { givens: Board; solution: Board; grade: GradeResult; givenCount: number }
 
-export function generateOne(n: Size, rnd: Rand, minGivens: number): Generated {
-  const solution = randomSolution(n, rnd);
-  const givens = dig(solution, n, rnd, minGivens);
-  return { givens, solution, grade: grade(givens, n), givenCount: givens.filter(Boolean).length };
+export function generateOne(n: Size, rnd: Rand, minGivens: number, diag = false): Generated {
+  const solution = randomSolution(n, rnd, diag);
+  const givens = dig(solution, n, rnd, minGivens, true, diag);
+  return { givens, solution, grade: grade(givens, n, diag), givenCount: givens.filter(Boolean).length };
 }
 
 /** 숫자 이름 바꾸기만 다른 문제를 같은 것으로 보기 위한 정규형 */

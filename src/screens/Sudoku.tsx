@@ -8,7 +8,7 @@ import { rpc, newOpId, ApiError } from '../lib/api';
 import { getLocal, setLocal, delLocal } from '../lib/local';
 import { Board, Size, parseBoard, boardToString, conflicts, geometry, rowOf, colOf, countSolutions } from '../sudoku/engine';
 import { makeHint, Hint } from '../sudoku/hints';
-import { REWARD_RULES, boardName, rewardText, hintMax, freeFirstHint, storyEvery, TITLE_NAME } from '../data/catalog';
+import { REWARD_RULES, boardName, rewardText, hintMax, freeFirstHint, storyEvery, TITLE_NAME, DIFF_KO, DIAG_RULE } from '../data/catalog';
 import { nextJourney } from './Journey';
 import { Sheet, Starlight, ErrorLine, Spinner, Avatar, mmss, secText } from '../ui';
 import { sfx } from '../lib/sound';
@@ -16,7 +16,6 @@ import { TREASURE_FX, boardThemeFor, themeVars } from '../data/effects';
 import { coinVars } from '../fx';
 import { FxLayers } from '../fx';
 
-const DIFF_KO: Record<string, string> = { intro: '입문', easy: '쉬움', medium: '보통', hard: '어려움' };
 const PICTURE = ['lyre', 'cornucopia', 'olive_tree', 'pandora_jar'];
 const PICTURE_KO = ['리라', '풍요의 뿔', '올리브 나무', '항아리'];
 
@@ -49,6 +48,8 @@ export function SudokuSelect({ onStart }: { onStart: (a: AttemptData) => void })
   const first = state!.quest.completed_count === 0;
   const amount = (s: number, d: string) => REWARD_RULES.find((r) => r.size === s && r.difficulty === d)!.amount;
   const choices: [number, string, string][] = [[4, 'intro', '4×4 입문'], [6, 'intro', '6×6 입문'], [9, 'easy', '9×9 쉬움'], [9, 'medium', '9×9 보통'], [9, 'hard', '9×9 어려움']];
+  // 신화(대각선)는 칭호「은하수의 방랑자」를 단 사람에게만 보인다
+  if (state!.profile.title === 'five') choices.push([9, 'diag', '9×9 신화']);
   return (
     <div className="page">
       <h1 className="page-title">스도쿠</h1>
@@ -122,9 +123,10 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
   const HM = hintMax(state?.profile.title ?? ''); // 한 판 힌트 상한(칭호「미궁 탐험가」 11번)
   const themed = boardThemeFor(state?.profile.avatar_id ?? '');
   const theme = themed?.theme;
-  const g = geometry(n);
+  const diag = attempt.difficulty === 'diag'; // 신화: 두 대각선도 규칙에 들어감
+  const g = geometry(n, diag);
   const givens = useMemo(() => parseBoard(attempt.givens), [attempt.givens]);
-  const solution = useMemo(() => countSolutions(givens, n, 2).solution!, [givens, n]);
+  const solution = useMemo(() => countSolutions(givens, n, 2, diag).solution!, [givens, n, diag]);
   const localKey = `att:${session?.user.id}:${profileId}:${attempt.id}`;
   const initial = useMemo<Snap & { revision: number; hints: number }>(() => {
     const server = { board: parseBoard(attempt.board), notes: Object.fromEntries(Object.entries(attempt.notes ?? {}).map(([k, v]) => [Number(k), v])), revision: attempt.revision, hints: attempt.hints_used };
@@ -202,7 +204,7 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
     return () => { document.removeEventListener('visibilitychange', flush); window.removeEventListener('online', pushServer); window.clearTimeout(timer.current); };
   }, [pushServer]);
 
-  const bad = useMemo(() => conflicts(cur.board, n), [cur.board, n]);
+  const bad = useMemo(() => conflicts(cur.board, n, diag), [cur.board, n, diag]);
   const full = cur.board.every((v) => v);
 
   const input = (d: number) => {
@@ -262,7 +264,7 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
 
   const askHint = () => {
     if (!hint && hintsUsed >= HM) return;
-    const h = makeHint(givens, cur.board, n, sym);
+    const h = makeHint(givens, cur.board, n, sym, diag);
     if (!hint) { setHintsUsed((x) => x + 1); hintsRef.current += 1; dirty.current = true; }
     setHint({ h, level: 1 });
     if (h.focusCells[0] !== undefined) setSel(h.focusCells[0]);
@@ -334,6 +336,7 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
           {settings.showTimer && <small> {mmss(seconds)}</small>}</div>
         <span className={`save-state ${status}`} role="status"><StatusIcon size={18} aria-hidden />{statusText}</span>
       </header>
+      {diag && <p className="rule-line">{DIAG_RULE}</p>}
 
       <div className={`tablet${theme?.art ? ' themed-frame' : ''}`} style={themed ? themeVars(themed.key, themed.theme, asset('')) : undefined}>
       <div className={`board${theme ? ' themed' : ''}${theme?.dark ? ' dark' : ''}`} role="grid" aria-label={`${n}×${n} 스도쿠 판`}
@@ -351,6 +354,7 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
           if (g.cellUnits[i].some((u) => focusUnits.has(u))) cls.push('focus-unit');
           if ((c + 1) % g.boxC === 0 && c < n - 1) cls.push('bR');
           if ((r + 1) % g.boxR === 0 && r < n - 1) cls.push('bB');
+          if (diag && (r === c || r + c === n - 1)) cls.push('dg');
           return (
             <button key={i} role="gridcell" className={cls.join(' ')} onClick={() => setSel(i)}
               aria-label={`가로 ${r + 1} 세로 ${c + 1}, ${v ? sym(v) : '빈칸'}${givens[i] ? ', 처음 숫자' : ''}${bad.has(i) ? ', 같은 숫자 겹침' : ''}${checkMarks.has(i) ? ', 틀림' : ''}`}>
