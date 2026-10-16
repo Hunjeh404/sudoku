@@ -96,16 +96,19 @@ describe('대각선 스도쿠(신화)', () => {
     expect(conf2(b, 9).size).toBe(0);
     expect(conf2(b, 9, true).size).toBe(2);
   });
-  it('문제 은행 60개: 대각선 규칙으로 유일해, 정답이 대각선 규칙을 지키고, 논리로 풀림', () => {
+  it('문제 은행 60개: 대각선 규칙으로 유일해, 정답이 대각선 규칙을 지키고, 논리로 풀림, 모두 X-Wing이 필요', () => {
     const bank = JSON.parse(rf2('puzzles/bank-diag.json', 'utf8'));
     expect(bank.length).toBe(60);
+    for (const p of bank) expect(p.techniques.xWing, p.id).toBeGreaterThan(0);
     for (const p of bank.slice(0, 15)) {
       const giv = [...p.givens].map((c: string) => (c === '.' ? 0 : +c));
       const r = cs2(giv, 9, 2, true);
       expect(r.count).toBe(1);
       expect(r.solution!.join('')).toBe(p.solution);
       expect(conf2([...p.solution].map(Number), 9, true).size).toBe(0);
-      expect(grade2(giv, 9, true).solved).toBe(true);
+      const gr = grade2(giv, 9, true);
+      expect(gr.solved).toBe(true);
+      expect(gr.techniques.xWing).toBeGreaterThan(0);
     }
   });
 });
