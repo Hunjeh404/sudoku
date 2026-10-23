@@ -33,6 +33,53 @@ body {
 button { font: inherit; color: inherit; }
 img { display: block; }
 :focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; }
+.seg.dex-tabs { display: flex; width: 100%; }
+.seg.dex-tabs button { flex: 1; padding: 0 8px; white-space: nowrap; }
+
+/* 신화 여행첩: 장면 24장, 세트 완성 배경 6종 */
+.collection-panel { margin-top: 20px; }
+.collection-intro { padding: 22px; border: 1px solid #d1c1a5; border-radius: 20px; background: #faf6ed; }
+.collection-eyebrow { display: block; margin-bottom: 8px; font-size: 12px; letter-spacing: .1em; color: #75603e; }
+.collection-intro h2 { font-size: 26px; }
+.collection-intro p { margin: 10px 0; }
+.collection-totals { display: flex; justify-content: space-between; gap: 8px; margin-top: 18px; }
+.collection-intro progress { display: block; width: 100%; height: 8px; margin: 10px 0; accent-color: #7f9d80; }
+.collection-current { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; margin: 12px 0; }
+.collection-current .btn { flex-shrink: 0; }
+.collection-sets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.collection-set { padding: 0; text-align: left; border: 1px solid #d1c1a5; border-radius: 15px; overflow: hidden; background: #faf6ed; cursor: pointer; }
+.collection-set.complete { border-color: #7f9d80; }
+.collection-cover { position: relative; }
+.collection-cover img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+.collection-cover span { position: absolute; bottom: 8px; right: 8px; padding: 3px 9px; border-radius: 20px; background: #faf6edf2; color: #3A3739; font-size: 12px; }
+.collection-set-text { padding: 12px; }
+.collection-set-text h3 { font-size: 17px; }
+.collection-set-text p { font-size: 13px; color: var(--ink-soft); margin: 8px 0; }
+.collection-set-text small { display: block; font-size: 12px; }
+.collection-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 16px 0; }
+.collection-card { overflow: hidden; padding: 0 0 12px; background: #fffaf0; border: 1px solid #d1c1a5; border-radius: 12px; cursor: pointer; text-align: left; }
+.collection-card img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+.collection-card.locked img { filter: grayscale(1); opacity: .65; }
+.collection-card strong { display: block; padding: 10px 10px 0; font-size: 14px; }
+.collection-card small { display: flex; align-items: center; gap: 3px; padding: 5px 10px 0; font-size: 12px; color: var(--ink-soft); }
+.collection-card small svg { flex-shrink: 0; }
+.collection-background { padding-top: 16px; border-top: 1px solid #d1c1a5; }
+.collection-art-button { display: block; width: 100%; padding: 0; border: 0; background: transparent; cursor: zoom-in; }
+.collection-art-button img { width: 100%; border-radius: 12px; }
+.collection-background h3 { font-size: 18px; margin-top: 16px; }
+.collection-full-art { width: 100%; height: auto; border-radius: 10px; }
+.collection-home { border: 1px solid #d1c1a5; border-radius: 18px; background: #faf6ed; overflow: hidden; margin: 16px 0; }
+.collection-home-art { margin: 0; position: relative; }
+.collection-home-art img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+.collection-home-art figcaption { position: absolute; bottom: 10px; left: 12px; padding: 3px 10px; border-radius: 20px; background: #faf6edf2; color: var(--ink); font-size: 12px; }
+.collection-home-link { display: flex; align-items: center; gap: 12px; width: 100%; padding: 16px; border: 0; background: transparent; text-align: left; cursor: pointer; }
+.collection-home-link small { display: block; color: var(--ink-soft); margin-top: 4px; font-size: 13px; }
+.collection-result { text-align: left; border-radius: 16px; overflow: hidden; background: var(--paper); margin: 16px 0; }
+.collection-result img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+.collection-result > div { padding: 14px; }
+.collection-result strong, .collection-result small { display: block; }
+.collection-result strong { font-size: 20px; margin: 5px 0; }
+@media (max-width: 370px) { .collection-sets { gap: 9px; } .collection-set-text { padding: 10px; } .collection-set-text h3 { font-size: 16px; } }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 h1, h2, h3 { font-family: var(--font-title); font-weight: 700; line-height: 1.25; margin: 0; }
 

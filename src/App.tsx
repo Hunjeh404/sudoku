@@ -34,6 +34,7 @@ function Splash() {
 function Game() {
   const { state, toastMsg, refresh, settings } = useGame();
   const [tab, setTab] = useState<Tab>('home');
+  const [dexTab, setDexTab] = useState<'people' | 'album'>('people');
   const [attempt, setAttempt] = useState<AttemptData | null>(null);
   const [result, setResult] = useState<any>(null);
   const [sheet, setSheet] = useState<'settings' | 'mail' | null>(null);
@@ -65,6 +66,7 @@ function Game() {
   );
   if (result) return (
     <ResultScreen result={result} onHome={() => { setResult(null); closeLayer(); setTab('home'); window.scrollTo(0, 0); }}
+      onCollection={() => { setResult(null); closeLayer(); setDexTab('album'); setTab('dex'); window.scrollTo(0, 0); }}
       onAgain={() => { setResult(null); closeLayer(); setTab('sudoku'); }} />
   );
 
@@ -81,11 +83,11 @@ function Game() {
         <button className="icon-btn" aria-label="설정" onClick={() => setSheet('settings')}><IconSettings /></button>
       </header>
       <main className="content">
-        {tab === 'home' ? <HomeScreen goSudoku={() => setTab('sudoku')} goFriends={() => setTab('friends')} goDex={() => setTab('dex')} />
+        {tab === 'home' ? <HomeScreen goSudoku={() => setTab('sudoku')} goFriends={() => setTab('friends')} goDex={() => { setDexTab('people'); setTab('dex'); }} goCollection={() => { setDexTab('album'); setTab('dex'); }} />
           : tab === 'sudoku' ? <SudokuSelect onStart={(a) => { openLayer(); setAttempt(a); }} />
           : tab === 'rank' ? <RankingScreen />
           : tab === 'friends' ? <FriendsScreen />
-          : <DexScreen />}
+          : <DexScreen initialTab={dexTab} />}
       </main>
       <nav className="tabbar" aria-label="주 메뉴">
         {([['home', '홈', IconHome2], ['sudoku', '스도쿠', IconGridDots], ['rank', '순위', IconTrophy], ['friends', '친구', IconUsers], ['dex', '도감', IconBook2]] as const).map(([k, l, I]) => (

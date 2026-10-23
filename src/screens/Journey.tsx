@@ -8,8 +8,14 @@ import { loadPeople, Person } from '../lib/content';
 import { Sheet, ErrorLine, Avatar } from '../ui';
 import { sfx } from '../lib/sound';
 import { josa } from '../lib/josa';
+import { COLLECTION_SETS } from '../data/collections';
 
-export const nextJourney = (count: number) => JOURNEY.find((j) => j.need > count) ?? null;
+// Server-paid rewards stay in JOURNEY. Album rewards are derived from the server count.
+export const DISPLAY_JOURNEY = [...JOURNEY, ...COLLECTION_SETS.flatMap((set, si) => set.cards.map((card, ci) => ({
+  step: 100 + si * 4 + ci, need: card.need, title: card.name,
+  reward: { collection: `여행첩 장면 카드${ci === 3 ? ` + 홈 배경「${set.backgroundName}」` : ''}` },
+})))].sort((a, b) => a.need - b.need || a.step - b.step);
+export const nextJourney = (count: number) => DISPLAY_JOURNEY.find((j) => j.need > count) ?? null;
 
 export function JourneySheet({ onClose }: { onClose: () => void }) {
   const { state } = useGame();
@@ -19,7 +25,7 @@ export function JourneySheet({ onClose }: { onClose: () => void }) {
     <Sheet title="여정" onClose={onClose}>
       <p className="fine">스도쿠를 끝낸 판 수만큼 나아가요. 크기·난이도·힌트와 상관없이 한 판은 한 걸음이에요. 지금 {n}판.</p>
       <ol className="journey">
-        {JOURNEY.map((j) => {
+        {DISPLAY_JOURNEY.map((j) => {
           const done = j.need <= n;
           const next = !done && nextJourney(n)?.step === j.step;
           return (
@@ -30,7 +36,7 @@ export function JourneySheet({ onClose }: { onClose: () => void }) {
           );
         })}
       </ol>
-      {n >= JOURNEY[JOURNEY.length - 1].need && <p>여정을 모두 마쳤어요. 이제 마음껏 풀면서 별빛과 초상화를 모으세요.</p>}
+      {n >= DISPLAY_JOURNEY[DISPLAY_JOURNEY.length - 1].need && <p>여정과 여섯 여행첩을 모두 완성했어요. 도감에서 모은 장면과 배경을 감상해 보세요.</p>}
       <p className="fine">이야기책: 1장은 처음부터, 이후 {E}판마다 한 장씩 열려요. 지금 {Math.min(16, Math.floor(n / E) + 1)}장까지 열렸어요{n < 15 * E ? `. 다음 장까지 ${E - (n % E)}판` : ''}.</p>
       <p className="fine">힌트 없이 끝낸 판: {state!.quest.no_hint_count}판</p>
     </Sheet>

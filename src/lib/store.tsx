@@ -5,7 +5,7 @@ import { rpc, ApiError } from './api';
 import { getLocal, setLocal } from './local';
 import { configureSound } from './sound';
 
-export interface Settings { sound: boolean; fx: number; music: number; reducedMotion: boolean; autoNotes: boolean; showTimer: boolean; pictureMode: boolean }
+export interface Settings { sound: boolean; fx: number; music: number; reducedMotion: boolean; autoNotes: boolean; showTimer: boolean; pictureMode: boolean; collectionBackdrop?: string }
 export const DEFAULT_SETTINGS: Settings = { sound: false, fx: 0.6, music: 0.4, reducedMotion: false, autoNotes: true, showTimer: false, pictureMode: false };
 
 export interface GameState {
@@ -99,7 +99,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const settings = useMemo<Settings>(() => {
     const local = getLocal<Partial<Settings>>(`settings:${profileId}`, {});
     const sys = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-    return { ...DEFAULT_SETTINGS, reducedMotion: sys, ...(state?.profile.settings ?? {}), ...local };
+    return { ...DEFAULT_SETTINGS, reducedMotion: sys, ...(state?.profile.settings ?? {}), ...local,
+      collectionBackdrop: state?.profile.settings.collectionBackdrop ?? '' };
   }, [state, profileId]);
 
   useEffect(() => {

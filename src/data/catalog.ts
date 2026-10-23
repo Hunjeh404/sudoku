@@ -51,7 +51,7 @@ export const TITLES: Title[] = [
 export const TITLE_NAME: Record<string, string> = Object.fromEntries(TITLES.map((t) => [t.id, t.name]));
 
 // 여정: 끝낸 판 수(need)에 닿으면 보상. gift=그 티어 초상화 셋 중 하나 무료, tier=티어 열림, bonus=별빛, title=칭호
-export interface JourneyReward { gift?: number; tier?: number; bonus?: number; title?: string }
+export interface JourneyReward { gift?: number; tier?: number; bonus?: number; title?: string; collection?: string }
 export interface JourneyStep { step: number; need: number; title: string; reward: JourneyReward }
 export const JOURNEY: JourneyStep[] = [
   { step: 1, need: 1, title: '첫 초상화', reward: { gift: 1 } },
@@ -73,6 +73,7 @@ export function rewardText(r: JourneyReward) {
   if (r.tier) out.push(`${r.tier}티어 초상화 상점 열림`);
   if (r.bonus) out.push(`별빛 ${r.bonus}`);
   if (r.title) out.push(`칭호「${TITLE_NAME[r.title]}」`);
+  if (r.collection) out.push(r.collection);
   return out.join(', ');
 }
 

@@ -11,12 +11,13 @@ import { sfx } from '../lib/sound';
 import { josa } from '../lib/josa';
 import { TREASURE_FX, BOARD_THEMES, TIER_THEMES, MEMO_GUARD_TEXT } from '../data/effects';
 import { FxPreview, ThemePreview } from '../fx';
+import { CollectionsPanel } from './Collections';
 
 type Filter = 1 | 2 | 3 | 4 | 'mine';
 
-export function DexScreen() {
+export function DexScreen({ initialTab = 'people' }: { initialTab?: 'people' | 'album' }) {
   const { state } = useGame();
-  const [tab, setTab] = useState<'people' | 'art' | 'book'>('people');
+  const [tab, setTab] = useState<'people' | 'art' | 'book' | 'album'>(initialTab);
   const [people, setPeople] = useState<Person[] | null>(null);
   const [err, setErr] = useState(false);
   // 처음엔 내 초상화(가진 게 없으면 1티어)
@@ -44,11 +45,11 @@ export function DexScreen() {
   return (
     <div className="page">
       <h1 className="page-title">도감</h1>
-      <div className="seg" role="tablist" aria-label="도감 종류">
-        {([['people', '초상화'], ['art', '보물'], ['book', '이야기책']] as const).map(([k, l]) =>
+      <div className="seg dex-tabs" role="tablist" aria-label="도감 종류">
+        {([['people', '초상화'], ['art', '보물'], ['book', '이야기책'], ['album', '여행첩']] as const).map(([k, l]) =>
           <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{l}</button>)}
       </div>
-      {tab === 'book' ? (
+      {tab === 'album' ? <CollectionsPanel /> : tab === 'book' ? (
         <>
           <p className="fine">그리스 신화 이야기 16장을 그림과 함께 읽어요. 1장은 처음부터, 스도쿠 {storyEvery(state!.profile.title)}판마다 한 장씩 열려요.</p>
           <button className="btn primary" onClick={() => setReading(true)}>이야기책 펼치기</button>

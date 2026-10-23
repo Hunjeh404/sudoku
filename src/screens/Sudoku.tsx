@@ -15,6 +15,7 @@ import { sfx } from '../lib/sound';
 import { TREASURE_FX, boardThemeFor, themeVars } from '../data/effects';
 import { coinVars } from '../fx';
 import { FxLayers } from '../fx';
+import { cardImage, collectionImage, collectionRewardsAt } from '../data/collections';
 
 const PICTURE = ['lyre', 'cornucopia', 'olive_tree', 'pandora_jar'];
 const PICTURE_KO = ['리라', '풍요의 뿔', '올리브 나무', '항아리'];
@@ -421,13 +422,14 @@ export function PuzzleScreen({ attempt, onExit, onComplete }: { attempt: Attempt
   );
 }
 
-export function ResultScreen({ result, onHome, onAgain }: { result: any; onHome: () => void; onAgain: () => void }) {
+export function ResultScreen({ result, onHome, onAgain, onCollection }: { result: any; onHome: () => void; onAgain: () => void; onCollection: () => void }) {
   const { refresh, state } = useGame();
   useEffect(() => { refresh(); }, []);
   const every = storyEvery(state?.profile.title ?? '');
   const j = result.journey && result.journey.step ? result.journey : null;
   const next = nextJourney(result.completed_count);
   const rec = result.record;
+  const collected = collectionRewardsAt(result.completed_count);
   return (
     <div className="result">
       <h1>다 풀었어요!</h1>
@@ -442,11 +444,14 @@ export function ResultScreen({ result, onHome, onAgain }: { result: any; onHome:
       {result.titles?.length > 0 && <p className="record-line">새 칭호「{result.titles.join('」「')}」를 받았어요. 설정에서 달 수 있어요</p>}
       {rec && <p className="record-line">{rec.first ? `첫 기록 ${secText(rec.sec)}` : `자기 기록 경신! ${secText(rec.prev)} → ${secText(rec.sec)}`}</p>}
       {j && <div className="journey-card"><p>여정 {j.step}번째 보상</p><strong>{j.title}</strong><small>{rewardText(j.reward)}</small></div>}
+      {collected.cards.map((card) => <div key={card.id} className="collection-result"><img src={asset(cardImage(card))} alt="" /><div><small>새 장면을 모았어요</small><strong>{card.name}</strong></div></div>)}
+      {collected.backgrounds.map((set) => <div key={set.id} className="collection-result"><img src={asset(collectionImage(set))} alt="" /><div><small>{set.name} · 세트 완성!</small><strong>{set.backgroundName}</strong><small>홈에 펼칠 새 배경을 받았어요</small></div></div>)}
       {!j && next && <p className="fine">다음 여정「{next.title}」까지 {next.need - result.completed_count}판</p>}
       {result.completed_count % every === 0 && result.completed_count / every + 1 <= 16 && (
         <p className="record-line">이야기책 {result.completed_count / every + 1}장이 열렸어요. 도감에서 읽어 보세요</p>
       )}
       <div className="stack">
+        {collected.cards.length > 0 && <button className="btn primary big" onClick={onCollection}>여행첩에서 보상 보기</button>}
         <button className="btn primary big" onClick={onHome}>{j?.reward?.gift ? '선물 고르러 가기' : '처음 화면으로'}</button>
         <button className="btn big" onClick={onAgain}>한 판 더</button>
       </div>

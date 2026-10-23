@@ -6,10 +6,11 @@ import { GUIDES, rewardText } from '../data/catalog';
 import { Avatar, TitleTag, tierOf } from '../ui';
 import { JourneySheet, GiftSheet, nextJourney } from './Journey';
 import { FeedList } from './Friends';
+import { CollectionHome } from './Collections';
 
 const TOTAL_PORTRAITS = 390;
 
-export function HomeScreen({ goSudoku, goFriends, goDex }: { goSudoku: () => void; goFriends: () => void; goDex: () => void }) {
+export function HomeScreen({ goSudoku, goFriends, goDex, goCollection }: { goSudoku: () => void; goFriends: () => void; goDex: () => void; goCollection: () => void }) {
   const { state } = useGame();
   const s = state!;
   const [journey, setJourney] = useState(false);
@@ -41,6 +42,7 @@ export function HomeScreen({ goSudoku, goFriends, goDex }: { goSudoku: () => voi
         <div><dt>이번 주</dt><dd>{s.points.week.toLocaleString()}</dd></div>
         <div><dt>모은 초상화</dt><dd><button className="link" onClick={goDex}>{s.owned.filter((id) => (tierOf(id) ?? 0) >= 1).length}<small>/{TOTAL_PORTRAITS}</small></button></dd></div>
       </dl>
+      <CollectionHome onOpen={goCollection} />
 
       {s.gifts.length > 0 && (
         <button className="gift-banner" onClick={() => setGift(true)}>
